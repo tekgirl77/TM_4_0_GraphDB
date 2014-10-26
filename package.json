@@ -1,0 +1,38 @@
+{
+  "name": "TM_4_0_GraphDB",
+  "version": "0.0.1",
+  "description": "Code for the Graph DB used by TM 4.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha --compilers coffee:coffee-script/register --recursive -R list",
+    "watch": "touch .tmCache/.deleteCacheNext && mocha -w --compilers coffee:coffee-script/register --watch-extensions jade  --recursive -R list"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TeamMentor/TM_4_0_GraphDB.git"
+  },
+  "keywords": [
+    "TeamMentor",
+    "Graph",
+    "LevelGraph"
+  ],
+  "author": "Dinis Cruz <dinis.cruz@owasp.org> (http://blog.diniscruz.com/)",
+  "license": "TeamMentor License",
+  "bugs": {
+    "url": "https://github.com/TeamMentor/TM_4_0_GraphDB/issues"
+  },
+  "homepage": "https://github.com/TeamMentor/TM_4_0_GraphDB",
+  "dependencies": {
+    "coffee-script": "^1.8.0",
+    "express": "^4.9.7",
+    "fluentnode": "^0.1.4",
+    "github": "^0.2.2",
+    "jade": "^1.7.0",
+    "levelgraph": "^0.9.2"
+  },
+  "devDependencies": {
+    "chai": "^1.9.2",
+    "mocha": "^1.21.5"
+  }
+}
