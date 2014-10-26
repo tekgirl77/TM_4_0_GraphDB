@@ -1,0 +1,51 @@
+<component name="libraryTable">
+  <library name="Generated files" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/dist/src/services/GitHub-Service.js" />
+        <item url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/src/fluent-fs.js" />
+        <item url="file://$PROJECT_DIR$/dist/src/services/Cache-Service.js" />
+        <item url="file://$PROJECT_DIR$/dist/src/services/Graph-Service.js" />
+        <item url="file://$PROJECT_DIR$/dist/test/services/test-Graph-Service.js" />
+        <item url="file://$PROJECT_DIR$/dist/test/services/test-GitHub-Service.js" />
+        <item url="file://$PROJECT_DIR$/dist/test/services/test-Cache-Service.js" />
+        <item url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/test/test-fluent-fs.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/test/services/test-Cache-Service.js" />
+      <root url="file://$PROJECT_DIR$/test/services/test-GitHub-Service.js" />
+      <root url="file://$PROJECT_DIR$/test/services/test-Cache-Service.js" />
+      <root url="file://$PROJECT_DIR$/test/test-Server.js" />
+      <root url="file://$PROJECT_DIR$/test/services/test-GitHub-Service.js" />
+      <root url="file://$PROJECT_DIR$/src/Server.js" />
+      <root url="file://$PROJECT_DIR$/test/test-Server.js" />
+      <root url="file://$PROJECT_DIR$/src/Server.js" />
+      <root url="file://$PROJECT_DIR$/dist/Cache-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/Server.js" />
+      <root url="file://$PROJECT_DIR$/dist/Cache-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/Server.js" />
+      <root url="file://$PROJECT_DIR$/dist/src/Server.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/test/test-fluent-path.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/src/fluent-path.js" />
+      <root url="file://$PROJECT_DIR$/dist/test/test-Server.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/test/test-fluent-string.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/src/fluent-string.js" />
+      <root url="file://$PROJECT_DIR$/dist/src/Server.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/test/test-fluent-path.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/src/fluent-path.js" />
+      <root url="file://$PROJECT_DIR$/dist/test/test-Server.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/test/test-fluent-string.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/src/fluent-string.js" />
+      <root url="file://$PROJECT_DIR$/dist/src/services/GitHub-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/src/fluent-fs.js" />
+      <root url="file://$PROJECT_DIR$/dist/src/services/Cache-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/src/services/Graph-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/test/services/test-GitHub-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/test/services/test-Graph-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/test/services/test-Cache-Service.js" />
+      <root url="file://$PROJECT_DIR$/dist/node_modules/fluentnode/test/test-fluent-fs.js" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>
