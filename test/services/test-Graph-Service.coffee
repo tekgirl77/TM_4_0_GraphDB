@@ -25,12 +25,12 @@ describe 'test-Graph-Service |', ->
       expect(graphService.openDb).to.be.an('function');
       expect(graphService.closeDb).to.be.an('function');
 
-      expect(graphService.dbPath.file_Exists()).to.equal(false)
-      expect(graphService.db                  ).to.equal(null)
+      expect(graphService.dbPath.folder_Exists()).to.equal(false)
+      expect(graphService.db                    ).to.equal(null)
 
-      expect(graphService.openDb()            ).to.equal(graphService.db)
-      expect(graphService.db                  ).to.not.equal(null)
-      expect(graphService.dbPath.file_Exists()).to.equal(true)
+      expect(graphService.openDb()              ).to.equal(graphService.db)
+      expect(graphService.db                    ).to.not.equal(null)
+      expect(graphService.dbPath.folder_Exists()).to.equal(true)
 
       graphService.closeDb ->
         expect(graphService.dbPath.folder_Delete_Recursive()).to.equal(true)
@@ -58,7 +58,7 @@ describe 'test-Graph-Service |', ->
     it 'add', (done)->
       expect(graphService.add).to.be.an('function')
       graphService.allData (data)->
-          expect(data).to.equal(null)
+          expect(data).to.be.empty
           graphService.add "a","b","c", ->
             graphService.query  "subject", "a", (data)->
               expect(data                  ).to.not.equal(null)
@@ -93,6 +93,12 @@ describe 'test-Graph-Service |', ->
           expect(data).to.deep.equal []
           done()
 
+    it 'alldata', (done)->
+      expect(graphService.allData).to.be.an('Function')
+      graphService.allData  (data) ->
+        expect(data.length).to.equal(1)
+        expect(data       ).to.deep.equal [{ subject: 'a', predicate : 'b', object:'c'}]
+        done()
 ###
 
   it 'graphDataFromQAServer', (done)->
@@ -204,11 +210,7 @@ describe 'test-Graph-Service |', ->
       #graphService.closeDb()
       done()
 
-  it 'alldata', (done)->
-    expect(graphService.allData).to.be.an('Function')
-    graphService.allData  (err, data) ->
-      expect(data.length).to.equal(graphService.data.length)
-      done()
+
   it 'query', (done)->
     expect(graphService.query).to.be.an('Function')
 

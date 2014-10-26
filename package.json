@@ -29,10 +29,14 @@
     "fluentnode": "^0.1.4",
     "github": "^0.2.2",
     "jade": "^1.7.0",
-    "levelgraph": "^0.9.2"
+    "levelgraph": "^0.9.2",
+    "request": "^2.46.0",
+    "vis": "^3.6.2"
   },
   "devDependencies": {
     "chai": "^1.9.2",
-    "mocha": "^1.21.5"
+    "cheerio": "^0.17.0",
+    "mocha": "^1.21.5",
+    "supertest": "^0.14.0"
   }
 }

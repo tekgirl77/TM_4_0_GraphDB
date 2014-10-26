@@ -1,26 +1,16 @@
-require('fluentnode')
-fs         = require('fs')
 
-#levelup    = require("levelup")
-#levelup    = require("level"        )
 levelgraph      = require('levelgraph'   )
 GitHub_Service  = require('./GitHub-Service')
 
 class GraphService
   constructor: (dbName)->
-    #console.log('in ArticlesGraph ctor')
-#    @level      = null
     @dbName     = if  dbName then dbName else '_tmp_db'.add_Random_String(5)
     @dbPath     = "./.tmCache/#{@dbName}"
     @db         = null
-#    @dataFile   = './src/article-data.json'
-#    @data       = null
 
   #Setup methods
 
   openDb : (callback)=>
-    #@level      = levelup   (@dbPath)
-    #@db         = levelgraph(@level)
     @db         = levelgraph(@dbPath)
     callback() if callback
     return @db
@@ -49,31 +39,28 @@ class GraphService
     @db.get {object:object}, (err,data)->callback(data)
 
 
-  #    dataFilePath: -> process.cwd().path.join(@dataFile)
-#    dataFromFile: ()-> JSON.parse fs.readFileSync(@dataFilePath(), "utf8")
-
-  dataFromGitHub: (callback)->
-    user   = "TMContent"
-    repo   = "TM_Test_GraphData"
-    path   = 'GraphData/article_Data.json'
-    new GitHub_Service().file user, repo, path, (data)-> callback(JSON.parse(data))
+#  dataFromGitHub: (callback)->
+#    user   = "TMContent"
+#    repo   = "TM_Test_GraphData"
+#    path   = 'GraphData/article_Data.json'
+#    new GitHub_Service().file user, repo, path, (data)-> callback(JSON.parse(data))
 
   # Load from disk
-  loadTestData: (callback) =>
-    if (@db==null)
-      @openDb()
-    @dataFromGitHub (data)=>
-      @data = data
-      @db.put @data, callback
+#  loadTestData: (callback) =>
+#    if (@db==null)
+#      @openDb()
+#    @dataFromGitHub (data)=>
+#      @data = data
+#      @db.put @data, callback
 
   # Search methods
 
-  allData: (callback)->
+  allData: (callback)=>
     @db.search [{
       subject  : @db.v("subject"),
       predicate: @db.v("predicate"),
       object   : @db.v("object"),
-    }], callback
+    }], (err, data)->callback(data)
 
   query: (key, value, callback)->
     switch key

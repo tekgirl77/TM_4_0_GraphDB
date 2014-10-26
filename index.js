@@ -3,11 +3,10 @@
 
 require('coffee-script/register');              // adding coffee-script support
 
-var server = require('./src/server');           // gets the express server
+var Server = require('./src/Server');           // gets the express server
 
-server.port  = process.env.PORT || 1332;        // sets port
-server.listen(server.port);                     // start server
+var server = new Server().start()               // start server
 
-console.log('Server started at: http://localhost:' + server.port);
+console.log('Server started at: ' + server.url());
 
-//require('child_process').spawn('open',['http://localhost:' + server.port]);
+require('child_process').spawn('open',[server.url()]);
