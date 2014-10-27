@@ -1,4 +1,5 @@
 express              = require 'express'
+Data_Controller      = require './controllers/Data-Controller'
 
 class Server
     constructor: ->
@@ -10,10 +11,14 @@ class Server
     configure: =>
         @app.set('view engine', 'jade')
         @addRoutes()
+        @addControlers()
     
     addRoutes: =>
         @app.get '/'    , (req,res)-> res.send('hello')
         @app.get '/test', (req,res)-> res.send('this is a test')
+
+    addControlers: =>
+        new Data_Controller(@).add_Routes()
 
     start: =>
         @_server = @app.listen(@port)

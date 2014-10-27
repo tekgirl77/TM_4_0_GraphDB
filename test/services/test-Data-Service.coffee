@@ -93,6 +93,9 @@ describe 'test-Data-Service |', ->
       dataService.graphService.deleteDb ->
         done()
 
+    after ->
+      expect(dataService.path_Name.folder_Delete_Recursive()).to.be.true
+
     it 'load_Data (json)', (done)->
       json_Data_1.saveAs(json_File_1)
       json_Data_2.saveAs(json_File_2)

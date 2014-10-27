@@ -1,23 +1,22 @@
-require('fluentnode')
-fs            = require('fs'           )
 expect        = require('chai'         ).expect
-spawn         = require('child_process').spawn
 Graph_Service  = require('./../../src/services/Graph-Service')
 
 describe 'test-Graph-Service |', ->
   describe 'core |', ->
-    it 'check ctor',->
+    it 'check ctor', ->
       graphService  = new Graph_Service()
       expect(Graph_Service      ).to.be.an  ('Function')
       expect(graphService       ).to.be.an  ('Object'  )
       expect(graphService.dbPath).to.be.an  ('String'  )
       expect(graphService.db    ).to.equal  (null)
       expect(graphService.dbName).to.contain('_tmp_db')
-      expect(graphService.dbPath).to.contain('./.tmCache/_tmp_db')
+      expect(graphService.dbPath).to.contain('.tmCache/_tmp_db')
+      expect(graphService.dbPath.folder_Delete_Recursive()).to.be.true
 
       graphService  = new Graph_Service('aaaa')
       expect(graphService.dbName).to.equal('aaaa')
       expect(graphService.dbPath).to.equal('./.tmCache/aaaa')
+      expect(graphService.dbPath.folder_Delete_Recursive()).to.be.true
 
     it 'openDb and closeDb', (done)->
       graphService  = new Graph_Service()
@@ -25,14 +24,10 @@ describe 'test-Graph-Service |', ->
       expect(graphService.openDb).to.be.an('function');
       expect(graphService.closeDb).to.be.an('function');
 
-      expect(graphService.dbPath.folder_Exists()).to.equal(false)
+      expect(graphService.dbPath.folder_Exists()).to.equal(true)
       expect(graphService.db                    ).to.equal(null)
-      #console.log(graphService.dbPath.folder_Exists())
       expect(graphService.openDb()              ).to.equal(graphService.db)
       expect(graphService.db                    ).to.not.equal(null)
-      #console.log(graphService.dbPath)
-      #console.log(graphService.dbPath.folder_Exists())
-      expect(graphService.dbPath.folder_Exists()).to.equal(true)
 
       graphService.closeDb ->
         expect(graphService.dbPath.folder_Delete_Recursive()).to.equal(true)

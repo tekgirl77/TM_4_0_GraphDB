@@ -14,6 +14,9 @@ describe 'test-Server |',->
         expect(server.port   ).to.be.an('number'  )
         expect(server._server).to.equal(null)
 
+        expect(server.addRoutes    ).to.be.an('function')
+        expect(server.addControlers).to.be.an('function')
+
 
     it 'start and stop', (done)->
         expect(server.start  ).to.be.an('function')
@@ -46,5 +49,5 @@ describe 'test-Server |',->
         expect(server.routes().size()).to.be.above(0)
         
     it 'Check expected paths', ->
-      expectedPaths = [ '/', '/test' ]
+      expectedPaths = [ '/', '/test' , '/data/:name']
       expect(server.routes()).to.deep.equal(expectedPaths)

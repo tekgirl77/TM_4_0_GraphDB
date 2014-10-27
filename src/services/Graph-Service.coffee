@@ -1,11 +1,10 @@
-
 levelgraph      = require('levelgraph'   )
 GitHub_Service  = require('./GitHub-Service')
 
 class GraphService
   constructor: (dbName)->
     @dbName     = if  dbName then dbName else '_tmp_db'.add_Random_String(5)
-    @dbPath     = "./.tmCache/#{@dbName}"
+    @dbPath     = "./.tmCache/#{@dbName}".create_Dir()
     @db         = null
 
   #Setup methods
