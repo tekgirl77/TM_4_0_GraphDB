@@ -1,8 +1,4 @@
-require('fluentnode')
-
-
 expect         = require('chai'         ).expect
-spawn          = require('child_process').spawn
 Data_Service   = require('./../../src/services/Data-Service')
 Graph_Service  = require('./../../src/services/Graph-Service')
 
@@ -82,7 +78,11 @@ describe 'test-Data-Service |', ->
     coffee_Data_2   = '''add_Data = (graphService, callback)->
                            graphService.db.put [{ subject: 'g1', predicate : 'b1', object:'c1'}], callback
                          module.exports = add_Data '''
-
+    dot_Data_1      = '''graph graphname {
+                                            a2 -- b2 -- c2;
+                                            b2 -- d2;
+                                          }'''
+    dot_Data_2      = '''{ d2 -- e3 }'''
 
     before ->
       expect(dataService.load_Data  ).to.be.an("function")
@@ -113,15 +113,29 @@ describe 'test-Data-Service |', ->
           expect(data.length).to.equal(3)
           done()
 
-    xit 'load_Data (dot)', (done)->
-      #dot_Data_1.saveAs(dot_File_2)
-      #coffee_Data_2.saveAs(dot_File_2)
-      expect(path_Data.files().size()).to.equal(0)
+    it 'load_Data (dot)', (done)->
+      dot_Data_1.saveAs(dot_File_1)
+      dot_Data_2.saveAs(dot_File_2)
+      expect(path_Data.files().size()).to.equal(2)
 
       dataService.load_Data ->
         dataService.graphService.allData (data)->
-          expect(data).to.be.empty
-          expect(data.length).to.equal(0)
+          expect(data).to.not.be.empty
+          expect(data.length).to.equal(4)
           done()
 
+    it 'load_Data (all formats)', (done)->
+      coffee_Data_1.saveAs(coffee_File_1)
+      coffee_Data_2.saveAs(coffee_File_2)
+      json_Data_1  .saveAs(json_File_1  )
+      json_Data_2  .saveAs(json_File_2  )
+      dot_Data_1   .saveAs(dot_File_1   )
+      dot_Data_2   .saveAs(dot_File_2   )
 
+      expect(path_Data.files().size()).to.equal(6)
+
+      dataService.load_Data ->
+        dataService.graphService.allData (data)->
+          expect(data).to.not.be.empty
+          expect(data.length).to.equal(11)
+          done()

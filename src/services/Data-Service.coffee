@@ -1,5 +1,7 @@
-fs            = require 'fs'
+require('fluentnode')
+
 Graph_Service = require './Graph-Service'
+Dot_Service   = require './Dot-Service'
 
 class Data_Service
   constructor: (name)->
@@ -32,6 +34,10 @@ class Data_Service
               add_Data = require(file)
               if typeof add_Data is 'function'
                 add_Data @graphService, loadNextFile
+            when '.dot'
+              dot_Data = file.file_Contents()
+              new Dot_Service().dot_To_Triplets dot_Data, (triplets)=>
+                @graphService.db.put triplets, loadNextFile
             else
               console.log("not supported" + file.path_Extension())
               loadNextFile()

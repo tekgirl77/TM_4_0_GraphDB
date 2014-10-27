@@ -27,9 +27,11 @@ describe 'test-Graph-Service |', ->
 
       expect(graphService.dbPath.folder_Exists()).to.equal(false)
       expect(graphService.db                    ).to.equal(null)
-
+      #console.log(graphService.dbPath.folder_Exists())
       expect(graphService.openDb()              ).to.equal(graphService.db)
       expect(graphService.db                    ).to.not.equal(null)
+      #console.log(graphService.dbPath)
+      #console.log(graphService.dbPath.folder_Exists())
       expect(graphService.dbPath.folder_Exists()).to.equal(true)
 
       graphService.closeDb ->
