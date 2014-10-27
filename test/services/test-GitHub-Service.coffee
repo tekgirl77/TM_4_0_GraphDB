@@ -19,6 +19,12 @@ describe 'services | test-GitHub-Service |', ->
     expect(gitHubService.useCache).to.be.an('boolean')
     expect(gitHubService.github  ).to.be.an('object')
 
+  it 'enableCache',->
+    expect(gitHubService.useCache).to.be.true
+    gitHubService.useCache = false
+    expect(gitHubService.useCache).to.be.false
+    expect(gitHubService.enableCache()).to.equal(gitHubService)
+    expect(gitHubService.useCache).to.be.true
 
   it 'authenticate',->
     expect(gitHubService.authenticate  ).to.be.an('Function')

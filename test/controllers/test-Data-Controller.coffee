@@ -49,9 +49,20 @@ describe 'test-Data-Controller |', ->
                       expect(json.first().predicate).to.equal('b1')
                       expect(json.first().object   ).to.equal('c1')
                       done()
-    # .get('/')
-    #.expect(200)
-    #.end (error, response) ->
-    #  $ = cheerio.load(response.text)
 
-
+  describe 'default data sets |', ->
+    server         = new Server()
+    app            = server.app
+    dataController = new Data_Controller(server).add_Routes()
+    it '/data/v0.1-gist' , (done)->
+      supertest(app).get("/data/v0.1-gist")
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end (error, response) ->
+        json = JSON.parse(response.text)
+        expect(json       ).to.be.an('array')
+        expect(json.size()).to.equal(83)
+        expect(json.first().subject  ).to.equal('1106d793193b')
+        expect(json.first().predicate).to.equal('Summary')
+        expect(json.first().object   ).to.equal('...')
+        done()

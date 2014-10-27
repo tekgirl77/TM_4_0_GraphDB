@@ -49,5 +49,6 @@ describe 'test-Server |',->
         expect(server.routes().size()).to.be.above(0)
         
     it 'Check expected paths', ->
-      expectedPaths = [ '/', '/test' , '/data/:name']
+      expectedPaths = [ '/', '/test'
+                        '/data/:name']
       expect(server.routes()).to.deep.equal(expectedPaths)

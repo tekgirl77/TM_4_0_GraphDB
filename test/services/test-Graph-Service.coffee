@@ -24,7 +24,7 @@ describe 'test-Graph-Service |', ->
       expect(graphService.openDb).to.be.an('function');
       expect(graphService.closeDb).to.be.an('function');
 
-      expect(graphService.dbPath.folder_Exists()).to.equal(true)
+      expect(graphService.dbPath.folder_Exists()).to.equal(false)
       expect(graphService.db                    ).to.equal(null)
       expect(graphService.openDb()              ).to.equal(graphService.db)
       expect(graphService.db                    ).to.not.equal(null)

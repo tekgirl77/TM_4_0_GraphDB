@@ -17,6 +17,10 @@ class GitHubService
       @github.authenticate    (type   : "oauth" , key  : @key, secret : @secret)
       return @
 
+    enableCache: ->
+      @useCache = true
+      @
+
     cacheService: (key, main_callback, noData_callback)=>
       if @useCache
         data = new Cache_Service().get(key)
