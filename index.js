@@ -9,4 +9,4 @@ var server = new Server().start()               // start server
 
 console.log('Server started at: ' + server.url());
 
-require('child_process').spawn('open',[server.url()]);
+//require('child_process').spawn('open',[server.url()]);

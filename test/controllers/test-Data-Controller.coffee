@@ -1,9 +1,14 @@
+cheerio         = require('cheerio')
 expect          = require('chai'     ).expect
 supertest       = require('supertest')
 Data_Controller = require('./../../src/controllers/Data-Controller')
 Server          = require('./../../src/Server')
 
-describe 'test-Data-Controller |', ->
+describe 'controllers | test-Data-Controller |', ->
+  server = new Server()
+  app    = server.app
+  dataController = new Data_Controller(server)
+
   describe 'core |', ->
     it 'check ctor',->
       dataController = new Data_Controller()
@@ -16,9 +21,6 @@ describe 'test-Data-Controller |', ->
       expect(dataController.server).to.equal(server)
 
   describe 'routes |', ->
-    server         = new Server()
-    app            = server.app
-    dataController = new Data_Controller(server).add_Routes()
 
     before ->
       expect(app           ).to.be.an        ('function')
@@ -31,9 +33,30 @@ describe 'test-Data-Controller |', ->
 
     it '/data/' , (done)->
       supertest(app).get('/data')
-                    .expect(404)
+                    .expect(200)
                     .end (error, response) ->
-                      expect(response.text).to.equal('Cannot GET /data\n')
+                      $ = cheerio.load(response.text)
+                      expect($('#title').html()).to.equal("Available data")
+                      #expect($('#baseFolder').html()).to.equal("db")
+                      expect($('#dataIds').length).to.be.above(10)
+
+                      firstDataId = $('#dataIds a')
+                      expect(firstDataId.html()        ).to.equal('data-test')
+                      expect(firstDataId.attr('id'    )).to.equal('data-test')
+                      expect(firstDataId.attr('href'  )).to.equal('/data/data-test')
+                      expect(firstDataId.attr('target')).to.equal('_blank')
+
+                      firstQueryId = $('#queries a')
+                      expect(firstQueryId.html()        ).to.equal('nice-graph')
+                      expect(firstQueryId.attr('id'    )).to.equal('nice-graph')
+                      expect(firstQueryId.attr('href'  )).to.equal('/data/data-test/nice-graph')
+                      expect(firstQueryId.attr('target')).to.equal('_blank')
+
+                      firstGraphId = $('#graphs a')
+                      expect(firstGraphId.html()        ).to.equal('graph')
+                      expect(firstGraphId.attr('id'    )).to.equal('graph')
+                      expect(firstGraphId.attr('href'  )).to.equal('/data/data-test/nice-graph/graph')
+                      expect(firstGraphId.attr('target')).to.equal('_blank')
                       done()
 
     it '/data/:name' , (done)->
@@ -44,25 +67,24 @@ describe 'test-Data-Controller |', ->
                       expect(error).to.be.null
                       json = JSON.parse(response.text)
                       expect(json       ).to.be.an('array')
-                      expect(json.size()).to.equal(6)
+                      expect(json.size()).to.equal(8)
                       expect(json.first().subject  ).to.equal('a')
                       expect(json.first().predicate).to.equal('b1')
                       expect(json.first().object   ).to.equal('c1')
                       done()
 
   describe 'default data sets |', ->
-    server         = new Server()
-    app            = server.app
-    dataController = new Data_Controller(server).add_Routes()
+
+
     it '/data/v0.1-gist' , (done)->
       supertest(app).get("/data/v0.1-gist")
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end (error, response) ->
-        json = JSON.parse(response.text)
-        expect(json       ).to.be.an('array')
-        expect(json.size()).to.equal(83)
-        expect(json.first().subject  ).to.equal('1106d793193b')
-        expect(json.first().predicate).to.equal('Summary')
-        expect(json.first().object   ).to.equal('...')
-        done()
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end (error, response) ->
+                      json = JSON.parse(response.text)
+                      expect(json       ).to.be.an('array')
+                      expect(json.size()).to.equal(83)
+                      expect(json.first().subject  ).to.equal('1106d793193b')
+                      expect(json.first().predicate).to.equal('Summary')
+                      expect(json.first().object   ).to.equal('...')
+                      done()

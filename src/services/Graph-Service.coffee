@@ -66,6 +66,7 @@ class GraphService
       when "subject"      then @db.get { subject: value}  , (err, data) -> callback(data)
       when "predicate"    then @db.get { predicate: value}, (err, data) -> callback(data)
       when "object"       then @db.get { object: value}   , (err, data) -> callback(data)
+      when "all"          then @allData callback
       else callback(null,[])
 
 

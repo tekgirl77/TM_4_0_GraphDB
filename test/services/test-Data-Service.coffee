@@ -2,7 +2,7 @@ expect         = require('chai'         ).expect
 Data_Service   = require('./../../src/services/Data-Service')
 Graph_Service  = require('./../../src/services/Graph-Service')
 
-describe 'test-Data-Service |', ->
+describe 'services | test-Data-Service |', ->
   describe 'core |', ->
     it 'check ctor',->
       dataService  = new Data_Service()
@@ -16,26 +16,26 @@ describe 'test-Data-Service |', ->
       expect(dataService.path_Queries ).to.be.an  ('string')
 
       expect(dataService.name         ).to.equal  ('test')
-      expect(dataService.path_Root    ).to.equal  ('db'             .realPath())
-      expect(dataService.path_Name    ).to.equal  ('db/test'        .realPath())
-      expect(dataService.path_Data    ).to.equal  ('db/test/data'   .realPath())
-      expect(dataService.path_Queries ).to.equal  ('db/test/queries'.realPath())
+      expect(dataService.path_Root    ).to.equal  ('db'             )
+      expect(dataService.path_Name    ).to.equal  ('db/test'        )
+      expect(dataService.path_Data    ).to.equal  ('db/test/data'   )
+      expect(dataService.path_Queries ).to.equal  ('db/test/queries')
 
       expect(dataService.graphService       ).to.be.instanceof(Graph_Service)
       expect(dataService.graphService.dbName).to.equal('test')
 
       dataService  = new Data_Service('aaaa')
-      expect(dataService.name               ).to.equal('aaaa')
-      expect(dataService.path_Name          ).to.equal('db/aaaa'        .realPath())
-      expect(dataService.path_Data          ).to.equal('db/aaaa/data'   .realPath())
-      expect(dataService.path_Queries       ).to.equal('db/aaaa/queries'.realPath())
-      expect(dataService.graphService.dbName).to.equal('aaaa')
+      expect(dataService.name               ).to.equal('aaaa'           )
+      expect(dataService.path_Name          ).to.equal('db/aaaa'        )
+      expect(dataService.path_Data          ).to.equal('db/aaaa/data'   )
+      expect(dataService.path_Queries       ).to.equal('db/aaaa/queries')
+      expect(dataService.graphService.dbName).to.equal('aaaa'           )
 
       expect(dataService.path_Name.folder_Delete_Recursive()).to.be.true
 
 
     it 'data_Files',->
-      dataService  = new Data_Service()
+      dataService  = new Data_Service().setup()
       expect(dataService.data_Files  ).to.be.an("function")
       expect(dataService.data_Files()).to.be.an("array")
       test_Data = "{ test: 'data'}"
@@ -51,12 +51,37 @@ describe 'test-Data-Service |', ->
       expect(dataService.query_Files  ).to.be.an("function")
       expect(dataService.query_Files()).to.be.an("array")
       test_Data = "{ test: 'query'}"
-      test_File = dataService.path_Data.path_Combine("testQuery.json")
+      test_File = dataService.path_Queries.path_Combine("testQuery.json")
       expect(test_Data.saveAs(test_File)) .to.be.true
       expect(dataService.query_Files()  ).to.be.not.empty
       expect(dataService.query_Files()  ).to.deep.contain(test_File.realPath())
       expect(test_File.file_Delete()    ).to.be.true
       expect(dataService.query_Files()  ).to.deep.not.contain(test_File.realPath())
+
+    it 'run_Query', (done)->
+      dataService  = new Data_Service()
+      expect(dataService.run_Query  ).to.be.an("function")
+
+      query_Name = 'testQuery'
+      coffee_Query = '''get_Graph = (graphService, callback)->
+                          graph = { nodes: [{'a','b'}] , edges: [{from:'a' , to: 'b'}] }
+                          callback(graph)
+                        module.exports = get_Graph '''
+      coffee_File = dataService.path_Queries.path_Combine("#{query_Name}.coffee")
+      expect(coffee_Query.saveAs(coffee_File)) .to.be.true
+
+      dataService.run_Query query_Name, (graph)->
+        expect(graph).to.not.be.null
+        expect(graph      ).to.be.an('object')
+        expect(graph.nodes).to.be.an('array')
+        expect(graph.edges).to.be.an('array')
+        expect(graph.nodes.first()).to.deep.equal({'a','b'})
+        expect(graph.edges.first()).to.deep.equal({from:'a' , to: 'b'})
+        done()
+
+  #expect(dataService.query_Files()   ).to.be.not.empty
+
+      #console.log(dataService)
 
   describe 'load data |', ->
 

@@ -1,4 +1,3 @@
-require 'fluentnode'
 Server  = require('./../src/Server')
 expect  = require('chai').expect
 request = require('request')
@@ -26,10 +25,9 @@ describe 'test-Server |',->
         expect(server._server.close         ).to.be.an('function')
         expect(server._server.getConnections).to.be.an('function')
 
-        request server.url(), (error, response,data)->
+        request  server.url() + '/404', (error, response,data)->
             expect(error).to.equal(null)
-            expect(response.statusCode).to.equal(200)
-            expect(data               ).to.equal('hello')
+            expect(response.statusCode).to.equal(404)
 
             server.stop()
 
@@ -49,6 +47,15 @@ describe 'test-Server |',->
         expect(server.routes().size()).to.be.above(0)
         
     it 'Check expected paths', ->
-      expectedPaths = [ '/', '/test'
-                        '/data/:name']
+      expectedPaths = [ '/'
+                        '/test'
+                        '/data'
+                        '/data/:name'
+                        '/data/:dataId/:queryId'
+                        '/lib/vis.js'
+                        '/lib/vis.css'
+                        '/lib/jquery.min.js'
+                        '/data/graphs/scripts/:script.js'
+                        '/data/:dataId/:queryId/:graphId'
+                      ]
       expect(server.routes()).to.deep.equal(expectedPaths)

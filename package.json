@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha --compilers coffee:coffee-script/register --recursive -R list",
-    "watch": "touch .tmCache/.deleteCacheNext && mocha -w --compilers coffee:coffee-script/register --watch-extensions jade  --recursive -R list"
+    "watch": "touch .tmCache/.deleteCacheNext && mocha -w --compilers coffee:coffee-script/register --watch-extensions jade  --recursive -R list",
+    "dev": "./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "chai": "^1.9.2",
     "cheerio": "^0.17.0",
     "mocha": "^1.21.5",
-    "supertest": "^0.14.0"
+    "supertest": "^0.14.0",
+    "supervisor": "^0.6.0"
   }
 }
