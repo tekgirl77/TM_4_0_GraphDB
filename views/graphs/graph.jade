@@ -1,30 +1,17 @@
-html
-    head
-        title  First Graph View
-        #meta(http-equiv="refresh" content="5")
-        script(src='/lib/vis.min.js')
-        script(src='/lib/jquery.min.js')
+extends _layouts/html_header.jade
+block content
+    h2#title Graph View (with Ajax load)
+    a(href='/data') links to all data
 
-        link(href='/lib/vis.css', rel='stylesheet', type='text/css')
-        style(type='text/css')
-            | #graph {
-            | position:absolute;
-            | border: 5px solid lightgray;
-            | }
-            | h1 { font-family: "Arial" }
-    body
-        h2#title Graph View (with Ajax load)
-        a(href='/data') links to all data
+    #graph
 
-        #graph
-
-        a#dataUrl(href=dataUrl style='display:none') dataUrl
-        script.
-            var options = {
-                            smoothCurves : false,
-                            stabilize : true,
-                            stabilizationIterations  : 2000
-                          }
-        script(type='text/javascript')
-            include ajaxLoad.js
+    a#dataUrl(href=dataUrl style='display:none') dataUrl
+    script.
+        var options = {
+                        smoothCurves : false,
+                        stabilize : true,
+                        stabilizationIterations  : 2000
+                      }
+    script(type='text/javascript')
+        include ajaxLoad.js
 

@@ -1,13 +1,15 @@
 require 'fluentnode'
 
 class CacheService
-    constructor: ->
-        @_cacheFolder    = "./.tmCache"
-        @_forDeletionTag = ".deleteCacheNext"
-        @setup()
+    constructor: (area)->
+      @_cacheFolder    = "./.tmCache"
+      @_forDeletionTag = ".deleteCacheNext"
+      @area = area || null
+      @setup()
 
     cacheFolder: =>
-      process.cwd().path_Combine(@_cacheFolder)
+      @_cacheFolder.append_To_Process_Cwd_Path()
+                   .path_Combine(@area || '')
 
     delete_CacheFolder: =>
       @cacheFolder().realPath().folder_Delete_Recursive()
@@ -21,7 +23,9 @@ class CacheService
       if @cacheFolder().path_Combine(@._forDeletionTag).exists()
         @delete_CacheFolder()
       if not @cacheFolder().folder_Exists()
-        @cacheFolder().folder_Create();
+        if @area
+          @_cacheFolder.append_To_Process_Cwd_Path().folder_Create();
+        @cacheFolder().folder_Create()
 
     path_Key: (key)->
       if(key)

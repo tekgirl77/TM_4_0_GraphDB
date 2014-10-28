@@ -23,13 +23,14 @@ class GitHubService
 
     cacheService: (key, main_callback, noData_callback)=>
       if @useCache
-        data = new Cache_Service().get(key)
+        cacheService = new Cache_Service('github')
+        data = cacheService.get(key)
         if (data)
           main_callback(JSON.parse(data))
         else
           noData_callback (data)->
             if (data)
-              new Cache_Service().put(key,JSON.stringify(data))
+              cacheService.put(key,JSON.stringify(data))
             main_callback(data)
       else
         noData_callback (data)->

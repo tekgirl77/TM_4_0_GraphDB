@@ -1,0 +1,16 @@
+html
+   head
+      title  First Graph View
+      #meta(http-equiv="refresh" content="5")
+      script(src='/lib/vis.js')
+      script(src='/lib/jquery.min.js')
+
+      link(href='/lib/vis.css', rel='stylesheet', type='text/css')
+      style(type='text/css')
+         | #graph {
+         | position:absolute;
+         | border: 5px solid lightgray;
+         | }
+         | h1 { font-family: "Arial" }
+   body
+      block content

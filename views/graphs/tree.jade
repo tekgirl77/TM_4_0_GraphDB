@@ -1,32 +1,19 @@
-html
-    head
-        title  First Graph View
-        #meta(http-equiv="refresh" content="5")
-        script(src='/data/graphs/scripts/vis.min.js')
-        script(src='/data/graphs/scripts/jquery.min.js')
+extends _layouts/html_header.jade
+block content
+    h2#title Tree View (with Ajax load)
+    a(href='/data') links to all data
 
-        //link(href='/vis/vis.css', rel='stylesheet', type='text/css')
-        style(type='text/css')
-            | #graph {
-            | position:absolute;
-            | border: 5px solid lightgray;
-            | }
-            | h1 { font-family: "Arial" }
-    body
-        h2#title Graph View (with Ajax load)
-        a(href='/data') links to all data
+    #graph
 
-        #graph
-
-        a#dataUrl(href=dataUrl style='display:none') dataUrl
-        script.
-            options = {
-                            stabilize: false,
-                            smoothCurves: false,
-                            hierarchicalLayout: {
-                                                    //direction: 'Up-Down',
-                                                    layout: 'direction'
-                                                }
-                      }
-        script(type='text/javascript')
-            include ajaxLoad.js
+    a#dataUrl(href=dataUrl style='display:none') dataUrl
+    script.
+        options = {
+                        stabilize: false,
+                        smoothCurves: false,
+                        hierarchicalLayout: {
+                                                //direction: 'Up-Down',
+                                                layout: 'direction'
+                                            }
+                  }
+    script(type='text/javascript')
+        include ajaxLoad.js

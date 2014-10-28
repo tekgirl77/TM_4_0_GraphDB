@@ -7,14 +7,18 @@ describe 'services | test-Cache-Service |', ->
   cacheService = new Cache_Service()
 
   it 'Cache-Service ctor',->
-      expect(Cache_Service).to.be.an('Function')
+    expect(Cache_Service).to.be.an('Function')
 
-      expect(cacheService               ).to.be.an('Object')
-      expect(cacheService._cacheFolder  ).to.be.an('String')
+    expect(cacheService               ).to.be.an('Object')
+    expect(cacheService._cacheFolder  ).to.be.an('String')
 
-      expect(cacheService._cacheFolder   ).to.equal('./.tmCache')
-      expect(cacheService.cacheFolder()  ).to.equal('./.tmCache'.realPath())
-      expect(cacheService._forDeletionTag).to.equal('.deleteCacheNext')
+    expect(cacheService._cacheFolder   ).to.equal('./.tmCache')
+    expect(cacheService._forDeletionTag).to.equal('.deleteCacheNext')
+    expect(cacheService.area).to.equal(null)
+    expect(cacheService.cacheFolder()  ).to.equal('./.tmCache'.realPath())
+    expect(new  Cache_Service('aaaa').area).to.equal('aaaa')
+
+
 
   it 'cacheFolder', ->
     expect(cacheService.cacheFolder).to.be.an('Function')
@@ -43,6 +47,18 @@ describe 'services | test-Cache-Service |', ->
     expect(cacheService.cacheFolder().file_Exists()).to.be.true
 
   describe 'separate Cache_Service |', ->
+
+    it 'customArea', ->
+      area = "_tmp_area_".add_5_Random_Letters()
+      cacheService = new Cache_Service(area)
+      cacheFolder  = cacheService.cacheFolder()
+      expect(cacheService.area      ).to.equal(area)
+      expect(cacheFolder            ).to.contain('.tmCache')
+      expect(cacheFolder            ).to.contain(cacheService.area)
+      expect(cacheFolder.file_Name()).to.equal(area)
+      expect(cacheFolder.exists()   ).to.be.true
+      expect(cacheFolder.delete_Folder()).to.be.true
+
 
     it 'markForDeletion and delete', ->
       expect(cacheService.delete         ).to.be.an('Function')

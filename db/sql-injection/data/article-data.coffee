@@ -86,12 +86,12 @@ addData = (graphService, callback)->
                                                                                                                   'metadata-11002762fc3e'
                                                                                                                   'metadata-13002762fc3e']}
 
-  #addMappings data, "metadata-00002762fc3e" , { is: 'Metadata' , title : 'C++'                       , xref    : ['xref-13002762fc3e']}
+  addMappings data, "metadata-00002762fc3e" , { is: 'Metadata' , title : 'C++'                       , xref    : ['xref-13002762fc3e']}
   addMappings data, "metadata-10002762fc3e" , { is: 'Metadata' , title : 'ASP.NET 4.0'               , xref    : ['xref-22002762fc3e']}
-  #addMappings data, "metadata-13002762fc3e" , { is: 'Metadata' , title : 'ASP.NET 3.5'               , xref    : ['xref-26002762fc3e']}
-  #addMappings data, "metadata-20002762fc3e" , { is: 'Metadata' , title : 'Android'                   , xref    : ['xref-40002762fc3e']}
-  #addMappings data, "metadata-30002762fc3e" , { is: 'Metadata' , title : 'HTML5'                     , xref    : ['xref-00002762fc3e']}
-  #addMappings data, "metadata-70002762fc3e" , { is: 'Metadata' , title : 'iOS'                       , xref    : ['xref-80002762fc3e']}
+  addMappings data, "metadata-13002762fc3e" , { is: 'Metadata' , title : 'ASP.NET 3.5'               , xref    : ['xref-26002762fc3e']}
+  addMappings data, "metadata-20002762fc3e" , { is: 'Metadata' , title : 'Android'                   , xref    : ['xref-40002762fc3e']}
+  addMappings data, "metadata-30002762fc3e" , { is: 'Metadata' , title : 'HTML5'                     , xref    : ['xref-00002762fc3e']}
+  addMappings data, "metadata-70002762fc3e" , { is: 'Metadata' , title : 'iOS'                       , xref    : ['xref-80002762fc3e']}
   addMappings data, "metadata-11002762fc3e" , { is: 'Metadata' , title : 'Web Application'           , xref    : ['xref-17002762fc3e']}
 
 
