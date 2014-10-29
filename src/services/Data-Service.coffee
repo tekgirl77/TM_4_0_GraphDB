@@ -1,7 +1,8 @@
 require('fluentnode')
-
-Graph_Service = require './Graph-Service'
-Dot_Service   = require './Dot-Service'
+coffeeScript     = require 'coffee-script'
+Graph_Service    = require './Graph-Service'
+Dot_Service      = require './Dot-Service'
+Data_Import_Util = require './../utils/Data-Import-Util'
 
 class Data_Service
   constructor: (name)->
@@ -25,6 +26,16 @@ class Data_Service
   query_Files: =>
     @path_Queries.files()
 
+  load_Data_From_Coffee: (file,callback) =>
+    add_Mappings = require('coffee-script').eval(file.file_Contents())
+    #add_Mappings = require(file)
+    if typeof add_Mappings is 'function'
+      dataImport = new Data_Import_Util()
+      add_Mappings(dataImport)
+      @graphService.db.put dataImport.data , callback
+    else
+      callback
+
   load_Data: (callback)=>
     @graphService.openDb =>
       files = @path_Data.files()
@@ -38,9 +49,7 @@ class Data_Service
               file_Data = JSON.parse(file.file_Contents())
               @graphService.db.put file_Data, loadNextFile
             when '.coffee'
-              add_Data = require(file)
-              if typeof add_Data is 'function'
-                add_Data @graphService, loadNextFile
+              @load_Data_From_Coffee(file, loadNextFile)
             when '.dot'
               dot_Data = file.file_Contents()
               new Dot_Service().dot_To_Triplets dot_Data, (triplets)=>
@@ -55,7 +64,7 @@ class Data_Service
     if(queryFile.file_Not_Exists())
       queryFile = process.cwd().path_Combine('db-queries').path_Combine("#{queryName}.coffee")
     if(queryFile.file_Exists())
-      get_Graph = require(queryFile.fullPath())
+      get_Graph = coffeeScript.eval(queryFile.fullPath().file_Contents())
       if typeof get_Graph is 'function'
         get_Graph @graphService, callback
         return

@@ -53,9 +53,9 @@ describe 'controllers | test-Data-Controller |', ->
                       expect(firstQueryId.attr('target')).to.equal('_blank')
 
                       firstGraphId = $('#graphs a')
-                      expect(firstGraphId.html()        ).to.equal('graph')
-                      expect(firstGraphId.attr('id'    )).to.equal('graph')
-                      expect(firstGraphId.attr('href'  )).to.equal('/data/data-test/nice-graph/graph')
+                      expect(firstGraphId.html()        ).to.equal('graph-wide')
+                      expect(firstGraphId.attr('id'    )).to.equal('graph-wide')
+                      expect(firstGraphId.attr('href'  )).to.equal('/data/data-test/nice-graph/graph-wide')
                       expect(firstGraphId.attr('target')).to.equal('_blank')
                       done()
 
@@ -81,6 +81,7 @@ describe 'controllers | test-Data-Controller |', ->
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end (error, response) ->
+                      throw error if error
                       json = JSON.parse(response.text)
                       expect(json       ).to.be.an('array')
                       expect(json.size()).to.equal(83)

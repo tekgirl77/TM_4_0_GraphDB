@@ -29,7 +29,9 @@ class GraphService
     @db.put([{ subject:subject , predicate:predicate  , object:object }], callback)
 
   get_Subject: (subject, callback)->
-    @db.get {subject:subject}, (err,data)->callback(data)
+    @db.get {subject:subject}, (err,data)->
+      throw err if err
+      callback(data)
 
   get_Predicate: (predicate, callback)->
     @db.get {predicate:predicate}, (err,data)->callback(data)
@@ -51,5 +53,28 @@ class GraphService
       when "object"       then @db.get { object: value}   , (err, data) -> callback(data)
       when "all"          then @allData callback
       else callback(null,[])
+
+  graph_From_Data: (data, callback)->
+    nodes = []
+    edges = []
+
+    addNode =  (node)->
+      nodes.push(node) if node not in nodes
+
+    addEdge =  (from, to, label)->
+      edges.push({from: from , to: to , label: label})
+
+    for triplet in data
+      if (triplet.subject.length > 40)
+        triplet.subject =  triplet.subject.substring(0,40) + "..."
+      addNode(triplet.subject)
+      addNode(triplet.object)
+      addEdge(triplet.subject, triplet.object, triplet.predicate)
+
+    nodes = ({id: node} for node in nodes)
+
+    graph = { nodes: nodes, edges: edges }
+
+    callback(graph)
 
 module.exports = GraphService

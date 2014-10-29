@@ -17,9 +17,10 @@ describe 'test-Server |',->
         expect(server.addControlers).to.be.an('function')
 
 
-    it 'start and stop', (done)->
+    xit 'start and stop', (done)->
         expect(server.start  ).to.be.an('function')
         expect(server.stop   ).to.be.an('function')
+
         expect(server.start()).to.equal(server)
 
         expect(server._server.close         ).to.be.an('function')
