@@ -30,7 +30,7 @@ addData = (dataUtil)->
   dataUtil.addMappings "query-10002762fc3e"  ,  { is: "Query",   title: "Perform SQL Validation on the Server", xref: ['xref-31002762fc3e'
                                                                                                                 'xref-32002762fc3e'
                                                                                                                 'xref-33002762fc3e'
-                                                                                                     #           'xref-34002762fc3e'
+                                                                                                                'xref-34002762fc3e'
                                                                                                                 'xref-35002762fc3e'
                                                                                                                 'xref-36002762fc3e'
                                                                                                                 'xref-37002762fc3e']}
