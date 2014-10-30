@@ -30,7 +30,8 @@ class JadeService
   calculateTargetPath: (fileToCompile)=>
     return null if not fileToCompile
     filename = fileToCompile.replace(/\//g,'_').replace(/\./g,'_') + '.txt'
-    @.targetFolder.folder_Create().path_Combine(filename)
+    @config.cache_folder.folder_Create()
+    @targetFolder.folder_Create().path_Combine(filename)
 
 
   compileJadeFileToDisk: (fileToCompile)=>
