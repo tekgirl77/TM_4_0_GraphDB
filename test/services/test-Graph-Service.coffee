@@ -97,17 +97,6 @@ describe 'services | test-Graph-Service |', ->
         expect(data       ).to.deep.equal [{ subject: 'a', predicate : 'b', object:'c'}]
         done()
 
-    it 'graph_From_Data',(done)->
-      expect(graphService.graph_From_Data).to.be.an('Function')
-      data = [{subject:'a', predicate: 'b',object:'c'}]
-      result =
-                nodes: [ { id: 'a' }, { id: 'c' } ]
-                edges: [ { from: 'a', to: 'c', label: 'b' } ]
-
-      graphService.graph_From_Data data, (graph)->
-        expect(graph).to.deep.equal(result)
-        done()
-
 ###
 
   it 'graphDataFromQAServer', (done)->

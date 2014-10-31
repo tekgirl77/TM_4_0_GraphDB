@@ -2,7 +2,7 @@ expect          = require('chai'     ).expect
 
 Data_Service = require('./../../../src/services/Data-Service')
 
-describe 'db | tm-data | test-Queries |', ->
+describe 'db | tm-data | test-queries |', ->
 
   dataService = new Data_Service('tm-data')
   graphService = dataService.graphService
@@ -18,7 +18,7 @@ describe 'db | tm-data | test-Queries |', ->
   after (done)->
     graphService.deleteDb done
 
-  it.only 'misc test query',(done)->
+  it 'misc test query',(done)->
     ###
     graphService.db.nav("XRef").archIn('is').as('xref')
                                .archOut('weight').as('weight')
@@ -69,25 +69,25 @@ describe 'db | tm-data | test-Queries |', ->
                     results = []
                     loadArticleIdData = (articleIds)->
                       if(articleIds.empty())
-                        console.log(results)
+                        #console.log(results)
                         done()
                       else
                         articleId = articleIds.shift()
                         db.get {subject:articleId , predicate:'title'}, (err, data)->
                           results.push { article_id: articleId, weight: weights[articleId], title: data.first().object}
-                          console.log(articleId + " : " + weights[articleId] +  " : " + data.first().object)
+                          #console.log(articleId + " : " + weights[articleId] +  " : " + data.first().object)
                           loadArticleIdData(articleIds)
 
                     loadArticleIdData(sorted_Articles)
 
 
-  it.only 'query - articles', (done)->
+  it 'query - articles', (done)->
     dataService.run_Query 'articles', (data)->
       #console.log data
       expect(data.nodes.size()).to.be.above(10)
       done()
-  it.only 'query - articles-by-weight', (done)->
+  it 'query - articles-by-weight', (done)->
     dataService.run_Query 'articles-by-weight', (data)->
-      console.log data
+      #console.log data
       expect(data.size()).to.be.above(5)
       done()

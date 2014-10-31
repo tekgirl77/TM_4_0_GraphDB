@@ -40,6 +40,9 @@ get_Graph = (graphService, callback)->
         when 'is'
           fromNode.fontSize  = 24
           switch (edge.to)
+            when 'Library'
+              fromNode.color.background =  "#ffffff"
+              fromNode.fontSize  = 70
             when 'Search'
               fromNode.color.background =  "#c3c335"
               fromNode.fontSize  = 50

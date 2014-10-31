@@ -10,11 +10,15 @@ describe 'utils | test-Data-Import-Util |', ->
     expect(dataImport.data ).to.be.an('array')
     expect(dataImport.data ).to.be.empty
 
-  it 'guid', ->
-    dataImport = new Data_Import_Util()
-    expect(dataImport.guid         ).to.be.an('function')
-    expect(dataImport.guid()       ).to.be.an('string')
-    expect(dataImport.guid().size()).to.equal(36)
+    expect(dataImport.addMapping ).to.equal(dataImport.add_Triplet )
+    expect(dataImport.addMappings).to.equal(dataImport.add_Triplets)
+
+  it 'check ctor(data)',->
+    data=['a','b']
+    dataImport = new Data_Import_Util(data)
+    dataImport.data.assert_Is_Equal_To    (data)
+    dataImport.data.assert_Is_Equal_To    (['a','b'])
+    dataImport.data.assert_Is_Not_Equal_To(['a','b','c'])
 
   it 'addMapping', ->
     dataImport = new Data_Import_Util()
@@ -56,3 +60,15 @@ describe 'utils | test-Data-Import-Util |', ->
     dataImport = new Data_Import_Util()
     expect(dataImport.addMappings(subject,mappings)).to.equal(dataImport)
     expect(dataImport.data                         ).to.deep.equal(result)
+
+  it 'graph_From_Data',(done)->
+    data = [{subject:'a', predicate: 'b',object:'c'}]
+    result =
+      nodes: [ { id: 'a' }, { id: 'c' } ]
+      edges: [ { from: 'a', to: 'c', label: 'b' } ]
+
+    dataImport = new Data_Import_Util(data)
+    dataImport.graph_From_Data.assert_Is_Function()
+    dataImport.graph_From_Data (graph) ->
+      graph.assert_Is_Equal_To result
+      done()
