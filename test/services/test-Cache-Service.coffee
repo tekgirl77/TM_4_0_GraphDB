@@ -1,50 +1,94 @@
 require 'fluentnode'
 Cache_Service = require('./../../src/services/Cache-Service')
 expect        = require('chai').expect
+cheerio       = require('cheerio')
 
 describe 'services | test-Cache-Service |', ->
-    
-  cacheService = new Cache_Service()
 
-  it 'Cache-Service ctor',->
-    expect(Cache_Service).to.be.an('Function')
+  describe 'core',->
 
-    expect(cacheService               ).to.be.an('Object')
-    expect(cacheService._cacheFolder  ).to.be.an('String')
+    cacheService = new Cache_Service()
 
-    expect(cacheService._cacheFolder   ).to.equal('./.tmCache')
-    expect(cacheService._forDeletionTag).to.equal('.deleteCacheNext')
-    expect(cacheService.area).to.equal(null)
-    expect(cacheService.cacheFolder()  ).to.equal('./.tmCache'.realPath())
-    expect(new  Cache_Service('aaaa').area).to.equal('aaaa')
+    it 'Cache-Service ctor',->
+      expect(Cache_Service).to.be.an('Function')
 
+      expect(cacheService               ).to.be.an('Object')
+      expect(cacheService._cacheFolder  ).to.be.an('String')
 
+      expect(cacheService._cacheFolder   ).to.equal('./.tmCache')
+      expect(cacheService._forDeletionTag).to.equal('.deleteCacheNext')
+      expect(cacheService.area).to.equal(null)
+      expect(cacheService.cacheFolder()  ).to.equal('./.tmCache'.realPath())
+      expect(new  Cache_Service('aaaa').area).to.equal('aaaa')
 
-  it 'cacheFolder', ->
-    expect(cacheService.cacheFolder).to.be.an('Function')
-    expect(cacheService.cacheFolder()).to.equal(process.cwd().path_Combine(cacheService._cacheFolder))
+    it 'cacheFolder', ->
+      expect(cacheService.cacheFolder).to.be.an('Function')
+      expect(cacheService.cacheFolder()).to.equal(process.cwd().path_Combine(cacheService._cacheFolder))
 
-  it 'delete', ->
-      expect(cacheService.delete).to.be.an('Function')
+    it 'delete', ->
+        expect(cacheService.delete).to.be.an('Function')
 
-  it 'path_Key',->
-    expect(cacheService.path_Key('aa')).to.equal(cacheService.cacheFolder().path_Combine('aa'))
-    expect(cacheService.path_Key(null)).to.equal(null)
+    it 'path_Key',->
+      expect(cacheService.path_Key('aa')).to.equal(cacheService.cacheFolder().path_Combine('aa'))
+      expect(cacheService.path_Key(null)).to.equal(null)
 
-  it 'put, get, delete', ->
-    key_Name  = 'key_'.add_Random_String(5)
-    key_Value = 'value_'.add_Random_String(5)
-    key_Path  = cacheService.path_Key(key_Name);
+    it 'put, get, delete', ->
+      key_Name  = 'key_'.add_Random_String(5)
+      key_Value = 'value_'.add_Random_String(5)
+      key_Path  = cacheService.path_Key(key_Name);
 
-    expect(key_Path    .file_Exists()          ).to.equal(false)
-    expect(cacheService.put(key_Name,key_Value)).to.equal(key_Value)
-    expect(key_Path    .file_Exists()          ).to.equal(true)
-    expect(cacheService.get(key_Name)          ).to.equal(key_Value)
-    expect(key_Path    .file_Delete()          ).to.equal(true)
+      expect(key_Path    .file_Exists()          ).to.equal(false)
+      expect(cacheService.put(key_Name,key_Value)).to.equal(key_Value)
+      expect(key_Path    .file_Exists()          ).to.equal(true)
+      expect(cacheService.get(key_Name)          ).to.equal(key_Value)
+      expect(key_Path    .file_Delete()          ).to.equal(true)
 
-  it 'setup', ->
-    expect(cacheService.setup).to.be.an('Function')
-    expect(cacheService.cacheFolder().file_Exists()).to.be.true
+    it 'has_Key',->
+      key_Name  = 'key_'.add_Random_String(5)
+      cacheService.has_Key(key_Name).assert_Is_False()
+      cacheService.has_Key(null    ).assert_Is_False()
+      cacheService.has_Key(''      ).assert_Is_False()
+      cacheService.put(key_Name,'a')
+      cacheService.has_Key(key_Name).assert_Is_True()
+      cacheService.delete(key_Name ).assert_Is_True()
+      cacheService.has_Key(key_Name).assert_Is_False()
+
+    it 'setup', ->
+      expect(cacheService.setup).to.be.an('Function')
+      expect(cacheService.cacheFolder().file_Exists()).to.be.true
+
+  describe 'HTTP requests |', ->
+    area         = "_tmp_Http";
+    cacheService = null
+    cacheFolder  = null
+
+    before ->
+      cacheService = new Cache_Service(area)
+      cacheFolder  = cacheService.cacheFolder()
+
+    after ->
+      #expect(cacheFolder.delete_Folder()).to.be.true
+
+    it 'http_GET', (done)->
+      cacheService.http_GET 'http://www.google.co.uk/aaa', (data, response)->
+        $ = cheerio.load(data)
+        (typeof(response)).                  assert_Is_Equal_To("object")
+        $('title')                          .assert_Is_Object()
+        $('title').html()                   .assert_Is('Error 404 (Not Found)!!1')
+        response.statusCode.str()           .assert_Is('404')
+        response.headers['x-xss-protection'].assert_Is('1; mode=block')
+        response.request.uri.hostname       .assert_Is('www.google.co.uk')
+        response.body                       .assert_Is(data)
+        done()
+
+    it 'json_GET', (done)->
+      cacheService.json_GET 'https://github.com/status.json', (json, response)->
+        (typeof(json)    )                  .assert_Is_Equal_To("object")
+        (typeof(response))                  .assert_Is_Equal_To("object")
+        json.status                         .assert_Is('ok')
+        response.headers['x-xss-protection'].assert_Equals('1; mode=block')
+        response.request.uri.hostname.assert_Equals('github.com')
+        done()
 
   describe 'separate Cache_Service |', ->
 
@@ -61,10 +105,11 @@ describe 'services | test-Cache-Service |', ->
 
 
     it 'markForDeletion and delete', ->
+      cacheService = new Cache_Service()
+
       expect(cacheService.delete         ).to.be.an('Function')
       expect(cacheService.markForDeletion).to.be.an('Function')
 
-      cacheService = new Cache_Service()
       cacheService._cacheFolder = "./.tmCache".add_Random_String(5)
       expect(cacheService.cacheFolder().exists()).to.be.false
       cacheService.setup()

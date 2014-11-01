@@ -1,4 +1,5 @@
 require 'fluentnode'
+request = require 'request'
 
 class CacheService
     constructor: (area)->
@@ -50,6 +51,34 @@ class CacheService
       if(key)
         return @path_Key(key).file_Delete()
       return null
+
+    has_Key: (key) =>
+      path = @path_Key(key)
+      if path then path.file_Exists() else false
+
+    http_GET: (url, callback)=>
+      key_url = url.replace(/[^a-z0-9]/gi, '_').lower()
+      if @has_Key(key_url)
+        response = JSON.parse(@get(key_url))
+        callback response.body, response
+      else
+        request url, (error, response)=>
+          throw error if error
+          @put(key_url,response)
+          callback response.body, response
+
+    json_GET: (url, callback)->
+      key_url = url.replace(/[^a-z0-9]/gi, '_').lower()
+      if @has_Key(key_url)
+        response = JSON.parse(@get(key_url))
+        json     = JSON.parse(response.body)
+        callback json, response
+      else
+        request url, (error, response)=>
+          throw error if error
+          @put(key_url,response)
+          callback JSON.parse(response.body), response
+
 module.exports = CacheService
 
 

@@ -51,14 +51,22 @@ describe 'db | tm-data | test-data-import |', ->
     dataImport.graph_From_Data (graph)->
       console.log graph
 
-  it.only 'tm-uno', (done)->
+  it 'tm-uno', (done)->
     dataService = new Data_Service('tm-uno')
     dataService.load_Data ->
       dataService.graphService.allData (data)->
-        console.log(data)
+        #console.log(data)
         dataService.graphService.deleteDb ->
           done()
     #dataService.run_Query 'tm-uno', (data)->
     #  console.log data
     #  #expect(data.size()).to.be.above(5)
     #  done()
+
+  it 'test tm-sme', (done)->
+    console.log 'before'
+    guidanceItem = 'a330bfdd-9576-40ea-997e-e7ed2762fc3e'
+    request = require('request')
+    request 'https://tmdev01-sme.teammentor.net/jsonp/' + guidanceItem, (error, response, data)->
+      #console.log JSON.parse(data).Metadata.Title
+      done()
