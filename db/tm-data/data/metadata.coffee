@@ -1,4 +1,4 @@
-addData = (dataUtil)->
+addData = (dataUtil, callback)->
   # Metadata
   dataUtil.addMappings "metadatas-00002762fc3e", { is: 'Metadatas', title: 'Metadatas'                  , contains: ['query-00102762fc3e'
                                                                                                                      'query-00202762fc3e'
@@ -59,5 +59,5 @@ addData = (dataUtil)->
                                                                                                                      'xref-21002762fc3e'
                                                                                                                      'xref-25002762fc3e'
                                                                                                                      'xref-29002762fc3e']}
-
+  callback()
 module.exports = addData

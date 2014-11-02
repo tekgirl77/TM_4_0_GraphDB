@@ -1,3 +1,4 @@
+Cache_Service    = require('./../../../src/services/Cache-Service')
 Data_Service     = require('./../../../src/services/Data-Service')
 Data_Import_Util = require('./../../../src/utils/Data-Import-Util')
 Guid             =  require('./../../../src/utils/Guid')
@@ -45,17 +46,18 @@ describe 'db | tm-data | test-data-import |', ->
     dataImport.add_Triplet(guid.short, 'is', 'Search')
     dataImport.add_Triplet(guid.short, 'title', json.name)
     #dataImport.add_Triplet('a','b','c')
-    console.log dataImport.data
+    #console.log dataImport.data
     return
 
     dataImport.graph_From_Data (graph)->
-      console.log graph
+      #console.log graph
 
-  it 'tm-uno', (done)->
+  xit 'tm-uno', (done)->
+    @timeout(5000)
     dataService = new Data_Service('tm-uno')
     dataService.load_Data ->
       dataService.graphService.allData (data)->
-        #console.log(data)
+        console.log(data.length)
         dataService.graphService.deleteDb ->
           done()
     #dataService.run_Query 'tm-uno', (data)->
@@ -63,10 +65,25 @@ describe 'db | tm-data | test-data-import |', ->
     #  #expect(data.size()).to.be.above(5)
     #  done()
 
-  it 'test tm-sme', (done)->
-    console.log 'before'
+  it.only 'tm-uno | tm-graph (query)', (done)->
+    dataService = new Data_Service('tm-uno')
+    dataService.load_Data ->
+      #dataService.graphService.allData (data)->
+      #  console.log(data.length)
+      #  dataService.graphService.deleteDb ->
+      #    done()
+      dataService.run_Query 'tm-graph', (data)->
+        console.log data.nodes.length
+        #  #expect(data.size()).to.be.above(5)
+        done()
+
+  it 'test tm-sme (JSON data)', (done)->
     guidanceItem = 'a330bfdd-9576-40ea-997e-e7ed2762fc3e'
-    request = require('request')
-    request 'https://tmdev01-sme.teammentor.net/jsonp/' + guidanceItem, (error, response, data)->
-      #console.log JSON.parse(data).Metadata.Title
+    url = 'https://tmdev01-sme.teammentor.net/jsonp/' + guidanceItem
+    json_Cache = new Cache_Service('tmdev01')
+
+    json_Cache.json_GET url, (data)->
+      data.assert_Is_Object()
+      data.Metadata.assert_Is_Object()
+      data.Metadata.Title.assert_Is('All Input Is Validated')
       done()

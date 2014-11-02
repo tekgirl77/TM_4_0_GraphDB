@@ -1,4 +1,4 @@
-addData = (dataUtil)->
+addData = (dataUtil, callback)->
   # Xrefs
   dataUtil.addMappings "xref-00002762fc3e"   ,  { is: 'XRef',    target: 'article-e7ed2762fc3e' , weight: '10'}
   dataUtil.addMappings "xref-10002762fc3e"   ,  { is: 'XRef',    target: 'article-e7ed2762fc3e' , weight: '5' }
@@ -53,5 +53,7 @@ addData = (dataUtil)->
 
 
   dataUtil.addMappings "xref-22102762fc3e"   ,  { is: 'XRef',    target: 'article-d5bc580df781' , weight: '50' }
+
+  callback()
 
 module.exports = addData

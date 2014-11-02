@@ -30,7 +30,8 @@ class CacheService
 
     path_Key: (key)->
       if(key)
-        return @cacheFolder().path_Combine(key)
+        safeKey = key.replace(/[^a-z0-9._-]/gi, '_').lower()
+        return @cacheFolder().path_Combine(safeKey)
       return null
 
     put: (key, value)=>
@@ -50,33 +51,31 @@ class CacheService
     delete: (key) =>
       if(key)
         return @path_Key(key).file_Delete()
-      return null
+      return false
 
     has_Key: (key) =>
       path = @path_Key(key)
       if path then path.file_Exists() else false
 
     http_GET: (url, callback)=>
-      key_url = url.replace(/[^a-z0-9]/gi, '_').lower()
-      if @has_Key(key_url)
-        response = JSON.parse(@get(key_url))
+      if @has_Key(url)
+        response = JSON.parse(@get(url))
         callback response.body, response
       else
         request url, (error, response)=>
           throw error if error
-          @put(key_url,response)
+          @put(url,response)
           callback response.body, response
 
     json_GET: (url, callback)->
-      key_url = url.replace(/[^a-z0-9]/gi, '_').lower()
-      if @has_Key(key_url)
-        response = JSON.parse(@get(key_url))
+      if @has_Key(url)
+        response = JSON.parse(@get(url))
         json     = JSON.parse(response.body)
         callback json, response
       else
         request url, (error, response)=>
           throw error if error
-          @put(key_url,response)
+          @put(url,response)
           callback JSON.parse(response.body), response
 
 module.exports = CacheService

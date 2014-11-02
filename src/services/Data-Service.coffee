@@ -31,8 +31,8 @@ class Data_Service
     #add_Mappings = require(file)
     if typeof add_Mappings is 'function'
       dataImport = new Data_Import_Util()
-      add_Mappings(dataImport)
-      @graphService.db.put dataImport.data , callback
+      add_Mappings dataImport, =>
+        @graphService.db.put dataImport.data , callback
     else
       callback
 

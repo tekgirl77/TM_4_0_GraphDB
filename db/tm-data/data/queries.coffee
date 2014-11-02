@@ -1,4 +1,4 @@
-addData = (dataUtil)->
+addData = (dataUtil, callback)->
   dataUtil.addMappings "keyword_00000762fc3e",  [ { title     : "SQL Injection"                  },
     { is        : "Search"                           },
     { contains  : "queries-00002762fc3e"             },
@@ -36,4 +36,6 @@ addData = (dataUtil)->
                                                                                                                            'xref-43002762fc3e'
                                                                                                                            'xref-44002762fc3e'
                                                                                                                            'xref-45002762fc3e']}
+  callback()
+
 module.exports = addData
