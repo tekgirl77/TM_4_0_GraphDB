@@ -4,7 +4,7 @@ Graph_Service    = require './Graph-Service'
 Dot_Service      = require './Dot-Service'
 Data_Import_Util = require './../utils/Data-Import-Util'
 
-class Data_Service
+class Db_Service
   constructor: (name)->
     @name         = if (name) then name else 'test'
     @graphService = new Graph_Service(@name)
@@ -70,4 +70,4 @@ class Data_Service
         return
     callback({})
 
-module.exports = Data_Service
+module.exports = Db_Service

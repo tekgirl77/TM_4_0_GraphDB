@@ -58,25 +58,47 @@ class CacheService
       if path then path.file_Exists() else false
 
     http_GET: (url, callback)=>
-      if @has_Key(url)
-        response = JSON.parse(@get(url))
+      key = "http_get_#{url}"
+      if @has_Key(key)
+        response = JSON.parse(@get(key))
         callback response.body, response
       else
         request url, (error, response)=>
           throw error if error
-          @put(url,response)
+          @put(key,response)
           callback response.body, response
 
     json_GET: (url, callback)->
-      if @has_Key(url)
-        response = JSON.parse(@get(url))
-        json     = JSON.parse(response.body)
+      key = "json_get_#{url}"
+      if @has_Key(key)
+        response = JSON.parse(@get(key))
+        json     = response.body
         callback json, response
       else
-        request url, (error, response)=>
+        options = { url: url , json: true }
+        request options, (error, response)=>
           throw error if error
-          @put(url,response)
-          callback JSON.parse(response.body), response
+          @put(key,response)
+          callback response.body, response
+
+    json_POST: (url, postData, callback)->
+      key = "json_post_#{url}"
+      if @has_Key(key)
+        response = JSON.parse(@get(key))
+        json     = response.body
+        callback json, response
+      else
+
+        options         = { url: url , body:postData, json: true}
+        options.headers = {
+                            'accept':'application/json, text/javascript, */*; q=0.01'
+                            'content-type':'application/json'
+                            'x-requested-with':'XMLHttpRequest'
+                          }
+        request.post options, (error, response)=>
+          throw error if error
+          @put(key,response)
+          callback response.body, response
 
 module.exports = CacheService
 

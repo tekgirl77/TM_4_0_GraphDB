@@ -1,16 +1,16 @@
 expect          = require('chai'     ).expect
 
-Data_Service = require('./../../../src/services/Data-Service')
+Db_Service = require('./../../../src/services/Db-Service')
 
 describe 'db | tm-data | test-queries |', ->
 
-  dataService = new Data_Service('tm-data')
-  graphService = dataService.graphService
+  dbService    = new Db_Service('tm-data')
+  graphService = dbService.graphService
   before (done)->
-    expect(dataService ).to.be.an('object')
+    expect(dbService   ).to.be.an('object')
     expect(graphService).to.be.an('object')
 
-    dataService.load_Data ->
+    dbService.load_Data ->
       graphService.allData (data)->
         expect(data.length).to.be.above(50)
         done()
@@ -82,12 +82,12 @@ describe 'db | tm-data | test-queries |', ->
 
 
   it 'query - articles', (done)->
-    dataService.run_Query 'articles', (data)->
+    dbService.run_Query 'articles', (data)->
       #console.log data
       expect(data.nodes.size()).to.be.above(10)
       done()
   it 'query - articles-by-weight', (done)->
-    dataService.run_Query 'articles-by-weight', (data)->
+    dbService.run_Query 'articles-by-weight', (data)->
       #console.log data
       expect(data.size()).to.be.above(5)
       done()

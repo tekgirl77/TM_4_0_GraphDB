@@ -2,7 +2,7 @@ cheerio          = require('cheerio')
 expect           = require('chai'     ).expect
 supertest        = require('supertest')
 Graph_Controller = require('./../../src/controllers/Graph-Controller')
-Data_Service     = require('./../../src/services/Data-Service')
+Db_Service       = require('./../../src/services/Db-Service')
 Server           = require('./../../src/Server')
 
 describe 'controllers | test-Graph-Controller |', ->
@@ -27,15 +27,15 @@ describe 'controllers | test-Graph-Controller |', ->
     graphId        = "graph"
     graphTitle     = "Graph View (with Ajax load)"
 
-    data_Service   = new Data_Service(dataId)
+    db_Service     = new Db_Service(dataId)
 
     before ->
-      expect(data_Service.path_Name.folder_Exists()).to.be.false
-      data_Service.setup()
-      expect(data_Service.path_Name.folder_Exists()).to.be.true
+      expect(db_Service.path_Name.folder_Exists()).to.be.false
+      db_Service.setup()
+      expect(db_Service.path_Name.folder_Exists()).to.be.true
 
     after ->
-      expect(data_Service.path_Name.folder_Delete_Recursive()).to.be.true
+      expect(db_Service.path_Name.folder_Delete_Recursive()).to.be.true
 
     it 'add_Routes', ->
       expect(server.routes()).to.contain('/data/:dataId/:queryId/:graphId')
