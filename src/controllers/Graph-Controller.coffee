@@ -22,7 +22,9 @@ class DataControler
     dataUrl      = "/data/#{dataId}/#{queryId}"
     viewModel    = { dataUrl: dataUrl}
 
-    html = new Jade_Service().enableCache()
+    global.request_Params = req
+
+    html = new Jade_Service().enableCache(false)
                              .renderJadeFile(view, viewModel)
     res.send html
 

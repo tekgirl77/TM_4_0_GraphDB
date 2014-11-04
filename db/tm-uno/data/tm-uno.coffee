@@ -3,6 +3,14 @@ Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd
 importService     = null
 library           = null
 library_Name      = 'UNO'
+
+library_Name = global.request_Params.query['library']
+
+if not library_Name
+  library_Name = 'UNO'
+
+console.log "[tm-uno] Library name is: #{library_Name}"
+
 #library_Name      = 'Java'
 #library_Name       = 'iOS'
 #library_Name       = 'C++'
