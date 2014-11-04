@@ -156,7 +156,7 @@ describe 'services | test-Import-Service |', ->
 
   #return
   # temporarily here
-  describe.only 'load tm-uno data set', ->
+  describe 'load tm-uno data set', ->
     Db_Service = require('./../../src/services/Db-Service')
     dbService = null
 

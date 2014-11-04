@@ -49,7 +49,7 @@ describe 'services | test-TeamMentor-Service |', ->
         article.Metadata.Title.assert_Is('All Input Is Validated')
         done()
 
-    it.only 'login (good pwd)', (done)->
+    it 'login (good pwd)', (done)->
       teamMentorService.login_Rest "graph123","aaaaaa", (data)->
         data.assert_Is('00000000-0000-0000-0000-000000000000')
         done()
@@ -62,14 +62,14 @@ describe 'services | test-TeamMentor-Service |', ->
       asmx.teamMentor  .assert_Is_Equal_To(teamMentorService)
       asmx.asmx_BaseUrl.assert_Is_Equal_To(teamMentorService.tmServer + '/Aspx_Pages/TM_WebServices.asmx/')
 
-    it '_json_Post', (done)->
-
+    xit '_json_Post', (done)->
       methodName = 'Ping'
       asmx._json_Post methodName, {message:''}, (response)->
+        console.log response
         response.d.assert_Contains('received ping: ')
         done()
 
-    it 'ping', (done)->
+    xit 'ping', (done)->
       value = (5).random_Letters()
       asmx.ping '', (data)->
         data.assert_Contains('received ping: ')
