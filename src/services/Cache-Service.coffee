@@ -75,6 +75,7 @@ class CacheService
         json     = response.body
         callback json, response
       else
+        "[CacheService][json_GET] downloading: #{url}".log()
         options = { url: url , json: true }
         request options, (error, response)=>
           throw error if error

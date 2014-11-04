@@ -24,6 +24,17 @@ class TeamMentor_Service
     @libraries (libraries)=>
       callback(libraries[name])
 
+  article: (guid, callback)=>
+    url = @tmServer + "/jsonp/#{guid}"
+    @cacheService.json_GET url, (article)->
+      callback article
+
+  login_Rest: (username,password, callback)=>
+    url = @tmServer + "/rest/login/#{username}/#{password}"
+    @cacheService.json_GET url, (article)->
+      callback article
+
+
 class TeamMentor_ASMX
   constructor: (teamMentorService)->
     @teamMentor   = teamMentorService
@@ -37,5 +48,10 @@ class TeamMentor_ASMX
 
   getFolderStructure_Libraries: (callback) =>
     @_json_Post "GetFolderStructure_Libraries", {}, (json, response) ->  callback(json.d)
+
+  login: (username, password, callback) =>
+    @_json_Post "Login", {username:username, password:password}, (json, response) ->
+      console.log json
+      callback(json.d)
 
 module.exports = TeamMentor_Service

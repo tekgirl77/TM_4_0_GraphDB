@@ -6,7 +6,10 @@ TeamMentor_Service = require('./TeamMentor-Service')
 Guid               = require('../utils/Guid')
 Data_Import_Util   = require('../utils/Data-Import-Util')
 
+async              = require('async')
+
 class ImportService
+
   constructor: (name)->
     @name = name || '_tmp_import'
     @cache      = new Cache_Service(@name)
@@ -24,13 +27,38 @@ class ImportService
   new_Data_Import_Util: ->
     new Data_Import_Util()
 
-  add_To_Db: (id_Title, guid, data, callback)->
-    library_Id = @new_Short_Guid(id_Title,guid)
-    importUtil = @new_Data_Import_Util()
-    importUtil.add_Triplets(library_Id, data)
-    @graph.db.put importUtil.data, callback
 
-  find_Subject: (subject, callback)=>
+  add_Db: (type, guid, data, callback)->
+    id = @new_Short_Guid(type,guid)
+    importUtil = @new_Data_Import_Util()
+    importUtil.add_Triplets(id, data)
+    @graph.db.put importUtil.data, -> callback(id)
+
+  add_Db_Contains: (source, target, callback)->
+    @graph.add(source, 'contains', target, callback)
+
+  add_Db_using_Type_Guid_Title: (type, guid, title, callback)->
+    @add_Db type.lower(), guid, {'guid' : guid, 'is' :type, 'title': title}, callback
+
+  find_Using_Is: (value, callback)=>
+    @graph.db.nav(value).archIn('is')
+                        .solutions (err,data) ->
+                          callback (item.x0 for item in data)
+
+  find_Using_Is_and_Title: (is_value, title_value, callback)=>
+    @graph.db.nav(is_value).archIn('is').as('id')
+                           .archOut('title').as('title')
+                           .bind(title_value)
+                           .solutions (err,data) ->
+                             callback if data.first() then data.first().id else null
+
+
+  find_Subject_Contains: (subject, callback)=>
+      @graph.db.nav(subject).archOut('contains')
+               .solutions (err,data) ->
+                  callback (item.x0 for item in data)
+
+  get_Subject_Data: (subject, callback)=>
     @graph.db.get {subject: subject}, (error, data)=>
       result = {}
       result[subject] = {}
@@ -38,8 +66,36 @@ class ImportService
         result[subject][item.predicate] = item.object
       callback(result)
 
+  get_Subjects_Data:(subjects, callback)=>
+    result = {}
+    map_Subject_data = (subject, next)=>
+      @get_Subject_Data subject, (subjectData)=>
+        result[subject] = subjectData[subject]
+        #console.log subjectData
+        next()
+    async.each subjects, map_Subject_data, -> callback(result)
+
+
   get_Libraries_Ids: (callback)=>
     @graph.db.nav('Library').archIn('is').solutions (err,data) ->
       callback (item.x0 for item in data)
+
+  get_Library_Id: (title, callback)=>
+    @graph.db.nav('Library').archIn('is').as('id')
+                            .archOut('title').as('title')
+                            .bind(title)
+                            .solutions (err,data) ->
+                              callback if data.first() then data.first().id else null
+
+  get_Library_Folders_Ids: (title, callback)=>
+    folders_Ids = []
+    @get_Library_Id title, (library_id)=>
+      @find_Subject_Contains library_id, callback
+
+      #callback(folders_Ids)
+      #@graph.db.nav('Folder').archIn('is').as('id')
+      #                       .archOut('title').as('title')
+      #                       .bind('Canonicalization')
+      #                        #.archOut('contains')
 
 module.exports = ImportService

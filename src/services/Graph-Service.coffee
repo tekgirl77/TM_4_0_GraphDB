@@ -2,6 +2,9 @@ levelgraph      = require('levelgraph'   )
 GitHub_Service  = require('./GitHub-Service')
 
 class GraphService
+
+  @open_Dbs: {}
+
   constructor: (dbName)->
     @dbName     = if  dbName then dbName else '_tmp_db'.add_Random_String(5)
     @dbPath     = "./.tmCache/#{@dbName}"#.create_Dir()
@@ -10,14 +13,22 @@ class GraphService
   #Setup methods
 
   openDb : (callback)=>
-    @db         = levelgraph(@dbPath)
+    if GraphService.open_Dbs[@dbPath]
+      @db = GraphService.open_Dbs[@dbPath]
+    else
+      @db = levelgraph(@dbPath)
+      GraphService.open_Dbs[@dbPath] = @db
     callback() if callback
     return @db
 
   closeDb: (callback)=>
-    @db.close =>
-      @db    = null
-      @level = null
+    if (@db)
+      @db.close =>
+        @db    = null
+        @level = null
+        delete GraphService.open_Dbs[@dbPath]
+        callback()
+    else
       callback()
 
   deleteDb: (callback)=>
@@ -27,6 +38,11 @@ class GraphService
 
   add: (subject, predicate, object, callback)=>
     @db.put([{ subject:subject , predicate:predicate  , object:object }], callback)
+
+  del: (subject, predicate, object, callback)=>
+    @db.del { subject:subject , predicate:predicate  , object:object }, (err)->
+      throw err if err
+      callback()
 
   get_Subject: (subject, callback)->
     @db.get {subject:subject}, (err,data)->

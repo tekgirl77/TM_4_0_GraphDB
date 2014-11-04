@@ -1,21 +1,3 @@
-mapNodes_by_Id_and_by_Is = (graphData, callback) ->
-  nodes_by_Id = {}
-  nodes_by_Is = {}
-  for node in graphData.nodes
-    nodes_by_Id[node.id]= { text: node.label, edges: {}}
-
-  for edge in graphData.edges
-    edges = nodes_by_Id[edge.from].edges
-    edges[edge.label] = [] if edges[edge.label] is undefined
-    edges[edge.label].push(edge.to)
-
-    if (edge.label =='is')
-      nodes_by_Is[edge.to] = [] if nodes_by_Is[edge.to] is undefined
-      nodes_by_Is[edge.to].push(edge.from)
-
-  graphData.nodes_by_Id = nodes_by_Id
-  graphData.nodes_by_Is = nodes_by_Is
-  callback(graphData)
 
 get_Graph = (graphService, callback)->
   graphService.query "all", null, (data) =>
@@ -28,8 +10,10 @@ get_Graph = (graphService, callback)->
     setNodeStyle = (node)->
       node.mass = 7
       node.shape = 'box'
-      node.color = {}
-
+      node.color = {  highlight: {
+                                    background: 'pink',
+                                    border: 'red'
+                                 } }
 
     setEdgeStyle = (edge)->
       fromNode = nodesMapping[edge.from]
@@ -41,50 +25,51 @@ get_Graph = (graphService, callback)->
           fromNode.fontSize  = 24
           switch (edge.to)
             when 'Library'
-              fromNode.color.background =  "#ffffff"
-              fromNode.fontSize  = 70
-            when 'Search', 'Folder'
+              fromNode.color.background =  "#030335"
+              fromNode.fontColor =  "#FFFFFF"
+              fromNode.fontSize  = 30
+            when 'Search'
               fromNode.color.background =  "#c3c335"
-              fromNode.fontSize  = 50
+              fromNode.fontSize  = 30
 
             when 'Articles','Queries', 'Metadatas'
               fromNode.color.background = "#92a792"
-              fromNode.fontSize  = 50
-          #fromNode.mass = 10
-            when 'Query','View'  then fromNode.color.background = "#e6b1b1"
-            when 'Article'       then fromNode.color.background = "#97d997"
-            when 'Metadata'      then fromNode.color.background = "#95bff7"
+              fromNode.fontSize  = 30
+            when 'Query'     then fromNode.color.background = "#e6b1b1"
+            when 'Article'   then fromNode.color.background = "#97d997"
+            when 'Metadata'  then fromNode.color.background = "#95bff7"
             when 'XRef'
               fromNode.color.background = '#000000'
               fromNode.shape           = 'dot'
               fromNode.radiusMax       = '10'
-          #fromNode.fontColor        = '#ffffff'
             else
               fromNode.color.background =  "#FFc335"
 
+          toNode.color.background =  "#AAAAAA"
           toNode.visible     = false
 
         when 'title'
-          fromNode.label  = edge.to #+ ":\n\n" + fromNode.label
-          toNode.visible = false
+          toNode.fontFill  = "#DDDDFF"
+        #  fromNode.label  = edge.to #+ ":\n\n" + fromNode.label
+        #  toNode.visible = false
 
-        when 'guid','weight', 'summary'
-          toNode.visible = false
+        #when 'guid','weight', 'summary'
+        #  toNode.visible = false
 
       edge.style = 'arrow'
-      edge.fontSize = 10
+      edge.fontSize = 30
       edge.length  = 150
-      switch (edge.label)
-        when 'target'
-          xrefTarget = nodesMapping[toNode.id]
-          fromNode.label = xrefTarget.label
-          fromNode.title += '<br/>....ArticleId: ' + toNode.id
-          fromNode.fontSize  = 20
-          return false
-        when 'weight'
-          fromNode.value = toNode.label
-          fromNode.title += '<br/>....Weight: ' + toNode.label
-          return false
+      #switch (edge.label)
+      #  when 'target'
+      #    xrefTarget = nodesMapping[toNode.id]
+      #    fromNode.label = xrefTarget.label
+      #    fromNode.title += '<br/>....ArticleId: ' + toNode.id
+      #    fromNode.fontSize  = 20
+      #    return false
+      #  when 'weight'
+      #    fromNode.value = toNode.label
+      #    fromNode.title += '<br/>....Weight: ' + toNode.label
+      #    return false
       return true
 
 
@@ -122,6 +107,7 @@ get_Graph = (graphService, callback)->
 
     graphData = { nodes: nodes, edges: edges }
     graphData.refresh = false
-    mapNodes_by_Id_and_by_Is(graphData, callback)
+    callback(graphData)
+    #mapNodes_by_Id_and_by_Is(graphData, callback)
 
 module.exports = get_Graph

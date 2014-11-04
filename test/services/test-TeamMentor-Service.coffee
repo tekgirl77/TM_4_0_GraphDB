@@ -39,6 +39,21 @@ describe 'services | test-TeamMentor-Service |', ->
         library.name = 'UNO'
         done()
 
+    it 'article', (done)->
+      article_Guid = 'a330bfdd-9576-40ea-997e-e7ed2762fc3e'
+      teamMentorService.article.assert_Is_Function()
+      teamMentorService.article article_Guid, (article)->
+        article.assert_Is_Object()
+        article.Metadata      .assert_Is_Object()
+        article.Metadata.Id   .assert_Is(article_Guid)
+        article.Metadata.Title.assert_Is('All Input Is Validated')
+        done()
+
+    it.only 'login (good pwd)', (done)->
+      teamMentorService.login_Rest "graph123","aaaaaa", (data)->
+        data.assert_Is('00000000-0000-0000-0000-000000000000')
+        done()
+
   describe 'asmx',->
     teamMentorService = new TeamMentor_Service()
     asmx              = teamMentorService.asmx
@@ -71,4 +86,10 @@ describe 'services | test-TeamMentor-Service |', ->
         data.first().views        .assert_Is_Array()
         data.first().guidanceItems.assert_Is_Array()
         done()
+
+    it 'login (bad pwd)', (done)->
+      asmx.login "aaa","bbb", (data)->
+        data.assert_Is('00000000-0000-0000-0000-000000000000')
+        done()
+
 

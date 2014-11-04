@@ -97,6 +97,30 @@ describe 'services | test-Graph-Service |', ->
         expect(data       ).to.deep.equal [{ subject: 'a', predicate : 'b', object:'c'}]
         done()
 
+    it 'del',(done)->
+      graphService.del "a","b","c", ->
+        graphService.allData  (data) ->
+          expect(data.length).to.equal(0)
+          done()
+
+  describe 'open and close of dbs |', ->
+    it 'confirm that open_Dbs stores db ref', (done)->
+      graphService  = new Graph_Service('_tm_Db1')
+      Object.keys(Graph_Service.open_Dbs).assert_Size_Is(0)
+      graphService.openDb ->
+        db = graphService.db
+        Object.keys(Graph_Service.open_Dbs).assert_Size_Is(1)
+        graphService.openDb ->
+          db.assert_Is_Equal_To(graphService.db)
+          db.assert_Is_Equal_To(Graph_Service.open_Dbs[graphService.dbPath])
+          Object.keys(Graph_Service.open_Dbs).assert_Size_Is(1)
+          graphService.closeDb ->
+            Object.keys(Graph_Service.open_Dbs).assert_Size_Is(0)
+            graphService.dbPath.assert_That_File_Exists()
+            graphService.deleteDb ->
+              graphService.dbPath.assert_That_File_Not_Exists()
+              done()
+
 ###
 
   it 'graphDataFromQAServer', (done)->
