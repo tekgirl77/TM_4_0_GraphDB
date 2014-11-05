@@ -18,8 +18,8 @@ class QueryControler
     dbService.load_Data ->                        # loads all data with all requests
     #dbService.graphService.openDb ->
       dbService.run_Query queryId, (graph)->
-        #dbService.graphService.closeDb ->
-        dbService.graphService.deleteDb ->
+        dbService.graphService.closeDb ->
+        #dbService.graphService.deleteDb ->
           res.type 'application/json'
           res.header('Access-Control-Allow-Origin', '*')
           res.send graph.json_pretty()

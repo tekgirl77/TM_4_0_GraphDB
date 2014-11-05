@@ -5,6 +5,7 @@ Graph_Service      = require('./Graph-Service')
 TeamMentor_Service = require('./TeamMentor-Service')
 Guid               = require('../utils/Guid')
 Data_Import_Util   = require('../utils/Data-Import-Util')
+Vis_Graph          = require('../utils/Vis-Graph')
 
 async              = require('async')
 
@@ -26,6 +27,10 @@ class ImportService
 
   new_Data_Import_Util: ->
     new Data_Import_Util()
+
+  new_Vis_Graph: ->
+    new Vis_Graph()
+
 
 
   add_Db: (type, guid, data, callback)->
@@ -61,17 +66,27 @@ class ImportService
   get_Subject_Data: (subject, callback)=>
     @graph.db.get {subject: subject}, (error, data)=>
       result = {}
-      result[subject] = {}
       for item in data
-        result[subject][item.predicate] = item.object
+        key = item.predicate
+        value = item.object
+        if (result[key])         # if there are more than one hit, return an array with them
+          if typeof(result[key])=='string'
+            result[key] = [result[key]]
+          result[key].push(value)
+        else
+          result[key] = value
       callback(result)
 
   get_Subjects_Data:(subjects, callback)=>
     result = {}
+    if not subjects
+      callback result
+      return
+    if(typeof(subjects) == 'string')
+      subjects = [subjects]
     map_Subject_data = (subject, next)=>
       @get_Subject_Data subject, (subjectData)=>
-        result[subject] = subjectData[subject]
-        #console.log subjectData
+        result[subject] = subjectData
         next()
     async.each subjects, map_Subject_data, -> callback(result)
 

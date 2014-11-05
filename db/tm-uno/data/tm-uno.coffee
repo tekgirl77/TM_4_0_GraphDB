@@ -4,12 +4,12 @@ importService     = null
 library           = null
 library_Name      = 'UNO'
 
-library_Name = global.request_Params.query['library']
+library_Name = if (global.request_Params) then global.request_Params.query['library'] else null
 
 if not library_Name
   library_Name = 'UNO'
 
-console.log "[tm-uno] Library name is: #{library_Name}"
+#console.log "[tm-uno] Library name is: #{library_Name} \n"
 
 #library_Name      = 'Java'
 #library_Name       = 'iOS'
@@ -58,7 +58,6 @@ import_Folders = (parent, folders, next)->
 addData = (dataImport,callback)->
   setupDb ->
       importService.add_Db_using_Type_Guid_Title 'Library', library.libraryId, library.name, (library_Id)->
-        #importService.graph.closeDb ->
         import_Folders library_Id, library.subFolders, ->
           import_Views library_Id, library.views, ->
             callback()

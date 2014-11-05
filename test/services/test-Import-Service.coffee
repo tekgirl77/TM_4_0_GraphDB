@@ -41,8 +41,8 @@ describe 'services | test-Import-Service |', ->
       importService.add_Db type, guid, data, (id)->
         importService.get_Subject_Data id, (id_Data)->
           id_Data.assert_Is_Object()
-          id_Data[id].b.assert_Is(data.b)
-          id_Data[id].d.assert_Is(data.d)
+          id_Data.b.assert_Is(data.b)
+          id_Data.d.assert_Is(data.d)
           done()
 
     it 'new_Short_Guid', ->
@@ -53,6 +53,10 @@ describe 'services | test-Import-Service |', ->
     it 'new_Data_Import_Util', ->
       importService.new_Data_Import_Util.assert_Is_Function()
       importService.new_Data_Import_Util().assert_Is_Object()
+
+    it 'new_Data_Import_Util', ->
+      importService.new_Vis_Graph.assert_Is_Function()
+                                 .ctor().nodes.assert_Is_Array()
 
   describe 'load Uno library',->
     importService = null
@@ -96,10 +100,10 @@ describe 'services | test-Import-Service |', ->
           libraries_Ids.assert_Size_Is(1)
           libraries_Ids.first().assert_Is(new_Id)
           importService.get_Subject_Data libraries_Ids.first(), (result)->
-            result[libraries_Ids.first()].assert_Is_Object()
-            result[libraries_Ids.first()].is.assert_Is('Library')
-            result[libraries_Ids.first()].title.assert_Is('UNO')
-            result[libraries_Ids.first()].guid.assert_Is('be5273b1-d682-4361-99d9-6234f2d47eb7')
+            result.assert_Is_Object()
+            result.is.assert_Is('Library')
+            result.title.assert_Is('UNO')
+            result.guid.assert_Is('be5273b1-d682-4361-99d9-6234f2d47eb7')
             done()
 
     it 'add Library folders', (done)->
@@ -136,7 +140,7 @@ describe 'services | test-Import-Service |', ->
             importService.find_Using_Is 'View',  (data)->
               data.assert_Size_Is(1)
               importService.get_Subject_Data folder_Id, (data)->
-                data[folder_Id].contains.assert_Is(view_Id)
+                data.contains.assert_Is(view_Id)
                 done()
 
     it 'add view articles', (done)->
@@ -150,34 +154,43 @@ describe 'services | test-Import-Service |', ->
               importService.find_Using_Is 'Article',  (data)->
                 data.assert_Size_Is(1)
                 importService.get_Subject_Data article_Id, (data)->
-                  data[article_Id].guid.assert_Is('a330bfdd-9576-40ea-997e-e7ed2762fc3e')
-                  data[article_Id].title.assert_Is('All Input Is Validated')
+                  data.guid.assert_Is('a330bfdd-9576-40ea-997e-e7ed2762fc3e')
+                  data.title.assert_Is('All Input Is Validated')
                   done()
 
   #return
   # temporarily here
-  describe 'load tm-uno data set', ->
-    Db_Service = require('./../../src/services/Db-Service')
-    dbService = null
+  describe.only 'load tm-uno data set', ->
+    Db_Service    = require('./../../src/services/Db-Service')
+    dbService     = null
+
+    before (done)->
+      dbService     = new Db_Service('tm-uno')
+      dbService.graphService.openDb done
 
     it 'loadData',  (done)->
-      dbService = new Db_Service('tm-uno')
       dbService.load_Data ->
         dbService.graphService.allData (data)->
           data.assert_Is_Array()
-          #console.log data
+          #console.log data.length
           done()
 
-    it 'test query',(done)->
-      title = 'UNO'
-      importService.get_Library_Id title, (library_Id)->
-        #console.log library_Id
-        #graph.db.nav('Library').archIn('is').archOut('title').solutions (err,data)->
-        #  console.log data
-        done()
+    #it 'test query',(done)->
+    #  title = 'UNO'
+    #  importService.get_Library_Id title, (library_Id)->
+    #    #console.log library_Id
+    #    #graph.db.nav('Library').archIn('is').archOut('title').solutions (err,data)->
+    #    #  console.log data
+    #    done()
 
-    it 'run query - library', (done)->
-      dbService.run_Query 'library', (graph)->
-        #console.log graph
+    xit 'run query - library', (done)->
+        dbService.run_Query 'library', (graph)->
+          #console.log graph
+          graph.nodes.assert_Is_Object()
+          done()
+
+    it 'run query - folder', (done)->
+      dbService.run_Query 'folder', (graph)->
+        console.log graph.json_pretty()
         graph.nodes.assert_Is_Object()
         done()

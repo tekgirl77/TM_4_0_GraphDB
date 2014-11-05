@@ -1,11 +1,5 @@
 async             = require 'async'
 Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
-#importService     = null
-
-#library_Name = 'UNO'
-#library_Name = 'Java'
-#library_name = 'iOS'
-
 
 get_Graph = (graphService, callback)->
   importService     = new Import_Service('tm-uno')
@@ -73,7 +67,7 @@ get_Graph = (graphService, callback)->
            #              }
 
     graph = { nodes: nodes, edges: edges , options:options}
-    console.log "graph created with: #{graph.nodes.size()} nodes and  #{graph.edges.size()} edges"
+    #console.log "graph created with: #{graph.nodes.size()} nodes and  #{graph.edges.size()} edges"
     callback(graph)
 
   map_Article = (article, next) ->
@@ -107,7 +101,7 @@ get_Graph = (graphService, callback)->
   importService.find_Using_Is 'Library', (library_Ids)->
     library_Id = library_Ids.first()
     importService.get_Subject_Data library_Id, (library_Data)->
-      library_Name = library_Data[library_Id].title
+      library_Name = library_Data.title
       importService.get_Library_Folders_Ids library_Name, (folders_Ids)->
         map_Folders(library_Name, folders_Ids, sendData)
 

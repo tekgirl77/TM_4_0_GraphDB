@@ -13,7 +13,7 @@ class Db_Service
     @path_Data    = "#{@path_Name}/data"
     @path_Queries = "#{@path_Name}/queries"
 
-  setup: ->
+  setup: (done)->
     @path_Root   .folder_Create()
     @path_Name   .folder_Create()
     @path_Data   .folder_Create()

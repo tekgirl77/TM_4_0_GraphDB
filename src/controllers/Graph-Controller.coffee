@@ -24,7 +24,7 @@ class DataControler
 
     global.request_Params = req
 
-    html = new Jade_Service().enableCache(false)
+    html = new Jade_Service().enableCache() #(false)
                              .renderJadeFile(view, viewModel)
     res.send html
 
