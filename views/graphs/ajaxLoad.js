@@ -7,6 +7,20 @@ var showData = function(graphData)
                 var container = document.getElementById('graph');
                 network = new vis.Network(container, graphData, options);
                 $('#status').html('')
+
+                openArticle = function(data)
+                {
+                    node = data.nodes[0]
+                    console.log('selected node: ' + node)
+                    nodeData = network.nodesData._data[node]
+                    console.log(nodeData)
+                    if (nodeData!= undefined && nodeData.guid)
+                    {
+                        console.log(nodeData.guid)
+                        window.open('https://tmdev01-sme.teammentor.net/' + nodeData.guid, '_blank')
+                    }
+                }
+                network.on('doubleClick', openArticle)
             }, 10)
     };
 

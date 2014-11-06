@@ -19,6 +19,9 @@ class Vis_Node
   _mass: (value)=>
     @['mass']=value
     @
+  _fontColor: (value)=>
+    @['fontColor']=value
+    @
   _fontSize: (value)=>
     @['fontSize']=value
     @
@@ -27,7 +30,7 @@ class Vis_Node
     @
 
   #colors
-  black       : ()=> @_color('black')
+  black       : ()=> @_color('black')._fontColor('white')
   blue        : ()=> @_color('blue')
   green       : ()=> @_color('green')
   red         : ()=> @_color('red')

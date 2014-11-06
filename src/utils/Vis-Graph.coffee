@@ -12,9 +12,9 @@ class Vis_Graph
     @nodes_Ids   = []
 
   add_Node: (id, label)=>
-    if id and id not in @nodes_Ids
+    if id not in @nodes_Ids
       new_Node = new Vis_Node(id, label,@)
-      @nodes_Ids.push(id)
+      @nodes_Ids.push(new_Node.id)
       @nodes    .push new_Node
       new_Node
     else

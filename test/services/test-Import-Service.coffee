@@ -1,7 +1,7 @@
 Import_Service = require('./../../src/services/Import-Service')
 async          = require('async')
 
-describe 'services | test-Import-Service |', ->
+describe.only 'services | test-Import-Service |', ->
   describe 'core', ->
     importService = new Import_Service()
 
@@ -136,10 +136,10 @@ describe 'services | test-Import-Service |', ->
         guid  = view.viewId
         title = view.caption
         importService.add_Db_using_Type_Guid_Title 'View', guid, title, (view_Id)->
-          importService.add_Db_Contains folder_Id, view_Id, ->
+          importService.add_Db_Contains folder_Id.first(), view_Id, ->
             importService.find_Using_Is 'View',  (data)->
               data.assert_Size_Is(1)
-              importService.get_Subject_Data folder_Id, (data)->
+              importService.get_Subject_Data folder_Id.first(), (data)->
                 data.contains.assert_Is(view_Id)
                 done()
 
@@ -160,7 +160,7 @@ describe 'services | test-Import-Service |', ->
 
   #return
   # temporarily here
-  describe.only 'load tm-uno data set', ->
+  describe 'load tm-uno data set', ->
     Db_Service    = require('./../../src/services/Db-Service')
     dbService     = null
 
@@ -189,8 +189,14 @@ describe 'services | test-Import-Service |', ->
           graph.nodes.assert_Is_Object()
           done()
 
-    it 'run query - folder', (done)->
-      dbService.run_Query 'folder', (graph)->
-        console.log graph.json_pretty()
+    xit 'run query - folders-and-views', (done)->
+      dbService.run_Query 'folders-and-views', (graph)->
+        #console.log graph.json_pretty()
+        graph.nodes.assert_Is_Object()
+        done()
+
+    it 'run query - article', (done)->
+      dbService.run_Query 'article', (graph)->
+        #console.log graph.json_pretty()
         graph.nodes.assert_Is_Object()
         done()

@@ -55,7 +55,8 @@ class ImportService
                            .archOut('title').as('title')
                            .bind(title_value)
                            .solutions (err,data) ->
-                             callback if data.first() then data.first().id else null
+                             #callback if data.first() then data.first().id else null
+                            callback (item.id for item in data)
 
 
   find_Subject_Contains: (subject, callback)=>

@@ -6,8 +6,6 @@ get_Graph = (graphService, callback)->
   importService.db.setup()
   importService.graph = graphService
 
-
-  console.log 'in Folder'
   graph = importService.new_Vis_Graph()
   graph.options._smoothCurves(false)
   graph.options.nodes.box()._mass(1)

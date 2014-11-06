@@ -29,10 +29,11 @@ describe 'Vis-Node',->
     _label.assert_Is('label_edge')
 
 
-  it '_color'    ,-> visNode._color(   'abc').color.assert_Is('abc')
-  it '_mass'     ,-> visNode._mass(    '10'  ).mass.assert_Is('10' )
-  it '_fontSize' ,-> visNode._fontSize('10'  ).mass.assert_Is('10' )
-  it '_shape'    ,-> visNode._shape(   'abc').shape.assert_Is('abc')
+  it '_color'    ,-> visNode._color(   'abc').color   .assert_Is('abc')
+  it '_mass'     ,-> visNode._mass(    '10' ).mass    .assert_Is('10' )
+  it '_fontSize' ,-> visNode._fontSize('11' ).fontSize.assert_Is('11' )
+  it '_fontSize' ,-> visNode._fontSize('12' ).fontSize.assert_Is('12' )
+  it '_shape'    ,-> visNode._shape(   'abc').shape   .assert_Is('abc')
 
   #colors
   colors = ['black','blue', 'green', 'red']
