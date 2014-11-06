@@ -25,4 +25,5 @@ class Vis_Options
   _smoothCurves: (value)=>
     @['smoothCurves']=value
     @
+
 module.exports = Vis_Options
