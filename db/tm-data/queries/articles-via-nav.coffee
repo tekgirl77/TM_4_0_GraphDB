@@ -1,4 +1,4 @@
-get_Graph = (graphService, callback)->
+get_Graph = (graphService, params, callback)->
 
   graphService.db.nav("Article").archIn('is').as('articleId')
               .archOut('title').as('title')

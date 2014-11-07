@@ -10,21 +10,26 @@ class DataControler
     @server.app.get('/lib/vis.js'       , (req,res)=> res.sendFile('/node_modules/vis/dist/vis.js' .append_To_Process_Cwd_Path()))
     @server.app.get('/lib/vis.css'      , (req,res)=> res.sendFile('/node_modules/vis/dist/vis.css'.append_To_Process_Cwd_Path()))
     @server.app.get('/lib/jquery.min.js', (req,res)=> res.sendFile('/views/lib/jquery.min.js'.append_To_Process_Cwd_Path()))
-    @server.app.get('/data/graphs/scripts/:script.js'    , @sendScript)
-    @server.app.get('/data/:dataId/:queryId/:graphId'    , @showGraph)
+    @server.app.get('/data/graphs/scripts/:script.js'          , @sendScript)
+    @server.app.get('/data/:dataId/:queryId/:graphId'          , @showGraph)
+    @server.app.get('/data/:dataId/:queryId/:graphId/:searchId', @showGraph)
     @
 
   showGraph: (req,res)->
     dataId       = req.params.dataId
     queryId      = req.params.queryId
     graphId      = req.params.graphId
+
+    queryParams  = req._parsedUrl.search || "?"
+    console.log "queryParams: " + queryParams
+
     view         = "/views/graphs/#{graphId}.jade"
-    dataUrl      = "/data/#{dataId}/#{queryId}"
+    dataUrl      = "/data/#{dataId}/#{queryId}#{queryParams}"
+    console.log dataUrl
     viewModel    = { dataUrl: dataUrl}
 
-    global.request_Params = req
 
-    html = new Jade_Service().enableCache() #(false)
+    html = new Jade_Service().enableCache(false)
                              .renderJadeFile(view, viewModel)
     res.send html
 

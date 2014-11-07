@@ -1,7 +1,7 @@
 Import_Service = require('./../../src/services/Import-Service')
 async          = require('async')
 
-describe.only 'services | test-Import-Service |', ->
+describe 'services | test-Import-Service |', ->
   describe 'core', ->
     importService = new Import_Service()
 
@@ -160,7 +160,7 @@ describe.only 'services | test-Import-Service |', ->
 
   #return
   # temporarily here
-  describe 'load tm-uno data set', ->
+  describe.only 'load tm-uno data set', ->
     Db_Service    = require('./../../src/services/Db-Service')
     dbService     = null
 
@@ -183,20 +183,26 @@ describe.only 'services | test-Import-Service |', ->
     #    #  console.log data
     #    done()
 
-    xit 'run query - library', (done)->
-        dbService.run_Query 'library', (graph)->
+    it 'run query - library', (done)->
+      dbService.run_Query 'library',  {},(graph)->
+        #console.log graph
+        graph.nodes.assert_Is_Object()
+        done()
+
+    it 'run query - library-all', (done)->
+        dbService.run_Query 'library-all',  {},(graph)->
           #console.log graph
           graph.nodes.assert_Is_Object()
           done()
 
-    xit 'run query - folders-and-views', (done)->
-      dbService.run_Query 'folders-and-views', (graph)->
+    it 'run query - folders-and-views', (done)->
+      dbService.run_Query 'folders-and-views', {}, (graph)->
         #console.log graph.json_pretty()
         graph.nodes.assert_Is_Object()
         done()
 
     it 'run query - article', (done)->
-      dbService.run_Query 'article', (graph)->
+      dbService.run_Query 'folder-metadata',  {show:'Canonicalization'}, (graph)->
         #console.log graph.json_pretty()
         graph.nodes.assert_Is_Object()
         done()

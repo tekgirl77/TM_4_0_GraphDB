@@ -14,9 +14,16 @@ describe 'Vis-Edge',->
     Vis_Edge.ctor().to   .assert_Contains("-")
     (Vis_Edge.ctor().label==undefined).assert_Is_True()
     Vis_Edge.ctor('abc', 'def','ghi').json_pretty().assert_Is("{\n  \"from\": \"abc\",\n  \"to\": \"def\",\n  \"label\": \"ghi\"\n}")
+    Vis_Edge.ctor(null,null,null,'the-graph').graph().assert_Is('the-graph')
+
+  it 'from_Node, to_Node',->
+    Vis_Edge.ctor().from_Node.assert_Is_Function()
+    Vis_Edge.ctor().to_Node.assert_Is_Function()
+    #see 'Vis_Edge - from_Node,to_Node' test from test-Vis-Graph
+
 
   #colors
-  colors = ['blue', 'red']
+  colors = ['black', 'blue', 'green','red', 'white']
   for color in colors
     do (color)->
       it "color: #{color}", ->

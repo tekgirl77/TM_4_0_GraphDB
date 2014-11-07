@@ -41,3 +41,12 @@ describe 'controllers | test-Query-Controller |', ->
           expect(graph.edges.first()).to.deep.equal({from:'a' , to: 'c1'})
 
           done()
+
+    it '/data/:dataId/:queryId?a=b' , (done)->
+      supertest(app).get('/data/v0.1/simple?a=b')
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end (error, response) ->
+                      graph = JSON.parse(response.text)
+                      expect(graph).to.deep.equal({a:'b'})
+                      done()

@@ -28,15 +28,17 @@ describe 'Vis-Node',->
     _to   .assert_Is('to')
     _label.assert_Is('label_edge')
 
-
+  it 'set'       ,-> visNode.set('key','---').key     .assert_Is('---')
   it '_color'    ,-> visNode._color(   'abc').color   .assert_Is('abc')
   it '_mass'     ,-> visNode._mass(    '10' ).mass    .assert_Is('10' )
   it '_fontSize' ,-> visNode._fontSize('11' ).fontSize.assert_Is('11' )
   it '_fontSize' ,-> visNode._fontSize('12' ).fontSize.assert_Is('12' )
-  it '_shape'    ,-> visNode._shape(   'abc').shape   .assert_Is('abc')
+  it '_label'    ,-> visNode._label(   'dfg').label   .assert_Is('dfg')
+  it '_shape'    ,-> visNode._shape(   'hij').shape   .assert_Is('hij')
+  it '_title'    ,-> visNode._shape(   'klm').shape   .assert_Is('klm')
 
   #colors
-  colors = ['black','blue', 'green', 'red']
+  colors = ['black','blue','green','red','white']
   for color in colors
     do (color)->
       it "color: #{color}", ->

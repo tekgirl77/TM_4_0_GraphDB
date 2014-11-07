@@ -17,7 +17,7 @@ mapNodes_by_Id_and_by_Is = (graphData, callback) ->
   graphData.nodes_by_Is = nodes_by_Is
   callback(graphData)
 
-get_Graph = (graphService, callback)->
+get_Graph = (graphService, params, callback)->
   graphService.query "all", null, (data) =>
     DataSet   = require('vis/lib/DataSet')
     nodesAdded   = []

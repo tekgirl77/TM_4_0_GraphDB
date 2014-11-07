@@ -1,4 +1,4 @@
-get_Graph = (graphService, callback)->
+get_Graph = (graphService, params, callback)->
 
   graphService.allData (data)->
     nodes = []

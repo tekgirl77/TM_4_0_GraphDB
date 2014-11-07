@@ -62,14 +62,15 @@ describe 'services | test-TeamMentor-Service |', ->
       asmx.teamMentor  .assert_Is_Equal_To(teamMentorService)
       asmx.asmx_BaseUrl.assert_Is_Equal_To(teamMentorService.tmServer + '/Aspx_Pages/TM_WebServices.asmx/')
 
-    xit '_json_Post', (done)->
+    it '_json_Post', (done)->
+      @timeout 10000        # in case the .NET server needs to wake up
       methodName = 'Ping'
       asmx._json_Post methodName, {message:''}, (response)->
-        console.log response
+        #console.log response
         response.d.assert_Contains('received ping: ')
         done()
 
-    xit 'ping', (done)->
+    it 'ping', (done)->
       value = (5).random_Letters()
       asmx.ping '', (data)->
         data.assert_Contains('received ping: ')

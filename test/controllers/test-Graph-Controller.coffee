@@ -59,8 +59,13 @@ describe 'controllers | test-Graph-Controller |', ->
                                    throw error if error
                                    callback(response.text)
 
-    it 'first.js', (done)->
+    it 'ajaxLoad.js', (done)->
       getResponseText '/data/graphs/scripts/ajaxLoad.js', null , (responseText)->
+        expect(responseText).to.not.equal('//file not found')
+        done()
+
+    it 'articleViewer.js', (done)->
+      getResponseText '/data/graphs/scripts/articleViewer.js', null , (responseText)->
         expect(responseText).to.not.equal('//file not found')
         done()
 

@@ -82,12 +82,12 @@ describe 'db | tm-data | test-queries |', ->
 
 
   it 'query - articles', (done)->
-    dbService.run_Query 'articles', (data)->
+    dbService.run_Query 'articles', {},  (data)->
       #console.log data
       expect(data.nodes.size()).to.be.above(10)
       done()
   it 'query - articles-by-weight', (done)->
-    dbService.run_Query 'articles-by-weight', (data)->
+    dbService.run_Query 'articles-by-weight', {}, (data)->
       #console.log data
       expect(data.size()).to.be.above(5)
       done()

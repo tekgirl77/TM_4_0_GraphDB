@@ -12,13 +12,14 @@ class Vis_Graph
     @nodes_Ids   = []
 
   add_Node: (id, label)=>
+    return null if not id
     if id not in @nodes_Ids
       new_Node = new Vis_Node(id, label,@)
       @nodes_Ids.push(new_Node.id)
       @nodes    .push new_Node
       new_Node
     else
-      null
+      @node(id)
 
   add_Nodes: (ids...)=>
     for id in ids
@@ -26,9 +27,9 @@ class Vis_Graph
     @
 
   add_Edge: (from, to, label)=>
-    @add_Node(from)
-    @add_Node(to)
-    new_Edge = new Vis_Edge(from, to, label)
+    new_Edge = new Vis_Edge(from, to, label,@)
+    @add_Node(new_Edge.from)
+    @add_Node(new_Edge.to)
     @edges.push(new_Edge)
     new_Edge
 

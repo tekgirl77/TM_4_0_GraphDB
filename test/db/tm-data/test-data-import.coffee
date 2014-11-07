@@ -73,7 +73,7 @@ describe 'db | tm-data | test-data-import |', ->
       #  console.log(data.length)
       #  dataService.graphService.deleteDb ->
       #    done()
-      dataService.run_Query 'tm-graph', (data)->
+      dataService.run_Query 'tm-graph',{},  (data)->
         #console.log data.nodes.length
         #  #expect(data.size()).to.be.above(5)
         done()

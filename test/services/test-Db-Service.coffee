@@ -63,14 +63,14 @@ describe 'services | test-Data-Service |', ->
       expect(dbService.run_Query  ).to.be.an("function")
 
       query_Name = 'testQuery'
-      coffee_Query = '''get_Graph = (graphService, callback)->
+      coffee_Query = '''get_Graph = (graphService, params, callback)->
                           graph = { nodes: [{'a','b'}] , edges: [{from:'a' , to: 'b'}] }
                           callback(graph)
                         module.exports = get_Graph '''
       coffee_File = dbService.path_Queries.path_Combine("#{query_Name}.coffee")
       expect(coffee_Query.saveAs(coffee_File)) .to.be.true
 
-      dbService.run_Query query_Name, (graph)->
+      dbService.run_Query query_Name, {}, (graph)->
         expect(graph).to.not.be.null
         expect(graph      ).to.be.an('object')
         expect(graph.nodes).to.be.an('array')

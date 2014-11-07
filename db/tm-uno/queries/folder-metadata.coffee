@@ -2,20 +2,22 @@ async             = require 'async'
 Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
 
 
-get_Graph = (graphService, callback)->
+get_Graph = (graphService, params, callback)->
+
   importService     = new Import_Service('tm-uno')
   importService.db.setup()
   importService.graph = graphService
 
   graph = importService.new_Vis_Graph()
-  graph.options.nodes.box()#._mass(30)
+  graph.options.nodes.box()#._mass(2)
   graph.options.edges.arrow().widthSelectionMultiplier = 5
-  #graph.options.edges
 
-  category_Node   = graph.add_Node('Category'  ).circle().black()._mass(25)
-  phase_Node      = graph.add_Node('Phase'     ).circle().black()._mass(25)
-  technology_Node = graph.add_Node('Technology').circle().black()._mass(25)
-  type_Node       = graph.add_Node('Type'      ).circle().black()._mass(25)
+  category_Node   = graph.add_Node('Category'  ).circle().black()._mass(5)
+  phase_Node      = graph.add_Node('Phase'     ).circle().black()._mass(5)
+  technology_Node = graph.add_Node('Technology').circle().black()._mass(5)
+  type_Node       = graph.add_Node('Type'      ).circle().black()._mass(5)
+
+  #console.log "params: #{params}"
 
   map_Article = (article_Id, parent, next)->
     importService.get_Subject_Data article_Id, (article_Data)->
@@ -29,21 +31,37 @@ get_Graph = (graphService, callback)->
         phase      = article.Metadata.Phase
         technology = article.Metadata.Technology
         type       = article.Metadata.Type
-        article_Node = graph.add_Node(article_Id, ' ')
-        if (not article_Node)
-          "already existed: #{article_Id}".log()
-          article_Node = graph.node(article_Id)
-        article_Node.dot()._color('#aabbcc')
-        article_Node.guid = id
-        article_Node.title = "#{title} <br><a href='https://tmdev01-sme.teammentor.net/#{id}' target='_blank'>open article</a>"
-        graph.add_Edge(category_Node.id   , category  )
-        graph.add_Edge(category           , article_Id)
-        graph.add_Edge(phase_Node.id      , phase     )
-        graph.add_Edge(phase              , article_Id)
-        graph.add_Edge(technology_Node.id , technology)
-        graph.add_Edge(technology         , article_Id)
-        graph.add_Edge(type_Node.id       , type      )
-        graph.add_Edge(type               , article_Id)
+
+        graph.add_Edge('Category'   , category  )
+        graph.add_Edge('Phase'      , phase     )
+        graph.add_Edge('Technology' , technology)
+        graph.add_Edge('Type'       , type      )
+
+        format_Node = (node)->
+          node.circle()._label('A').set('guid', id).set('title', title)._color('lightGray')
+
+        format_Edge_To_Node = (edge)->
+          format_Node(edge.to_Node())
+
+        #map to global metadata nodes
+        format_Edge_To_Node graph.add_Edge category
+        format_Edge_To_Node graph.add_Edge phase
+        format_Edge_To_Node graph.add_Edge technology
+        format_Edge_To_Node graph.add_Edge type
+
+        #map to view (i.e. parent) metadata nodes
+        add_Article_To_Metadata = (nodeKey,edgeKey, labelText)->
+          graph.node(nodeKey).add_Edge(edgeKey).to_Node()._label(labelText)
+                             .add_Edge().to_Node().call_Function(format_Node)
+
+
+        add_Article_To_Metadata("#{parent}_Category"  , "#{parent}_#{category}"  , category)
+        add_Article_To_Metadata("#{parent}_Phase"     , "#{parent}_#{phase}"     , phase)
+        add_Article_To_Metadata("#{parent}_Technology", "#{parent}_#{technology}", technology)
+        add_Article_To_Metadata("#{parent}_Type"      , "#{parent}_#{type}"      , type)
+
+        #graph.node("#{parent}_Technology").add_Edge("#{parent}_#{technology}")
+
         next()
 
 
@@ -53,34 +71,37 @@ get_Graph = (graphService, callback)->
 
   map_Articles_In_View =  (view_Id,parent,next)->
     importService.get_Subject_Data view_Id, (view_Data)->
-      graph.add_Node(view_Id, 'view: ' + view_Data.title)#._color('#aabbcc')
-      #     .title = "<a href='https://tmdev01-sme.teammentor.net/#{view_Id}' target='_blank'>view just this view</a>"
+      view_Node = graph.add_Node(view_Id, 'view: ' + view_Data.title)._color('#aabbcc')._mass(5)
+      view_Node.add_Edge("#{view_Id}_Category"  ).to_Node()._label('C')._title('Category'  ).circle().black()._mass(5)
+      view_Node.add_Edge("#{view_Id}_Phase"     ).to_Node()._label('P')._title('Phase'     ).circle().black()._mass(5)
+      view_Node.add_Edge("#{view_Id}_Technology").to_Node()._label('T')._title('Technology').circle().black()._mass(5)
+      view_Node.add_Edge("#{view_Id}_Type"      ).to_Node()._label('T')._title('Type'      ).circle().black()._mass(5)
+
       graph.add_Edge(parent, view_Id)
       if (view_Data.contains)
         async.each view_Data.contains, ((item, next)-> map_Article(item,view_Id,next)), next
       else
         next()
 
-
-    #importService.find_Using_Is_and_Title 'Article', title, (article_Ids)->
-    #  async.each article_Ids, map_Article, next
-
   map_Articles_In_Folder = (folder_Id, next)->
     importService.get_Subject_Data folder_Id, (folder_Data)->
-      graph.add_Node(folder_Id, 'folder: ' + folder_Data.title).green()
+      graph.add_Node(folder_Id, 'folder: ' + folder_Data.title)._color('orange')._fontSize(30)._mass(3)
       if (folder_Data.contains)
         async.each folder_Data.contains, ((item, next)-> map_Articles_In_View(item,folder_Id,next)), next
       else
         next()
 
+  folder_Name = 'Authorization'
+  if (params && params.show)
+    folder_Name = params.show
 
-  #importService.find_Using_Is 'View', (view_Ids)->
-  #  view_Id = view_Ids[4]
-  #  map_Articles_In_View view_Id , ->
-  importService.find_Using_Is 'Folder', (folder_Ids)->
-    folder_Id = folder_Ids[9]
+  importService.find_Using_Is_and_Title 'Folder', folder_Name, (folder_Ids)->
+    folder_Id = folder_Ids.first()
     map_Articles_In_Folder folder_Id , ->
-      "\nMapped #{graph.nodes.size()} nodes and #{graph.edges.size()} edges".log()
+      #"\nMapped #{graph.nodes.size()} nodes and #{graph.edges.size()} edges".log()
       callback(graph)
+
+  #importService.find_Using_Is 'Folder', (folder_Ids)->
+  #folder_Id = folder_Ids[2]
 
 module.exports = get_Graph

@@ -14,8 +14,8 @@ describe 'utils | test-Vis_Graph |', ->
     visGraph.add_Node('a' ).assert_Is_Object().id.assert_Is('a')
     visGraph.nodes.assert_Size_Is(1)
     (visGraph.add_Node('a' ) == null).assert_Is_True()
-    (visGraph.add_Node(    ) == null).assert_Is_True()
-    (visGraph.add_Node(null) == null).assert_Is_True()
+    (visGraph.add_Node(    ) == null).assert_Is_False()
+    (visGraph.add_Node(null) == null).assert_Is_False()
     visGraph.add_Node('b' ).assert_Is_Object().id.assert_Is('b')
     visGraph.nodes_Ids.assert_Contains    ('a' )
     visGraph.nodes_Ids.assert_Contains    ('b')
@@ -54,3 +54,11 @@ describe 'utils | test-Vis_Graph |', ->
     visGraph = Vis_Graph.ctor()
     visGraph.add_Node('a')
     visGraph.nodes_By_Id()['a'].assert_Is_Object()
+
+  it 'Vis_Edge - from_Node,to_Node',->
+    visGraph = Vis_Graph.ctor()
+    edge = visGraph.add_Edge('a','b')
+    edge.graph().assert_Is_Equal_To(visGraph)
+    edge.from_Node().id.assert_Is('a')
+    edge.to_Node()  .id.assert_Is('b')
+

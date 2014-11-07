@@ -51,7 +51,7 @@ class TeamMentor_ASMX
 
   login: (username, password, callback) =>
     @_json_Post "Login", {username:username, password:password}, (json, response) ->
-      console.log json
+      #console.log json
       callback(json.d)
 
 module.exports = TeamMentor_Service

@@ -1,5 +1,5 @@
 
-get_Graph = (graphService, callback)->
+get_Graph = (graphService, params, callback)->
   graphService.query "all", null, (data) =>
     DataSet   = require('vis/lib/DataSet')
     nodesAdded   = []

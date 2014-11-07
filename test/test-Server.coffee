@@ -21,22 +21,27 @@ describe 'test-Server |',->
         expect(server.start  ).to.be.an('function')
         expect(server.stop   ).to.be.an('function')
 
-        expect(server.start()).to.equal(server)
+        request  server.url(), (error, response, data)->
+          if (error == null)  # means the server is already running
+            done()
+            return
 
-        expect(server._server.close         ).to.be.an('function')
-        expect(server._server.getConnections).to.be.an('function')
+          expect(server.start()).to.equal(server)
 
-        request  server.url() + '/404', (error, response,data)->
-            expect(error).to.equal(null)
-            expect(response.statusCode).to.equal(404)
+          expect(server._server.close         ).to.be.an('function')
+          expect(server._server.getConnections).to.be.an('function')
 
-            server.stop()
+          request  server.url() + '/404', (error, response,data)->
+              expect(error).to.equal(null)
+              expect(response.statusCode).to.equal(404)
 
-            request server.url(), (error, response,data)->
-                expect(error        ).to.not.equal(null)
-                expect(error.message).to.equal('connect ECONNREFUSED')
-                expect(response     ).to.equal(undefined)
-                done()
+              server.stop()
+
+              request server.url(), (error, response,data)->
+                  expect(error        ).to.not.equal(null)
+                  expect(error.message).to.equal('connect ECONNREFUSED')
+                  expect(response     ).to.equal(undefined)
+                  done()
 
     it 'url',->
         expect(server.url()).to.equal("http://localhost:1332")
@@ -58,5 +63,6 @@ describe 'test-Server |',->
                         '/lib/jquery.min.js'
                         '/data/graphs/scripts/:script.js'
                         '/data/:dataId/:queryId/:graphId'
+                        '/data/:dataId/:queryId/:graphId/:searchId'
                       ]
       expect(server.routes()).to.deep.equal(expectedPaths)

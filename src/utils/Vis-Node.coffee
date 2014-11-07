@@ -13,27 +13,23 @@ class Vis_Node
   add_Edge: (to,label)=>
     @graph().add_Edge(@id,to,label)
 
-  _color: (value)=>
-    @['color']=value
+  set: (key, value)=>
+    @[key]=value
     @
-  _mass: (value)=>
-    @['mass']=value
-    @
-  _fontColor: (value)=>
-    @['fontColor']=value
-    @
-  _fontSize: (value)=>
-    @['fontSize']=value
-    @
-  _shape: (value)=>
-    @['shape']=value
-    @
+  _color    : (value)=> @set('color'    , value)
+  _mass     : (value)=> @set('mass'     , value)
+  _fontColor: (value)=> @set('fontColor', value)
+  _fontSize : (value)=> @set('fontSize' , value)
+  _label    : (value)=> @set('label'    , value)
+  _shape    : (value)=> @set('shape'    , value)
+  _title    : (value)=> @set('title'    , value)
 
   #colors
   black       : ()=> @_color('black')._fontColor('white')
   blue        : ()=> @_color('blue')
-  green       : ()=> @_color('green')
-  red         : ()=> @_color('red')
+  green       : ()=> @_color('green')._fontColor('white')
+  red         : ()=> @_color('red')._fontColor('white')
+  white       : ()=> @_color('white')
 
   #shapes
   box         : ()-> @_shape('box')
