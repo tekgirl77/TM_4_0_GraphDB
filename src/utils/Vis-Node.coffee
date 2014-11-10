@@ -43,7 +43,4 @@ class Vis_Node
   triangle    : ()-> @_shape('triangle')
   triangleDown: ()-> @_shape('triangleDown')
 
-
-
-
 module.exports = Vis_Node

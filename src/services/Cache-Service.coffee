@@ -102,5 +102,3 @@ class CacheService
           callback response.body, response
 
 module.exports = CacheService
-
-

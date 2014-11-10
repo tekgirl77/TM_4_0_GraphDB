@@ -1,12 +1,14 @@
 Cache_Service    = require('/src/services/Cache-Service'.append_To_Process_Cwd_Path())
-Data_Service     = require('/src/services/Data-Service'.append_To_Process_Cwd_Path())
+#Import_Service     = require('/src/services/Import-Service'.append_To_Process_Cwd_Path())
 #Data_Import_Util = require('/src/utils/Data-Import-Util'.append_To_Process_Cwd_Path())
 Guid             = require('/src/utils/Guid'.append_To_Process_Cwd_Path())
 async            = require 'async'
 
-addData = (dataImport,callback)->
+addData = (options,callback)->
+  dataImport = options.data
 
-  dataService = new Data_Service('tm-uno-first')
+  #dataService = new Import_Service('tm-uno-first')
+  dataService = options.importService
   import_Folder = dataService.path_Name.path_Combine('_xml_import')                              .assert_That_Folder_Exists()
   data_File     = import_Folder        .path_Combine('be5273b1-d682-4361-99d9-6234f2d47eb7.json').assert_That_File_Exists()
   uno_Json      = data_File.file_Contents()                                                      .assert_Is_Json()
@@ -102,7 +104,7 @@ addData = (dataImport,callback)->
       next()
 
   handle_Folder = (folder, next)->
-    console.log ' -> Folder : ' + folder.name
+    #console.log ' -> Folder : ' + folder.name
     search_id = new Guid('search', folder.folderId).short
     dataImport.add_Triplet(search_id, 'guid' , folder.folderId)
     dataImport.add_Triplet(search_id, 'is'   , 'Search')
@@ -136,41 +138,14 @@ addData = (dataImport,callback)->
 
   folders = uno_Json.data.subFolders #.splice(0,1)
 
-  async.each folders , handle_Folder , (err)->
-    #"ALL DONE".log()
-    console.log mappedIds
-    callback()
-
-
-
-      #articles_query_id = new Guid('articles').short
-
-      #dataImport.add_Triplet(articles_query_id, 'is'   , 'Articles')
-      #dataImport.add_Triplet(articles_query_id, 'title', 'Articles')
-
-      #dataImport.add_Triplet(queries_id, 'contains', articles_query_id)
-
-      #for guidanceItem in view.guidanceItems
+  dataService.graph.deleteDb ->
+    dataService.graph.openDb ->
+      async.each folders , handle_Folder , (err)->
+      callback()
 
 
 
 
-
-        #request = require('request')
-        #request 'https://tmdev01-sme.teammentor.net/jsonp/' + guidanceItem, (error, response, data)->
-        #  console.log data
-        #break;
-      #console.log view
-      #break
-    #break
-
- # callback()
-
-#
-#  console.log dataImport.data
-#
-#  dataImport.graph_From_Data callback
-#  console.log Object.keys(json).size()
 
 module.exports = addData
 

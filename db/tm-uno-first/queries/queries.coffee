@@ -1,6 +1,7 @@
 Data_Import_Util = require('/src/utils/Data-Import-Util'.append_To_Process_Cwd_Path())
 
-get_Graph = (graphService, params, callback)->
+get_Graph = (options, callback)->
+  graphService = options.importService.graph
 
   db = graphService.db
   db.search [

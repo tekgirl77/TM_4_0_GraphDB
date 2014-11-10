@@ -1,5 +1,5 @@
 levelgraph     = require('levelgraph'   )
-Db_Service     = require('./../services/Db-Service'  )
+Import_Service = require('./../services/Import-Service')
 GitHub_Service = require('./../services/GitHub-Service')
 Jade_Service   = require('./../services/Jade-Service')
 
@@ -14,18 +14,18 @@ class DataControler
 
   json_Raw_Data: (req,res)=>
     name = req.params.name
-    dbService = new Db_Service(name)
-    dbService.load_Data ->                  # note that at the moment this is loading all data all the time
+    importService = new Import_Service(name)
+    importService.load_Data ->                  # note that at the moment this is loading all data all the time
     #dbService.graphService.openDb  ->
-      dbService.graphService.allData (data)->
-        dbService.graphService.closeDb ->
+      importService.graph.allData (data)=>
+        importService.graph.closeDb =>
           res.type 'application/json'
           res.send data.json_pretty()
 
   show_Available_Data: (req,res)=>
 
     graphFolder = process.cwd().path_Combine('/views/graphs')
-    baseFolder = new Db_Service().path_Root
+    baseFolder = new Import_Service().path_Root
     db = []
     for folder in baseFolder.folders()
       item  =

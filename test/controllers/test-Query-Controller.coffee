@@ -26,7 +26,7 @@ describe 'controllers | test-Query-Controller |', ->
 
     it '/data/:dataId/:queryId' , (done)->
 
-      supertest(app).get('/data/v0.1/simple')
+      supertest(app).get('/data/data-test/simple')
         .expect(200)
         .expect('Content-Type', /json/)
         .end (error, response) ->
@@ -35,15 +35,15 @@ describe 'controllers | test-Query-Controller |', ->
           expect(graph       ).to.be.an('object')
           expect(graph.nodes).to.be.an('array')
           expect(graph.edges).to.be.an('array')
-          expect(graph.nodes.size()).to.equal(8)
-          expect(graph.edges.size()).to.equal(8)
-          expect(graph.nodes.first()).to.deep.equal({'id': 'a'})
-          expect(graph.edges.first()).to.deep.equal({from:'a' , to: 'c1'})
+          expect(graph.nodes.size()).to.equal(14)
+          expect(graph.edges.size()).to.equal(12)
+          expect(graph.nodes.fourth()).to.deep.equal({'id': 'articleA'})
+          expect(graph.edges.fourth()).to.deep.equal({from:'a' , to: 'c1'})
 
           done()
 
     it '/data/:dataId/:queryId?a=b' , (done)->
-      supertest(app).get('/data/v0.1/simple?a=b')
+      supertest(app).get('/data/data-test/simple?a=b')
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end (error, response) ->

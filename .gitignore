@@ -1,3 +1,4 @@
 node_modules
 .tmCache
 npm-debug.log
+.dist

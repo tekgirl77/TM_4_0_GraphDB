@@ -5,9 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha --compilers coffee:coffee-script/register --recursive -R list",
-    "watch": "touch .tmCache/.deleteCacheNext && mocha -w --compilers coffee:coffee-script/register --watch-extensions jade  --recursive -R list",
-    "dev": "./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js"
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register --recursive -R list",
+    "test-js":"./node_modules/mocha/bin/mocha --recursive -R list ./.dist/test",
+    "clear-cache": "touch .tmCache/.deleteCacheNext",
+    "watch": "mocha -w --compilers coffee:coffee-script/register --watch-extensions jade  --recursive -R list",
+    "watch-js":"./node_modules/mocha/bin/mocha --recursive -R list -w ./.dist/test",
+    "dev": "./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js",
+    "compile":"coffee --output ./.dist/src --compile ./src &&  coffee --output ./.dist/test --compile ./test"
   },
   "repository": {
     "type": "git",

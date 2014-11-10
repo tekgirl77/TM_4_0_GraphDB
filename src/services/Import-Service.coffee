@@ -1,5 +1,10 @@
+require('fluentnode')
+coffeeScript       = require 'coffee-script'
+async              = require('async')
+
 Cache_Service      = require('./Cache-Service')
-Db_Service         = require('./Db-Service')
+#Db_Service         = require('./Db-Service')
+Dot_Service        = require './Dot-Service'
 #GitHub_Service     = require('./GitHub-Service')
 Graph_Service      = require('./Graph-Service')
 TeamMentor_Service = require('./TeamMentor-Service')
@@ -7,32 +12,102 @@ Guid               = require('../utils/Guid')
 Data_Import_Util   = require('../utils/Data-Import-Util')
 Vis_Graph          = require('../utils/Vis-Graph')
 
-async              = require('async')
 
 class ImportService
 
   constructor: (name)->
-    @name = name || '_tmp_import'
+    #@name = name || '_tmp_import'
+    @name          = if (name) then name else 'test'
     @cache      = new Cache_Service(@name)
-    @db         = new Db_Service(@name)
-    @graph      = @db.graphService
+    @graph      = new Graph_Service(@name)
     @teamMentor = new TeamMentor_Service();
+    @path_Root     = "db"
+    @path_Name     = "db/#{@name}"
+    @path_Data     = "#{@path_Name}/data"
+    @path_Queries  = "#{@path_Name}/queries"
  
   setup: (callback)->
-    @db.setup()
-       .load_Data(callback)
+    @path_Root   .folder_Create()
+    @path_Name   .folder_Create()
+    @path_Data   .folder_Create()
+    @path_Queries.folder_Create()
+    @graph.openDb()
+    callback()
 
+    #@load_Data(callback)
+
+  #Load DB data
+  data_Files: =>
+    @path_Data.files()
+
+  query_Files: =>
+    @path_Queries.files()
+
+  load_Data_From_Coffee: (file,callback) =>
+    #jsFile = file.replace('/db/','/.dist/db/').replace('.coffee','.js')
+    #if (jsFile and jsFile.file_Exists())
+    #  "executing js version of file: #{jsFile}".log()
+    #  add_Mappings = eval(jsFile.file_Contents().replace('}).call(this);', 'return addData;}).call(this);'))
+    #else
+    #  "executing coffee version of file: #{file}".log()
+    #  add_Mappings = require('coffee-script').eval(file.file_Contents())
+    add_Mappings = require('coffee-script').eval(file.file_Contents())
+    if typeof add_Mappings is 'function'
+      dataImport = new Data_Import_Util()
+      options = {data: dataImport, importService: @}
+      add_Mappings options, =>
+        @graph.db.put dataImport.data , callback
+    else
+      callback()
+
+  load_Data: (callback)=>
+    @graph.openDb =>
+      files = @path_Data.files()
+      loadNextFile = =>
+        file = files.pop()
+        if file is undefined
+          callback()
+        else
+          switch file.file_Extension()
+            when '.json'
+              file_Data = JSON.parse(file.file_Contents())
+              @graph.db.put file_Data, loadNextFile
+            when '.coffee'
+              @load_Data_From_Coffee(file, loadNextFile)
+            when '.dot'
+              dot_Data = file.file_Contents()
+              new Dot_Service().dot_To_Triplets dot_Data, (triplets)=>
+                @graph.db.put triplets, loadNextFile
+            else
+              console.log("not supported" + file.path_Extension())
+              loadNextFile()
+      loadNextFile()
+
+  run_Query: (queryName, params, callback)=>
+    queryFile = @path_Queries.path_Combine("#{queryName}.coffee")
+    if(queryFile.file_Not_Exists())
+      queryFile = process.cwd().path_Combine('db-queries').path_Combine("#{queryName}.coffee")
+    if(queryFile.file_Exists())
+      get_Graph = coffeeScript.eval(queryFile.fullPath().file_Contents())
+      if typeof get_Graph is 'function'
+        options = {importService:@ , params: params}
+        get_Graph options, callback
+        return
+    callback({})
+
+
+  #new object Utils
   new_Short_Guid: (title, guid)->
     new Guid(title, guid).short
 
-  new_Data_Import_Util: ->
-    new Data_Import_Util()
+  new_Data_Import_Util: (data)->
+    new Data_Import_Util(data)
 
   new_Vis_Graph: ->
     new Vis_Graph()
 
 
-
+  #add data to GraphDB
   add_Db: (type, guid, data, callback)->
     id = @new_Short_Guid(type,guid)
     importUtil = @new_Data_Import_Util()

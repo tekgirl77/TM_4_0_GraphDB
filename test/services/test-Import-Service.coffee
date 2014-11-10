@@ -2,36 +2,96 @@ Import_Service = require('./../../src/services/Import-Service')
 async          = require('async')
 
 describe 'services | test-Import-Service |', ->
+
+
   describe 'core', ->
     importService = new Import_Service()
 
     after ->
       importService.graph.deleteDb ->
-        importService.db.path_Name.folder_Delete_Recursive().assert_Is_True()
+        importService.path_Name.folder_Delete_Recursive().assert_Is_True()
 
-    it 'check ctor', ->
+    it 'check ctor()', ->
       Import_Service.assert_Is_Function()
       importService             .assert_Is_Object()
       importService.name        .assert_Is_String()
       importService.cache       .assert_Is_Object()#.assert_Instance_Of()
-      importService.db          .assert_Is_Object()
       importService.graph       .assert_Is_Object()
       importService.teamMentor  .assert_Is_Object()
+      importService.path_Root   .assert_Is_String()
+      importService.path_Name   .assert_Is_String()
+      importService.path_Data   .assert_Is_String()
+      importService.path_Queries.assert_Is_String()
 
-      importService.name        .assert_Is '_tmp_import'
+      importService.name        .assert_Is 'test'
       importService.name        .assert_Is importService.cache.area
-      importService.name        .assert_Is importService.db.name
-      importService.name        .assert_Is importService.db.graphService.dbName
       importService.name        .assert_Is importService.graph.dbName
+      importService.path_Root   .assert_Is('db')
+      importService.path_Name   .assert_Is('db/test')
+      importService.path_Data   .assert_Is('db/test/data')
+      importService.path_Queries.assert_Is('db/test/queries')
+
+    it 'check ctor (name)', ->
+      aaaa_ImportService  = new Import_Service('aaaa')
+      aaaa_ImportService.name         .assert_Is 'aaaa'
+      aaaa_ImportService.path_Name    .assert_Is 'db/aaaa'
+      aaaa_ImportService.path_Data    .assert_Is 'db/aaaa/data'
+      aaaa_ImportService.path_Queries .assert_Is 'db/aaaa/queries'
+      aaaa_ImportService.graph.dbName .assert_Is 'aaaa'
+      aaaa_ImportService.path_Name.folder_Delete_Recursive().assert_Is_True()
 
     it 'setup', (done)->
       importService.setup.assert_Is_Function()
       (importService.graph.db is null).assert_Is_True()
       importService.setup ->
-        importService.graph.db.assert_Is_Object()
+        #importService.graph.db.assert_Is_Object()
+        importService.path_Data.assert_That_File_Exists()
+        importService.path_Queries.assert_That_File_Exists()
         importService.graph.dbPath.assert_That_File_Exists()
-        importService.db.path_Data.assert_That_File_Exists()
-        importService.db.path_Queries.assert_That_File_Exists()
+        done()
+
+    it 'data_Files',->
+      #importService  = new Db_Service().setup()
+      importService.data_Files    .assert_Is_Function()
+      importService.data_Files() .assert_Is_Array()
+      test_Data = "{ test: 'data'}"
+      test_File = importService.path_Data.path_Combine("testData.json")
+      test_Data.saveAs(test_File).assert_Is_True()
+      importService.data_Files() .assert_Not_Empty()
+      importService.data_Files() .assert_Contains(test_File.realPath())
+      test_File.file_Delete()    .assert_Is_True()
+      importService.data_Files() .assert_Not_Contains(test_File.realPath())
+
+    it 'query_Files',->
+      importService.query_Files  .assert_Is_Function()
+      importService.query_Files().assert_Is_Array()
+      test_Data = "{ test: 'query'}"
+      test_File = importService.path_Queries.path_Combine("testQuery.json")
+      test_Data.saveAs(test_File).assert_Is_True()
+      importService.query_Files().assert_Not_Empty()
+      importService.query_Files().assert_Contains(test_File.realPath())
+      test_File.file_Delete()    .assert_Is_True()
+      importService.query_Files().assert_Not_Contains(test_File.realPath())
+
+
+    it 'run_Query', (done)->
+      importService.run_Query.assert_Is_Function()
+
+      query_Name = 'testQuery'
+      coffee_Query = '''get_Graph = (params, callback)->
+                          graph = { nodes: [{'a','b'}] , edges: [{from:'a' , to: 'b'}] }
+                          callback(graph)
+                        module.exports = get_Graph '''
+      coffee_File = importService.path_Queries.path_Combine("#{query_Name}.coffee")
+      coffee_Query.saveAs(coffee_File).assert_Is_True()
+
+      importService.run_Query query_Name, {}, (graph)->
+        graph.assert_Is_Object()
+
+        graph.nodes.assert_Is_Array()
+        graph.edges.assert_Is_Array()
+        graph.nodes.first().assert_Is_Equal_To({'a','b'})
+        graph.edges.first().assert_Is_Equal_To({from:'a' , to: 'b'})
         done()
 
     it 'add_Db and find_Subject', (done)->
@@ -58,6 +118,100 @@ describe 'services | test-Import-Service |', ->
       importService.new_Vis_Graph.assert_Is_Function()
                                  .ctor().nodes.assert_Is_Array()
 
+
+  describe 'load data |', ->
+    importService = null
+    path_Data     = null
+    json_File_1   = null
+    json_File_2   = null
+    coffee_File_1 = null
+    coffee_File_2 = null
+    dot_File_1    = null
+    dot_File_2    = null
+
+    json_Data_1   = JSON.stringify [{ subject: 'a', predicate : 'b', object:'c'}, { subject: 'a', predicate : 'd', object:'f'}]
+    json_Data_2   = JSON.stringify [{ subject: 'g', predicate : 'b', object:'c'}, { subject: 'g', predicate : 'd', object:'f'}]
+    coffee_Data_1   = '''add_Data = (options,callback)->
+                           options.data.addMappings('a1', [{'b1':'c1'},{ 'd1':'f1'}])
+                           callback()
+                         module.exports = add_Data '''
+    coffee_Data_2   = '''add_Data = (options,callback)->
+                           options.data.addMapping('g1','b1','c1')
+                           callback()
+                         module.exports = add_Data '''
+    dot_Data_1      = '''graph graphname {
+                                            a2 -- b2 -- c2;
+                                            b2 -- d2;
+                                          }'''
+    dot_Data_2      = '''{ d2 -- e3 }'''
+
+    before (done)->
+      importService = new Import_Service('temp_load')
+      importService.setup ->
+        path_Data     = importService.path_Data
+
+        json_File_1   = path_Data.path_Combine("testData_1.json"  )
+        json_File_2   = path_Data.path_Combine("testData_2.json"  )
+        coffee_File_1 = path_Data.path_Combine("testData_1.coffee")
+        coffee_File_2 = path_Data.path_Combine("testData_2.coffee")
+        dot_File_1    = path_Data.path_Combine("testData_1.dot"   )
+        dot_File_2    = path_Data.path_Combine("testData_2.dot"   )
+        done()
+
+    afterEach (done)->
+      file.file_Delete() for file in  path_Data.files()
+      path_Data.files().assert_Empty()
+      importService.graph.deleteDb ->
+        done()
+
+    after ->
+      importService.path_Name.folder_Delete_Recursive().assert_Is_True()
+
+    it 'load_Data (json)', (done)->
+      json_Data_1.saveAs(json_File_1)
+      json_Data_2.saveAs(json_File_2)
+      path_Data.files().assert_Size_Is(2)
+      importService.load_Data ->
+        importService.graph.allData (data)->
+          data.assert_Is_Array().assert_Size_Is(4)
+          done()
+
+    it 'load_Data (coffee)', (done)->
+      coffee_Data_1.saveAs(coffee_File_1)
+      coffee_Data_2.saveAs(coffee_File_2)
+      path_Data.files().assert_Size_Is(2)
+      importService.load_Data ->
+        importService.graph.allData (data)->
+          data.assert_Is_Array().assert_Size_Is(3)
+          done()
+
+
+    it 'load_Data (dot)', (done)->
+      dot_Data_1.saveAs(dot_File_1)
+      dot_Data_2.saveAs(dot_File_2)
+      path_Data.files().assert_Size_Is(2)
+
+      importService.load_Data ->
+        importService.graph.allData (data)->
+          data.assert_Is_Array().assert_Size_Is(4)
+          done()
+
+    it 'load_Data (all formats)', (done)->
+      coffee_Data_1.saveAs(coffee_File_1)
+      coffee_Data_2.saveAs(coffee_File_2)
+      json_Data_1  .saveAs(json_File_1  )
+      json_Data_2  .saveAs(json_File_2  )
+      dot_Data_1   .saveAs(dot_File_1   )
+      dot_Data_2   .saveAs(dot_File_2   )
+
+      path_Data.files().assert_Size_Is(6)
+
+      importService.load_Data ->
+        importService.graph.allData (data)->
+          data.assert_Is_Array().assert_Size_Is(11)
+          done()
+
+
   describe 'load Uno library',->
     importService = null
     db            = null
@@ -68,7 +222,6 @@ describe 'services | test-Import-Service |', ->
 
     before (done)->
       importService = new Import_Service('_temp_Uno')
-      db            = importService.db
       cache         = importService.cache
       graph         = importService.graph
       teamMentor    = importService.teamMentor
@@ -79,13 +232,13 @@ describe 'services | test-Import-Service |', ->
           done()
 
     after (done)->
-      db.path_Name.folder_Delete_Recursive()    .assert_Is_True()
+      importService.path_Name.folder_Delete_Recursive()    .assert_Is_True()
       cache.delete_CacheFolder()                  .assert_Is_True()
-      #teamMentor.cacheService.delete_CacheFolder().assert_Is_True()
+
       graph.deleteDb ->
-        graph.dbPath       .assert_That_Folder_Not_Exists()
-        db.path_Data       .assert_That_Folder_Not_Exists()
-        db.path_Queries    .assert_That_Folder_Not_Exists()
+        graph.dbPath              .assert_That_Folder_Not_Exists()
+        importService.path_Data   .assert_That_Folder_Not_Exists()
+        importService.path_Queries.assert_That_Folder_Not_Exists()
         cache.cacheFolder().assert_That_Folder_Not_Exists()
         done()
 
@@ -160,19 +313,25 @@ describe 'services | test-Import-Service |', ->
 
   #return
   # temporarily here
-  describe.only 'load tm-uno data set', ->
-    Db_Service    = require('./../../src/services/Db-Service')
-    dbService     = null
+  describe 'load tm-uno data set', ->
+    @timeout 10000  # for the cases when data needs to be loaded from the network
+    importService     = null
 
     before (done)->
-      dbService     = new Db_Service('tm-uno')
-      dbService.graphService.openDb done
+      importService     = new Import_Service('tm-uno')
+      #"opening the db".log()
+      importService.graph.openDb done
+
+    after (done)->
+      #"closing the db".log()
+      importService.graph.closeDb  done
+
 
     it 'loadData',  (done)->
-      dbService.load_Data ->
-        dbService.graphService.allData (data)->
+      importService.load_Data.assert_Is_Function()
+      importService.load_Data ->
+        importService.graph.allData (data)->
           data.assert_Is_Array()
-          #console.log data.length
           done()
 
     #it 'test query',(done)->
@@ -184,25 +343,25 @@ describe 'services | test-Import-Service |', ->
     #    done()
 
     it 'run query - library', (done)->
-      dbService.run_Query 'library',  {},(graph)->
-        #console.log graph
+      importService.run_Query 'library',  {},(graph)->
+        #console.log graph.nodes.size()
         graph.nodes.assert_Is_Object()
         done()
 
     it 'run query - library-all', (done)->
-        dbService.run_Query 'library-all',  {},(graph)->
+        importService.run_Query 'library-all',  {},(graph)->
           #console.log graph
           graph.nodes.assert_Is_Object()
           done()
 
     it 'run query - folders-and-views', (done)->
-      dbService.run_Query 'folders-and-views', {}, (graph)->
+      importService.run_Query 'folders-and-views', {}, (graph)->
         #console.log graph.json_pretty()
         graph.nodes.assert_Is_Object()
         done()
 
-    it 'run query - article', (done)->
-      dbService.run_Query 'folder-metadata',  {show:'Canonicalization'}, (graph)->
+    it 'run query - folder-metadata', (done)->
+      importService.run_Query 'folder-metadata',  {show:'Canonicalization'}, (graph)->
         #console.log graph.json_pretty()
         graph.nodes.assert_Is_Object()
         done()

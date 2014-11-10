@@ -1,15 +1,21 @@
-Cache_Service    = require('./../../../src/services/Cache-Service')
-Data_Service     = require('./../../../src/services/Db-Service')
-Data_Import_Util = require('./../../../src/utils/Data-Import-Util')
-Guid             =  require('./../../../src/utils/Guid')
+return #long running test - move into CI server
 
-return
+Cache_Service    = require('./../../src/services/Cache-Service')
+Import_Service   = require('./../../src/services/Import-Service')
+Data_Import_Util = require('./../../src/utils/Data-Import-Util')
+Guid             =  require('./../../src/utils/Guid')
+
 describe 'db | tm-data | test-data-import |', ->
+  dataService   = null
+  import_Folder = null
+  data_File     = null
+  json          = null
 
-  dataService = new Db_Service('tm-uno-first')
-  import_Folder = dataService.path_Name.path_Combine('_xml_import')                              .assert_That_Folder_Exists()
-  data_File     = import_Folder        .path_Combine('be5273b1-d682-4361-99d9-6234f2d47eb7.json').assert_That_File_Exists()
-  json          = data_File.file_Contents()                                                      .assert_Is_Json();
+  before ->
+    importService = new Import_Service('tm-uno-first')
+    import_Folder = importService.path_Name.path_Combine('_xml_import')                            .assert_That_Folder_Exists()
+    data_File     = import_Folder        .path_Combine('be5273b1-d682-4361-99d9-6234f2d47eb7.json').assert_That_File_Exists()
+    json          = data_File.file_Contents()                                                      .assert_Is_Json();
 
   it 'check json data', ->
     json.name .assert_Is_Equal_To('Uno')
@@ -53,30 +59,19 @@ describe 'db | tm-data | test-data-import |', ->
     dataImport.graph_From_Data (graph)->
       #console.log graph
 
-  xit 'tm-uno-first', (done)->
-    @timeout(5000)
-    dataService = new Db_Service('tm-uno-first')
-    dataService.load_Data ->
-      dataService.graphService.allData (data)->
-        console.log(data.length)
-        dataService.graphService.deleteDb ->
-          done()
-    #dataService.run_Query 'tm-uno', (data)->
-    #  console.log data
-    #  #expect(data.size()).to.be.above(5)
-    #  done()
-
-  it 'tm-uno-first | tm-graph (query)', (done)->
-    dataService = new Db_Service('tm-uno-first')
-    dataService.load_Data ->
-      #dataService.graphService.allData (data)->
-      #  console.log(data.length)
-      #  dataService.graphService.deleteDb ->
-      #    done()
-      dataService.run_Query 'tm-graph',{},  (data)->
-        #console.log data.nodes.length
-        #  #expect(data.size()).to.be.above(5)
-        done()
+  it.only 'tm-uno-first | tm-graph (query)', (done)->
+    @timeout 100000
+    importService = new Import_Service('tm-uno-first')
+    importService.graph.deleteDb ->
+      importService.load_Data ->
+        importService.graph.allData (data)->
+          data.assert_Is_Array().assert_Not_Empty()
+          #console.log(data.length)
+          importService.run_Query 'tm-graph',{},  (data)->
+            data.nodes.assert_Is_Array().assert_Not_Empty()
+            #console.log data.nodes.length
+            #  #expect(data.size()).to.be.above(5)
+            done()
 
   it 'test tm-sme (JSON data)', (done)->
     guidanceItem = 'a330bfdd-9576-40ea-997e-e7ed2762fc3e'

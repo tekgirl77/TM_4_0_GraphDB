@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ProjectTasksOptions" suppressed-tasks="Jade">
-    <TaskOptions isEnabled="false">
-      <option name="arguments" value="--output $ProjectFileDir$/dist/$FileDirRelativeToProjectRoot$/ --compile --map $FileName$" />
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="--output $ProjectFileDir$/.dist/$FileDirRelativeToProjectRoot$/ --compile --map $FileName$" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" value="Compiles .coffee files into .js files" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="coffee" />
       <option name="immediateSync" value="true" />
       <option name="name" value="CoffeeScript" />
-      <option name="output" value="$ProjectFileDir$/dist/$FileDirRelativeToProjectRoot$/$FileNameWithoutExtension$.js:$ProjectFileDir$/dist/$FileDirRelativeToProjectRoot$/$FileNameWithoutExtension$.map" />
+      <option name="output" value="$ProjectFileDir$/.dist/$FileDirRelativeToProjectRoot$/$FileNameWithoutExtension$.js:$ProjectFileDir$/dist/$FileDirRelativeToProjectRoot$/$FileNameWithoutExtension$.map" />
       <option name="outputFilters">
         <array />
       </option>

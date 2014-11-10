@@ -1,12 +1,10 @@
 async             = require 'async'
-Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
+#Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
 
-get_Graph = (graphService, params, callback)->
-  importService     = new Import_Service('tm-uno')
-  importService.db.setup()
-  importService.graph = graphService
+get_Graph = (options, callback)->
 
-  graph = importService.new_Vis_Graph()
+  importService = options.importService
+  graph         = importService.new_Vis_Graph()
   graph.options._smoothCurves(false)
   graph.options.nodes.box()._mass(1)
   graph.options.edges.arrow()

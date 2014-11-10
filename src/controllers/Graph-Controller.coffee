@@ -1,5 +1,5 @@
 levelgraph     = require('levelgraph'   )
-Data_Service   = require('./../services/Db-Service'  )
+Import_Service = require('./../services/Import-Service')
 Jade_Service = require('./../services/Jade-Service')
 
 class DataControler
@@ -21,15 +21,13 @@ class DataControler
     graphId      = req.params.graphId
 
     queryParams  = req._parsedUrl.search || "?"
-    console.log "queryParams: " + queryParams
 
     view         = "/views/graphs/#{graphId}.jade"
     dataUrl      = "/data/#{dataId}/#{queryId}#{queryParams}"
-    console.log dataUrl
     viewModel    = { dataUrl: dataUrl}
 
 
-    html = new Jade_Service().enableCache(false)
+    html = new Jade_Service().enableCache()
                              .renderJadeFile(view, viewModel)
     res.send html
 

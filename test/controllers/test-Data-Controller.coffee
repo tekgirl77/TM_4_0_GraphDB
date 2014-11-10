@@ -47,35 +47,36 @@ describe 'controllers | test-Data-Controller |', ->
                       expect(firstDataId.attr('target')).to.equal('_blank')
 
                       firstQueryId = $('#queries a')
-                      expect(firstQueryId.html()        ).to.equal('nice-graph')
-                      expect(firstQueryId.attr('id'    )).to.equal('nice-graph')
-                      expect(firstQueryId.attr('href'  )).to.equal('/data/data-test/nice-graph')
+                      expect(firstQueryId.html()        ).to.equal('simple')
+                      expect(firstQueryId.attr('id'    )).to.equal('simple')
+                      expect(firstQueryId.attr('href'  )).to.equal('/data/data-test/simple')
                       expect(firstQueryId.attr('target')).to.equal('_blank')
 
                       firstGraphId = $('#graphs a')
                       expect(firstGraphId.html()        ).to.equal('graph-wide')
                       expect(firstGraphId.attr('id'    )).to.equal('graph-wide')
-                      expect(firstGraphId.attr('href'  )).to.equal('/data/data-test/nice-graph/graph-wide')
+                      expect(firstGraphId.attr('href'  )).to.equal('/data/data-test/simple/graph-wide')
                       expect(firstGraphId.attr('target')).to.equal('_blank')
                       done()
 
     it '/data/:name' , (done)->
-      supertest(app).get('/data/v0.1')
+      supertest(app).get('/data/data-test')
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end (error, response) ->
                       expect(error).to.be.null
                       json = JSON.parse(response.text)
                       expect(json       ).to.be.an('array')
-                      expect(json.size()).to.equal(8)
-                      expect(json.first().subject  ).to.equal('a')
-                      expect(json.first().predicate).to.equal('b1')
-                      expect(json.first().object   ).to.equal('c1')
+                      expect(json.size()).to.equal(12)
+                      expect(json.first() .subject  ).to.equal('Principles')
+                      expect(json.first() .predicate).to.equal('have')
+                      expect(json.first() .object   ).to.equal('Guidelines')
+                      expect(json.fourth().subject  ).to.equal('a')
+                      expect(json.fourth().predicate).to.equal('b1')
+                      expect(json.fourth().object   ).to.equal('c1')
                       done()
 
-  describe 'default data sets |', ->
-
-
+  ###describe 'default data sets |', ->
     it '/data/v0.1-gist' , (done)->
       supertest(app).get("/data/v0.1-gist")
                     .expect(200)
@@ -89,3 +90,17 @@ describe 'controllers | test-Data-Controller |', ->
                       expect(json.first().predicate).to.equal('Summary')
                       expect(json.first().object   ).to.equal('...')
                       done()
+
+  #this is the code that was inside the v0.1-gist.coffee file
+
+  GitHub_Service = require(process.cwd() + '/src/services/GitHub-Service')
+
+  add_Data = (dataUtil, callback)->
+    gist_Id   = '456938ffc68d151bea96'
+    gist_File = 'article-data.json'
+    new GitHub_Service().enableCache().gist gist_Id, gist_File, (gistData) ->
+      dataUtil.data = JSON.parse(gistData.content)
+      callback()
+  module.exports = add_Data
+
+  ###

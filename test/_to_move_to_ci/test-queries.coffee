@@ -1,16 +1,20 @@
+return #long running test - move into CI server
+
 expect          = require('chai'     ).expect
 
-Db_Service = require('./../../../src/services/Db-Service')
+Import_Service   = require('./../../src/services/Import-Service')
 
 describe 'db | tm-data | test-queries |', ->
+  importService    = null
+  graphService = null
 
-  dbService    = new Db_Service('tm-data')
-  graphService = dbService.graphService
   before (done)->
-    expect(dbService   ).to.be.an('object')
-    expect(graphService).to.be.an('object')
+    importService = new Import_Service('tm-data')
+    graphService  = importService.graph
+    expect(importService ).to.be.an('object')
+    expect(graphService  ).to.be.an('object')
 
-    dbService.load_Data ->
+    importService.load_Data ->
       graphService.allData (data)->
         expect(data.length).to.be.above(50)
         done()
@@ -82,12 +86,12 @@ describe 'db | tm-data | test-queries |', ->
 
 
   it 'query - articles', (done)->
-    dbService.run_Query 'articles', {},  (data)->
+    importService.run_Query 'articles', {},  (data)->
       #console.log data
       expect(data.nodes.size()).to.be.above(10)
       done()
   it 'query - articles-by-weight', (done)->
-    dbService.run_Query 'articles-by-weight', {}, (data)->
+    importService.run_Query 'articles-by-weight', {}, (data)->
       #console.log data
       expect(data.size()).to.be.above(5)
       done()

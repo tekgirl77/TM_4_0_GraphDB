@@ -106,16 +106,17 @@ describe 'services | test-Graph-Service |', ->
   describe 'open and close of dbs |', ->
     it 'confirm that open_Dbs stores db ref', (done)->
       graphService  = new Graph_Service('_tm_Db1')
-      Object.keys(Graph_Service.open_Dbs).assert_Size_Is(0)
+      originalSize = Graph_Service.open_Dbs.keys().size();
+      #Object.keys(Graph_Service.open_Dbs).assert_Size_Is(0)
       graphService.openDb ->
         db = graphService.db
-        Object.keys(Graph_Service.open_Dbs).assert_Size_Is(1)
+        Graph_Service.open_Dbs.keys().assert_Size_Is(originalSize + 1)
         graphService.openDb ->
           db.assert_Is_Equal_To(graphService.db)
           db.assert_Is_Equal_To(Graph_Service.open_Dbs[graphService.dbPath])
-          Object.keys(Graph_Service.open_Dbs).assert_Size_Is(1)
+          Graph_Service.open_Dbs.keys().assert_Size_Is(originalSize + 1)
           graphService.closeDb ->
-            Object.keys(Graph_Service.open_Dbs).assert_Size_Is(0)
+            Graph_Service.open_Dbs.keys().assert_Size_Is(originalSize)
             graphService.dbPath.assert_That_File_Exists()
             graphService.deleteDb ->
               graphService.dbPath.assert_That_File_Not_Exists()

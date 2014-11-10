@@ -1,5 +1,5 @@
 levelgraph     = require('levelgraph'   )
-Db_Service   = require('./../services/Db-Service'  )
+Import_Service = require('./../services/Import-Service')
 GitHub_Service = require('./../services/GitHub-Service')
 
 class QueryControler
@@ -15,12 +15,12 @@ class QueryControler
     dataId      = req.params.dataId
     queryId     = req.params.queryId
     queryParams = req.query || {}
-    dbService = new Db_Service(dataId)
+    importService = new Import_Service(dataId)
 
-    dbService.load_Data ->                        # loads all data with all requests
+    importService.load_Data ->                        # loads all data with all requests
     #dbService.graphService.openDb ->
-      dbService.run_Query queryId, queryParams, (graph)->
-        dbService.graphService.closeDb ->
+      importService.run_Query queryId, queryParams, (graph)->
+        importService.graph.closeDb ->
         #dbService.graphService.deleteDb ->
           res.type 'application/json'
           res.header('Access-Control-Allow-Origin', '*')

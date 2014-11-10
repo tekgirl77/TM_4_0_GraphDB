@@ -1,9 +1,11 @@
-get_Graph = (graphService, params, callback)->
+get_Graph = (options, callback)->
 
-  graphService.db.nav("Article").archIn('is').as('articleId')
-              .archOut('title').as('title')
-              .solutions (err, results)->
-                mapData(results)
+  db = options.importService.graph.db
+
+  db.nav("Article").archIn('is').as('articleId')
+                   .archOut('title').as('title')
+                   .solutions (err, results)->
+                     mapData(results)
 
 
   mapData = (data)->

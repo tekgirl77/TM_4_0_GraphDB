@@ -1,5 +1,5 @@
 async             = require 'async'
-Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
+#Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
 importService     = null
 library           = null
 library_Name      = 'UNO'
@@ -12,19 +12,19 @@ if not library_Name
 #console.log "[tm-uno] Library name is: #{library_Name} \n"
 
 #library_Name      = 'Java'
-#library_Name       = 'iOS'
+library_Name       = 'iOS'
 #library_Name       = 'C++'
 #library_Name       = "PCI DSS Compliance"
 #library_Name       = "CWE"
 
 setupDb = (callback)=>
-  importService     = new Import_Service('tm-uno')
-  importService.db.setup()
-  importService.graph.deleteDb ->
-    importService.graph.openDb ->
-      importService.teamMentor.library library_Name, (data) ->
-        library = data
-        callback()
+  #importService     = new Import_Service('tm-uno')
+  #importService.db.setup()
+  #importService.graph.deleteDb ->
+  importService.graph.openDb ->
+    importService.teamMentor.library library_Name, (data) ->
+      library = data
+      callback()
 
 import_Article = (article, next)->
   importService.teamMentor.article article.guid, (articleData)->
@@ -55,12 +55,12 @@ import_Folders = (parent, folders, next)->
   foldersToAdd = ({guid: folder.folderId, title: folder.name, parent:parent, views:folder.views} for folder in folders)
   async.each foldersToAdd, import_Folder,-> next()
 
-addData = (dataImport,callback)->
+addData = (params,callback)->
+  importService = params.importService
   setupDb ->
       importService.add_Db_using_Type_Guid_Title 'Library', library.libraryId, library.name, (library_Id)->
         import_Folders library_Id, library.subFolders, ->
           import_Views library_Id, library.views, ->
             callback()
-
 
 module.exports = addData

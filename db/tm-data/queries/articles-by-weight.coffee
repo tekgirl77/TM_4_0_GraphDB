@@ -1,6 +1,6 @@
-get_Graph = (graphService, params, callback)->
+get_Graph = (options, callback)->
 
-  db = graphService.db
+  db = options.importService.graph.db
   db.search [
               { subject: db.v('xref')      , predicate: 'weight', object: db.v('weight')}
               { subject: db.v('xref')      , predicate: 'target', object: db.v('article-id')}

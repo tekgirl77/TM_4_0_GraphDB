@@ -12,7 +12,6 @@ class Vis_Graph
     @nodes_Ids   = []
 
   add_Node: (id, label)=>
-    return null if not id
     if id not in @nodes_Ids
       new_Node = new Vis_Node(id, label,@)
       @nodes_Ids.push(new_Node.id)

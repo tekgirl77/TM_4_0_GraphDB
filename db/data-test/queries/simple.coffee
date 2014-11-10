@@ -1,7 +1,9 @@
-get_Graph = (graphService, params, callback)->
+get_Graph = (options, callback)->
 
-  if( params and params.a)
-    callback(params)
+  graphService = options.importService.graph
+
+  if( options.params and options.params.a)
+    callback(options.params)
     return;
 
   graphService.allData (data)->

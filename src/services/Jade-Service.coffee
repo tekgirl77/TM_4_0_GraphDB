@@ -74,4 +74,4 @@ class JadeService
 
 #  @.config.createCacheFolders();                   # ensure cache folders exists
 
-module.exports = JadeService;
+module.exports = JadeService
