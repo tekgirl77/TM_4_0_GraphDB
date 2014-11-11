@@ -1,4 +1,5 @@
 async             = require 'async'
+cheerio           = require 'cheerio'
 #Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
 
 
@@ -6,7 +7,9 @@ get_Graph = (options, callback)->
 
   importService = options.importService
   params        = options.params
+
   graph         = importService.new_Vis_Graph()
+
   graph.options.nodes.box()#._mass(2)
   graph.options.edges.arrow().widthSelectionMultiplier = 5
 
@@ -14,6 +17,7 @@ get_Graph = (options, callback)->
   phase_Node      = graph.add_Node('Phase'     ).circle().black()._mass(5)
   technology_Node = graph.add_Node('Technology').circle().black()._mass(5)
   type_Node       = graph.add_Node('Type'      ).circle().black()._mass(5)
+
 
   #console.log "params: #{params}"
 
@@ -29,14 +33,24 @@ get_Graph = (options, callback)->
         phase      = article.Metadata.Phase
         technology = article.Metadata.Technology
         type       = article.Metadata.Type
-
+        html       = article.Content.Data_Json
+        summary    = ""
+        if (article.Content.DataType.lower() is 'html')
+          $          = cheerio.load(html.substring(0,400))
+          summary    = $('p').text().substring(0,200).trim()
+        else
+          summary = html.substring(0,200).replace(/\*/g,'').replace(/\=/g,'')
         graph.add_Edge('Category'   , category  )
         graph.add_Edge('Phase'      , phase     )
         graph.add_Edge('Technology' , technology)
         graph.add_Edge('Type'       , type      )
 
         format_Node = (node)->
-          node.circle()._label('A').set('guid', id).set('title', title)._color('lightGray')
+          node.circle()._label('A')
+                       .set('guid', id)
+                       .set('title', title)
+                       .set('summary', summary)
+                       ._color('lightGray')
 
         format_Edge_To_Node = (edge)->
           format_Node(edge.to_Node())
@@ -68,6 +82,7 @@ get_Graph = (options, callback)->
       async.each article_Ids, map_Article, next
 
   map_Articles_In_View =  (view_Id,parent,next)->
+    #"mapping view: #{view_Id}".log()
     importService.get_Subject_Data view_Id, (view_Data)->
       view_Node = graph.add_Node(view_Id, 'view: ' + view_Data.title)._color('#aabbcc')._mass(5)
       view_Node.add_Edge("#{view_Id}_Category"  ).to_Node()._label('C')._title('Category'  ).circle().black()._mass(5)
@@ -82,22 +97,28 @@ get_Graph = (options, callback)->
         next()
 
   map_Articles_In_Folder = (folder_Id, next)->
+    #"mapping folder: #{folder_Id}".log()
     importService.get_Subject_Data folder_Id, (folder_Data)->
       graph.add_Node(folder_Id, 'folder: ' + folder_Data.title)._color('orange')._fontSize(30)._mass(3)
       if (folder_Data.contains)
-        async.each folder_Data.contains, ((item, next)-> map_Articles_In_View(item,folder_Id,next)), next
+        view_Ids =  if typeof(folder_Data.contains) != 'string' then folder_Data.contains else [folder_Data.contains]
+        async.each view_Ids, ((item, next)-> map_Articles_In_View(item,folder_Id,next)), next
       else
         next()
 
-  folder_Name = 'Authorization'
-  if (params && params.show)
-    folder_Name = params.show
-
-  importService.find_Using_Is_and_Title 'Folder', folder_Name, (folder_Ids)->
-    folder_Id = folder_Ids.first()
+  map_Folder = (folder_Id)=>
     map_Articles_In_Folder folder_Id , ->
       #"\nMapped #{graph.nodes.size()} nodes and #{graph.edges.size()} edges".log()
       callback(graph)
+
+  if (params && params.show)
+    folder_Name = params.show
+    importService.find_Using_Is_and_Title 'Folder', folder_Name, (folder_Ids)->
+      #console.log folder_Ids
+      map_Folder folder_Ids.first()
+  else
+    importService.find_Using_Is  'Folder', (folder_Ids)->
+      map_Folder folder_Ids.first()
 
   #importService.find_Using_Is 'Folder', (folder_Ids)->
   #folder_Id = folder_Ids[2]

@@ -57,12 +57,12 @@ describe 'test-Server |',->
                         '/test'
                         '/data'
                         '/data/:name'
+                        '/data/:dataId/:queryId/filter/:filterId'
                         '/data/:dataId/:queryId'
                         '/lib/vis.js'
                         '/lib/vis.css'
                         '/lib/jquery.min.js'
                         '/data/graphs/scripts/:script.js'
                         '/data/:dataId/:queryId/:graphId'
-                        '/data/:dataId/:queryId/:graphId/:searchId'
                       ]
       expect(server.routes()).to.deep.equal(expectedPaths)

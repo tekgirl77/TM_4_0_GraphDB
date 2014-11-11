@@ -12,7 +12,6 @@ class DataControler
     @server.app.get('/lib/jquery.min.js', (req,res)=> res.sendFile('/views/lib/jquery.min.js'.append_To_Process_Cwd_Path()))
     @server.app.get('/data/graphs/scripts/:script.js'          , @sendScript)
     @server.app.get('/data/:dataId/:queryId/:graphId'          , @showGraph)
-    @server.app.get('/data/:dataId/:queryId/:graphId/:searchId', @showGraph)
     @
 
   showGraph: (req,res)->

@@ -25,9 +25,12 @@ class TeamMentor_Service
       callback(libraries[name])
 
   article: (guid, callback)=>
-    url = @tmServer + "/jsonp/#{guid}"
-    @cacheService.json_GET url, (article)->
-      callback article
+    if not guid
+      callback null
+    else
+      url = @tmServer + "/jsonp/#{guid}"
+      @cacheService.json_GET url, (article)->
+        callback article
 
   login_Rest: (username,password, callback)=>
     url = @tmServer + "/rest/login/#{username}/#{password}"

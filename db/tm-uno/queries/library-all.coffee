@@ -96,7 +96,6 @@ get_Graph = (options, callback)->
 
 
   #step 1
-  #console.log('here')
   importService.find_Using_Is 'Library', (library_Ids)->
     library_Id = library_Ids.first()
     importService.get_Subject_Data library_Id, (library_Data)->

@@ -24,12 +24,14 @@ class ImportService
     @path_Root     = "db"
     @path_Name     = "db/#{@name}"
     @path_Data     = "#{@path_Name}/data"
+    @path_Filters  = "#{@path_Name}/filters"
     @path_Queries  = "#{@path_Name}/queries"
  
   setup: (callback)->
     @path_Root   .folder_Create()
     @path_Name   .folder_Create()
     @path_Data   .folder_Create()
+    @path_Filters.folder_Create()
     @path_Queries.folder_Create()
     @graph.openDb()
     callback()
@@ -95,6 +97,15 @@ class ImportService
         return
     callback({})
 
+  run_Filter: (filterName, graph, callback)=>
+    filterFile = @path_Filters.path_Combine("#{filterName}.coffee")
+    if(filterFile.file_Exists())
+      get_Data = coffeeScript.eval(filterFile.fullPath().file_Contents())
+      if typeof get_Data is 'function'
+        options = {importService:@ , graph: graph}
+        get_Data options, callback
+        return
+    callback({})
 
   #new object Utils
   new_Short_Guid: (title, guid)->
@@ -130,8 +141,7 @@ class ImportService
                            .archOut('title').as('title')
                            .bind(title_value)
                            .solutions (err,data) ->
-                             #callback if data.first() then data.first().id else null
-                            callback (item.id for item in data)
+                              callback (item.id for item in data)
 
 
   find_Subject_Contains: (subject, callback)=>
@@ -140,18 +150,22 @@ class ImportService
                   callback (item.x0 for item in data)
 
   get_Subject_Data: (subject, callback)=>
-    @graph.db.get {subject: subject}, (error, data)=>
-      result = {}
-      for item in data
-        key = item.predicate
-        value = item.object
-        if (result[key])         # if there are more than one hit, return an array with them
-          if typeof(result[key])=='string'
-            result[key] = [result[key]]
-          result[key].push(value)
-        else
-          result[key] = value
-      callback(result)
+    #console.log subject
+    if not subject
+      callback {}
+    else
+      @graph.db.get {subject: subject}, (error, data)=>
+        result = {}
+        for item in data
+          key = item.predicate
+          value = item.object
+          if (result[key])         # if there are more than one hit, return an array with them
+            if typeof(result[key])=='string'
+              result[key] = [result[key]]
+            result[key].push(value)
+          else
+            result[key] = value
+        callback(result)
 
   get_Subjects_Data:(subjects, callback)=>
     result = {}

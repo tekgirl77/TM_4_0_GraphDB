@@ -94,6 +94,26 @@ describe 'services | test-Import-Service |', ->
         graph.edges.first().assert_Is_Equal_To({from:'a' , to: 'b'})
         done()
 
+    it 'run_Filter', (done)->
+      importService.setup ->
+        importService.run_Query.assert_Is_Function()
+
+        filter_Name = 'testFilter'
+        coffee_Query = '''get_Data = (params, callback)->
+                            graph = params.graph
+                            data = { number_of_nodes : graph.nodes.length , number_of_edges: graph.edges.length }
+                            callback(data)
+                          module.exports = get_Data '''
+        coffee_File = importService.path_Filters.path_Combine("#{filter_Name}.coffee")
+        coffee_Query.saveAs(coffee_File).assert_Is_True()
+        graph = { nodes: [{'a','b'}] , edges: [{from:'a' , to: 'b'}] }
+        importService.run_Filter filter_Name, graph, (data)->
+          data.assert_Is_Object()
+          data.number_of_nodes.assert_Is_Equal_To(graph.nodes.size())
+          data.number_of_edges.assert_Is_Equal_To(graph.nodes.size())
+          done()
+
+
     it 'add_Db and find_Subject', (done)->
       type = 'test'
       guid = "aaaa-bbbc-cccc-dddd"
@@ -310,58 +330,3 @@ describe 'services | test-Import-Service |', ->
                   data.guid.assert_Is('a330bfdd-9576-40ea-997e-e7ed2762fc3e')
                   data.title.assert_Is('All Input Is Validated')
                   done()
-
-  #return
-  # temporarily here
-  describe 'load tm-uno data set', ->
-    @timeout 10000  # for the cases when data needs to be loaded from the network
-    importService     = null
-
-    before (done)->
-      importService     = new Import_Service('tm-uno')
-      #"opening the db".log()
-      importService.graph.openDb done
-
-    after (done)->
-      #"closing the db".log()
-      importService.graph.closeDb  done
-
-
-    it 'loadData',  (done)->
-      importService.load_Data.assert_Is_Function()
-      importService.load_Data ->
-        importService.graph.allData (data)->
-          data.assert_Is_Array()
-          done()
-
-    #it 'test query',(done)->
-    #  title = 'UNO'
-    #  importService.get_Library_Id title, (library_Id)->
-    #    #console.log library_Id
-    #    #graph.db.nav('Library').archIn('is').archOut('title').solutions (err,data)->
-    #    #  console.log data
-    #    done()
-
-    it 'run query - library', (done)->
-      importService.run_Query 'library',  {},(graph)->
-        #console.log graph.nodes.size()
-        graph.nodes.assert_Is_Object()
-        done()
-
-    it 'run query - library-all', (done)->
-        importService.run_Query 'library-all',  {},(graph)->
-          #console.log graph
-          graph.nodes.assert_Is_Object()
-          done()
-
-    it 'run query - folders-and-views', (done)->
-      importService.run_Query 'folders-and-views', {}, (graph)->
-        #console.log graph.json_pretty()
-        graph.nodes.assert_Is_Object()
-        done()
-
-    it 'run query - folder-metadata', (done)->
-      importService.run_Query 'folder-metadata',  {show:'Canonicalization'}, (graph)->
-        #console.log graph.json_pretty()
-        graph.nodes.assert_Is_Object()
-        done()

@@ -12,19 +12,17 @@ if not library_Name
 #console.log "[tm-uno] Library name is: #{library_Name} \n"
 
 #library_Name      = 'Java'
-library_Name       = 'iOS'
+#library_Name       = 'iOS'
 #library_Name       = 'C++'
 #library_Name       = "PCI DSS Compliance"
 #library_Name       = "CWE"
 
 setupDb = (callback)=>
-  #importService     = new Import_Service('tm-uno')
-  #importService.db.setup()
-  #importService.graph.deleteDb ->
-  importService.graph.openDb ->
-    importService.teamMentor.library library_Name, (data) ->
-      library = data
-      callback()
+  importService.graph.deleteDb ->
+    importService.graph.openDb ->
+      importService.teamMentor.library library_Name, (data) ->
+        library = data
+        callback()
 
 import_Article = (article, next)->
   importService.teamMentor.article article.guid, (articleData)->
