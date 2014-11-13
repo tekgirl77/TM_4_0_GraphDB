@@ -26,13 +26,13 @@ describe 'services | test-Graph-Service |', ->
 
       expect(graphService.dbPath.folder_Exists()).to.equal(false)
       expect(graphService.db                    ).to.equal(null)
-      expect(graphService.openDb()              ).to.equal(graphService.db)
-      expect(graphService.db                    ).to.not.equal(null)
+      graphService.openDb ->
+        expect(graphService.db                    ).to.not.equal(null)
 
-      graphService.closeDb ->
-        expect(graphService.dbPath.folder_Delete_Recursive()).to.equal(true)
-        expect(graphService.db                              ).to.equal(null)
-        done()
+        graphService.closeDb ->
+          expect(graphService.dbPath.folder_Delete_Recursive()).to.equal(true)
+          expect(graphService.db                              ).to.equal(null)
+          done()
 
     it 'deleteDb', (done) ->
       graphService  = new Graph_Service()

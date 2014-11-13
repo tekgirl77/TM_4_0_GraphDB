@@ -59,7 +59,7 @@ describe.only 'db | tm-data | test-data-import |', ->
     dataImport.graph_From_Data (graph)->
       #console.log graph
 
-  it.only 'tm-uno-first | tm-graph (query)', (done)->
+  it 'tm-uno-first | tm-graph (query)', (done)->
     @timeout 100000
     importService = new Import_Service('tm-uno-first')
     importService.graph.deleteDb ->

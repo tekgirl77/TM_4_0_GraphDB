@@ -3,13 +3,13 @@ async          = require('async')
 
 describe 'services | test-Import-Service |', ->
 
-
   describe 'core', ->
     importService = new Import_Service()
 
-    after ->
+    after (done)->
       importService.graph.deleteDb ->
-        importService.path_Name.folder_Delete_Recursive().assert_Is_True()
+
+        done()
 
     it 'check ctor()', ->
       Import_Service.assert_Is_Function()
@@ -30,6 +30,7 @@ describe 'services | test-Import-Service |', ->
       importService.path_Name   .assert_Is('db/test')
       importService.path_Data   .assert_Is('db/test/data')
       importService.path_Queries.assert_Is('db/test/queries')
+      importService.path_Name.folder_Delete_Recursive().assert_Is_True()
 
     it 'check ctor (name)', ->
       aaaa_ImportService  = new Import_Service('aaaa')
@@ -125,6 +126,23 @@ describe 'services | test-Import-Service |', ->
           id_Data.d.assert_Is(data.d)
           done()
 
+    it 'add_Is, find_Using_Is', (done)->
+      id    = 'is_id'
+      value = 'is_value'
+      importService.add_Is id, value, ->
+        importService.find_Using_Is value, (data)->
+          data.first().assert_Is(id)
+          done();
+
+    it 'add_Is, find_Using_Title', (done)->
+      id    = 'title_id'
+      value = 'title_value'
+      importService.add_Title id, value, ->
+        importService.find_Using_Title value, (data)->
+          data.first().assert_Is(id)
+          done();
+
+
     it 'new_Short_Guid', ->
       importService.new_Short_Guid.assert_Is_Function()
       importService.new_Short_Guid('aaa').starts_With('aaa').assert_Is_True()
@@ -134,7 +152,7 @@ describe 'services | test-Import-Service |', ->
       importService.new_Data_Import_Util.assert_Is_Function()
       importService.new_Data_Import_Util().assert_Is_Object()
 
-    it 'new_Data_Import_Util', ->
+    it 'new_Vis_Graph', ->
       importService.new_Vis_Graph.assert_Is_Function()
                                  .ctor().nodes.assert_Is_Array()
 

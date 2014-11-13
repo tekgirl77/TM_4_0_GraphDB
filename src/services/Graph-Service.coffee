@@ -14,14 +14,16 @@ class GraphService
 
   openDb : (callback)=>
     if GraphService.open_Dbs[@dbPath]
+      #"[openDb]reusing".log()
       @db = GraphService.open_Dbs[@dbPath]
     else
+      #"[openDb]creating".log()
       @db = levelgraph(@dbPath)
       GraphService.open_Dbs[@dbPath] = @db
-    callback() if callback
-    return @db
+    callback()
 
   closeDb: (callback)=>
+    #"--- In CLOSE DB".log()
     if (@db)
       @db.close =>
         @db    = null

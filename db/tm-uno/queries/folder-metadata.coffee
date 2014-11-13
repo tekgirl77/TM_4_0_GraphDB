@@ -1,126 +1,108 @@
 async             = require 'async'
-cheerio           = require 'cheerio'
-#Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
 
+size_Views = -1
+size_Articles = -1
+
+format_Article_Node = (node, id, title, summary)->
+  node.circle()._label('A')
+               .set('guid', id)
+               .set('title', title)
+               .set('summary', summary)
+               ._color('lightGray')
 
 get_Graph = (options, callback)->
 
   importService = options.importService
   params        = options.params
-
   graph         = importService.new_Vis_Graph()
+  db            = importService.graph.db
+  folder_Ids    = null
+  contains      = null
+  articles_Data = null
 
   graph.options.nodes.box()#._mass(2)
   graph.options.edges.arrow().widthSelectionMultiplier = 5
 
-  category_Node   = graph.add_Node('Category'  ).circle().black()._mass(5)
-  phase_Node      = graph.add_Node('Phase'     ).circle().black()._mass(5)
-  technology_Node = graph.add_Node('Technology').circle().black()._mass(5)
-  type_Node       = graph.add_Node('Type'      ).circle().black()._mass(5)
+  metadata_Nodes =
+                    category   : graph.add_Node('Category'  ).circle().black()._mass(5)
+                    phase      : graph.add_Node('Phase'     ).circle().black()._mass(5)
+                    technology : graph.add_Node('Technology').circle().black()._mass(5)
+                    type       : graph.add_Node('Type'      ).circle().black()._mass(5)
 
+  #articles_Node   = graph.add_Node('Articles'      ).circle().black()._mass(5)
 
-  #console.log "params: #{params}"
-
-  map_Article = (article_Id, parent, next)->
-    importService.get_Subject_Data article_Id, (article_Data)->
-      importService.teamMentor.article article_Data.guid, (article)->
-        if not article or not article.Metadata
+  loadData =  (queryTitle, next)=>
+    db.get {predicate:'title'}, (error, titles)->
+      db.get {predicate:'contains'}, (error, _contains)->
+        folder_Ids    = (title.subject for title in titles when title.object == queryTitle)
+        view_Ids     = (contain.object for contain in _contains when folder_Ids.contains(contain.subject))
+        article_Ids  = (contain.object for contain in _contains when view_Ids.contains(contain.subject))
+        importService.get_Subjects_Data article_Ids, (_articles_Data)->
+          contains = _contains
+          articles_Data = _articles_Data
           next()
-          return
-        id         = article.Metadata.Id
-        title      = article.Metadata.Title
-        category   = article.Metadata.Category
-        phase      = article.Metadata.Phase
-        technology = article.Metadata.Technology
-        type       = article.Metadata.Type
-        html       = article.Content.Data_Json
-        summary    = ""
-        if (article.Content.DataType.lower() is 'html')
-          $          = cheerio.load(html.substring(0,400))
-          summary    = $('p').text().substring(0,200).trim()
-        else
-          summary = html.substring(0,200).replace(/\*/g,'').replace(/\=/g,'')
-        graph.add_Edge('Category'   , category  )
-        graph.add_Edge('Phase'      , phase     )
-        graph.add_Edge('Technology' , technology)
-        graph.add_Edge('Type'       , type      )
 
-        format_Node = (node)->
-          node.circle()._label('A')
-                       .set('guid', id)
-                       .set('title', title)
-                       .set('summary', summary)
-                       ._color('lightGray')
+  map_Data = (next) =>
+    for folder_Id in folder_Ids
+      view_Ids     = (contain.object for contain in contains when contain.subject == folder_Id).take(size_Views)
 
-        format_Edge_To_Node = (edge)->
-          format_Node(edge.to_Node())
+      folder_Node = graph.add_Node(folder_Id, folder_Id)
+      for view_Id in view_Ids
+        article_Ids  = (contain.object for contain in contains when contain.subject == view_Id).take(size_Articles)
 
-        #map to global metadata nodes
-        format_Edge_To_Node graph.add_Edge category
-        format_Edge_To_Node graph.add_Edge phase
-        format_Edge_To_Node graph.add_Edge technology
-        format_Edge_To_Node graph.add_Edge type
+        view_Node = graph.add_Node(view_Id, view_Id)
+        graph.add_Edge(folder_Id, view_Id)
+        graph.add_Edge(view_Id, "#{view_Id}_Category")
 
-        #map to view (i.e. parent) metadata nodes
-        add_Article_To_Metadata = (nodeKey,edgeKey, labelText)->
-          graph.node(nodeKey).add_Edge(edgeKey).to_Node()._label(labelText)
-                             .add_Edge().to_Node().call_Function(format_Node)
+        for article_Id in article_Ids
+          article_Data = articles_Data[article_Id]
+        # graph.add_Edge(folder_Id, view_Id,'folder')
+        # graph.add_Edge(view_Id, article_Id,'view')
+        # graph.add_Edge(article_Id,article_Data.category  , 'category')
+        # graph.add_Edge(article_Id,article_Data.phase     , 'phase')
+        # graph.add_Edge(article_Id,article_Data.technology, 'technology')
+        # graph.add_Edge(article_Id,article_Data.type      , 'type')
+
+          add_Metatada = (names)=>
+            for name in names
+              metadata_Nodes[name].add_Edge(name + '_'+article_Data[name]).to_Node()._label(article_Data[name])
+                                  .add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, 'subject for : ' + article_Data.title)
+
+          add_Metatada(['category','phase','technology','type'])
 
 
-        add_Article_To_Metadata("#{parent}_Category"  , "#{parent}_#{category}"  , category)
-        add_Article_To_Metadata("#{parent}_Phase"     , "#{parent}_#{phase}"     , phase)
-        add_Article_To_Metadata("#{parent}_Technology", "#{parent}_#{technology}", technology)
-        add_Article_To_Metadata("#{parent}_Type"      , "#{parent}_#{type}"      , type)
+          add_Article_To_Metadata = (nodeKey,edgeKey, labelText)->
+            graph.node(nodeKey).add_Edge(edgeKey).to_Node()._label(labelText)
+                               .add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, 'subject for : ' + article_Data.title)
 
-        #graph.node("#{parent}_Technology").add_Edge("#{parent}_#{technology}")
+          #view_Node.add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, 'subject for : ' + article_Data.title)
 
-        next()
+          add_Article_To_Metadata("#{view_Id}_Category"  , "#{view_Id}_#{article_Data.category}"  , article_Data.category)
+
+          #console.log article_Data
+          #console.log(@[name+'_Node'])
+    next()
 
 
-  map_Articles_Using_Title=  (title,next)->
-    importService.find_Using_Is_and_Title 'Article', title, (article_Ids)->
-      async.each article_Ids, map_Article, next
 
-  map_Articles_In_View =  (view_Id,parent,next)->
-    #"mapping view: #{view_Id}".log()
-    importService.get_Subject_Data view_Id, (view_Data)->
-      view_Node = graph.add_Node(view_Id, 'view: ' + view_Data.title)._color('#aabbcc')._mass(5)
-      view_Node.add_Edge("#{view_Id}_Category"  ).to_Node()._label('C')._title('Category'  ).circle().black()._mass(5)
-      view_Node.add_Edge("#{view_Id}_Phase"     ).to_Node()._label('P')._title('Phase'     ).circle().black()._mass(5)
-      view_Node.add_Edge("#{view_Id}_Technology").to_Node()._label('T')._title('Technology').circle().black()._mass(5)
-      view_Node.add_Edge("#{view_Id}_Type"      ).to_Node()._label('T')._title('Type'      ).circle().black()._mass(5)
-
-      graph.add_Edge(parent, view_Id)
-      if (view_Data.contains)
-        async.each view_Data.contains, ((item, next)-> map_Article(item,view_Id,next)), next
-      else
-        next()
-
-  map_Articles_In_Folder = (folder_Id, next)->
-    #"mapping folder: #{folder_Id}".log()
-    importService.get_Subject_Data folder_Id, (folder_Data)->
-      graph.add_Node(folder_Id, 'folder: ' + folder_Data.title)._color('orange')._fontSize(30)._mass(3)
-      if (folder_Data.contains)
-        view_Ids =  if typeof(folder_Data.contains) != 'string' then folder_Data.contains else [folder_Data.contains]
-        async.each view_Ids, ((item, next)-> map_Articles_In_View(item,folder_Id,next)), next
-      else
-        next()
-
-  map_Folder = (folder_Id)=>
-    map_Articles_In_Folder folder_Id , ->
-      #"\nMapped #{graph.nodes.size()} nodes and #{graph.edges.size()} edges".log()
+  loadData 'Data Validation', ->
+    map_Data ->
       callback(graph)
 
-  if (params && params.show)
-    folder_Name = params.show
-    importService.find_Using_Is_and_Title 'Folder', folder_Name, (folder_Ids)->
-      #console.log folder_Ids
-      map_Folder folder_Ids.first()
-  else
-    importService.find_Using_Is  'Folder', (folder_Ids)->
-      map_Folder folder_Ids.first()
+      # for folder_Id in folder_Ids
+      #   "here".log()
+      #   view_Ids     = (contain.object for contain in contains when contain.subject == folder_Id)
+      #   for view_Id in view_Ids
+      #     article_Ids  = (contain.object for contain in contains when contain.subject == view_Id)
+      #     for article_Id in article_Ids
+      #       importService.get_Subject_Data article_Id, (data)->
+      #         console.log data
+      #         phase     = (phase.object for phase in phases when phase.subject == article_Id).first()
+      #         graph.add_Edge(folder_Id, view_Id)
+      #         graph.add_Edge(view_Id, article_Id)
+      #         graph.add_Edge(article_Id, phase,"phase")
 
-  #importService.find_Using_Is 'Folder', (folder_Ids)->
-  #folder_Id = folder_Ids[2]
+
+
 
 module.exports = get_Graph

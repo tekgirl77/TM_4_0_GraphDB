@@ -33,8 +33,8 @@ class ImportService
     @path_Data   .folder_Create()
     @path_Filters.folder_Create()
     @path_Queries.folder_Create()
-    @graph.openDb()
-    callback()
+    @graph.openDb ->
+      callback()
 
     #@load_Data(callback)
 
@@ -58,7 +58,10 @@ class ImportService
       dataImport = new Data_Import_Util()
       options = {data: dataImport, importService: @}
       add_Mappings options, =>
-        @graph.db.put dataImport.data , callback
+        if dataImport.data.empty()
+          callback()
+        else
+          @graph.db.put dataImport.data , callback
     else
       callback()
 
@@ -131,8 +134,19 @@ class ImportService
   add_Db_using_Type_Guid_Title: (type, guid, title, callback)->
     @add_Db type.lower(), guid, {'guid' : guid, 'is' :type, 'title': title}, callback
 
+  add_Is: (id, is_Value, callback)->
+    @graph.add id,'is',is_Value, callback
+
+  add_Title: (id, title_Value, callback)->
+    @graph.add id,'title',title_Value, callback
+
   find_Using_Is: (value, callback)=>
     @graph.db.nav(value).archIn('is')
+                        .solutions (err,data) ->
+                          callback (item.x0 for item in data)
+
+  find_Using_Title: (value, callback)=>
+    @graph.db.nav(value).archIn('title')
                         .solutions (err,data) ->
                           callback (item.x0 for item in data)
 
@@ -156,6 +170,7 @@ class ImportService
     else
       @graph.db.get {subject: subject}, (error, data)=>
         result = {}
+        throw error if error
         for item in data
           key = item.predicate
           value = item.object

@@ -6,12 +6,12 @@
   "scripts": {
     "start": "node index.js",
     "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register --recursive -R list",
-    "test-js":"./node_modules/mocha/bin/mocha --recursive -R list ./.dist/test",
+    "test-js": "./node_modules/mocha/bin/mocha --recursive -R list ./.dist/test",
     "clear-cache": "touch .tmCache/.deleteCacheNext",
     "watch": "mocha -w --compilers coffee:coffee-script/register --watch-extensions jade  --recursive -R list",
-    "watch-js":"./node_modules/mocha/bin/mocha --recursive -R list -w ./.dist/test",
+    "watch-js": "./node_modules/mocha/bin/mocha --recursive -R list -w ./.dist/test",
     "dev": "./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js",
-    "compile":"coffee --output ./.dist/src --compile ./src &&  coffee --output ./.dist/test --compile ./test"
+    "compile": "coffee --output ./.dist/src --compile ./src &&  coffee --output ./.dist/test --compile ./test"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "fluentnode": "^0.1.6",
     "github": "^0.2.2",
     "jade": "^1.7.0",
-    "levelgraph": "^0.9.2",
+    "levelgraph": "^0.10.0",
     "node-uuid": "^1.4.1",
     "request": "^2.47.0",
     "vis": "^3.6.3",
