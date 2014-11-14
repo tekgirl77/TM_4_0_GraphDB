@@ -1,6 +1,6 @@
 async             = require 'async'
 
-size_Views = -1
+size_Views    = -1
 size_Articles = -1
 
 format_Article_Node = (node, id, title, summary)->
@@ -52,47 +52,41 @@ get_Graph = (options, callback)->
         view_Data = subjects_Data[view_Id]
         view_Node = graph.add_Node(view_Id, view_Data.title)._color('#aabbcc')._mass(5)
         graph.add_Edge(folder_Id, view_Id)
-        graph.add_Edge(view_Id, "#{view_Id}_Category"  ).to_Node()._label('C')._title('Category'  ).circle().black()._mass(5)
-        graph.add_Edge(view_Id, "#{view_Id}_Phase"     ).to_Node()._label('C')._title('Phase'     ).circle().black()._mass(5)
-        graph.add_Edge(view_Id, "#{view_Id}_Technology").to_Node()._label('C')._title('Technology').circle().black()._mass(5)
-        graph.add_Edge(view_Id, "#{view_Id}_Type"      ).to_Node()._label('C')._title('Type'      ).circle().black()._mass(5)
+        graph.add_Edge(view_Id, "#{view_Id}_Category"  ).to_Node()._label('Cat')._title('Category'  ).circle().black()._mass(5)
+        graph.add_Edge(view_Id, "#{view_Id}_Phase"     ).to_Node()._label('Pha')._title('Phase'     ).circle().black()._mass(5)
+        graph.add_Edge(view_Id, "#{view_Id}_Technology").to_Node()._label('Tech')._title('Technology').circle().black()._mass(5)
+        graph.add_Edge(view_Id, "#{view_Id}_Type"      ).to_Node()._label('Type')._title('Type'      ).circle().black()._mass(5)
 
         article_Ids  = (contain.object for contain in contains when contain.subject == view_Id).take(size_Articles)
         for article_Id in article_Ids
           article_Data = subjects_Data[article_Id]
-        # graph.add_Edge(folder_Id, view_Id,'folder')
-        # graph.add_Edge(view_Id, article_Id,'view')
-        # graph.add_Edge(article_Id,article_Data.category  , 'category')
-        # graph.add_Edge(article_Id,article_Data.phase     , 'phase')
-        # graph.add_Edge(article_Id,article_Data.technology, 'technology')
-        # graph.add_Edge(article_Id,article_Data.type      , 'type')
+
 
           add_Metatada = (names)=>
             for name in names
               metadata_Nodes[name].add_Edge(name + '_'+article_Data[name]).to_Node()._label(article_Data[name])
-                                  .add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, 'subject for : ' + article_Data.title)
-
-          add_Metatada(['category','phase','technology','type'])
-
+                                  .add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title,  article_Data.sumary)
 
           add_Article_To_Metadata = (nodeKey,edgeKey, labelText)->
             graph.node(nodeKey).add_Edge(edgeKey).to_Node()._label(labelText)
-                               .add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, 'subject for : ' + article_Data.title)
+                               .add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, article_Data.summary)
 
-          #view_Node.add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, 'subject for : ' + article_Data.title)
+
+          add_Metatada(['category','phase','technology','type'])
 
           add_Article_To_Metadata("#{view_Id}_Category"  , "#{view_Id}_#{article_Data.category}"  , article_Data.category)
           add_Article_To_Metadata("#{view_Id}_Phase"     , "#{view_Id}_#{article_Data.phase}"     , article_Data.phase)
-          add_Article_To_Metadata("#{view_Id}_Technology", "#{view_Id}_#{article_Data.technology}", subjects_Data[article_Data.technology])
+          add_Article_To_Metadata("#{view_Id}_Technology", "#{view_Id}_#{article_Data.technology}", article_Data.technology)
           add_Article_To_Metadata("#{view_Id}_Type"      , "#{view_Id}_#{article_Data.type}"      , article_Data.type)
 
           #console.log article_Data
           #console.log(@[name+'_Node'])
     next()
 
-
-
-  loadData 'Data Validation', ->
+  folder_Name = 'Data Validation'
+  if (params && params.show)
+    folder_Name = params.show
+  loadData folder_Name, ->
     map_Data ->
       callback(graph)
 

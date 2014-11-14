@@ -1,5 +1,5 @@
 async             = require 'async'
-#Import_Service    = require '/src/services/Import-Service'.append_To_Process_Cwd_Path()
+cheerio           = require 'cheerio'
 importService     = null
 library           = null
 library_Name      = 'UNO'
@@ -31,7 +31,13 @@ import_Article_Metadata = (article_Id, articleData, next)->
   phase      = articleData.Metadata.Phase
   technology = articleData.Metadata.Technology
   type       = articleData.Metadata.Type
-
+  html       = articleData.Content.Data_Json
+  summary    = ""
+  if (articleData.Content.DataType.lower() is 'html')
+    $          = cheerio.load(html.substring(0,400))
+    summary    = $('p').text().substring(0,200).trim()
+  else
+    summary = html.substring(0,200).replace(/\*/g,'').replace(/\=/g,'')
 
   importUtil = importService.new_Data_Import_Util()
 
@@ -39,6 +45,8 @@ import_Article_Metadata = (article_Id, articleData, next)->
   importUtil.add_Triplet(article_Id, 'phase'     , phase)
   importUtil.add_Triplet(article_Id, 'technology', technology)
   importUtil.add_Triplet(article_Id, 'type'      , type)
+  importUtil.add_Triplet(article_Id, 'summary'   , summary)
+
 
   importService.graph.db.put importUtil.data, ()->
   next()

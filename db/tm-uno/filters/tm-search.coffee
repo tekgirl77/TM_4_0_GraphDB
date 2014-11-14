@@ -44,11 +44,12 @@ get_Data = (params, callback)->
       filter.title   = filter_Name
       filter.results = []
       mappings = {}
-      for technology in nodes[filter_Name].edges
-        mappings[technology] ?= 0
-        mappings[technology]++
+
+      for filter_Edge in nodes[filter_Name].edges
+        mappings[filter_Edge] ?= 0
+        mappings[filter_Edge]++
       for mapping in mappings.keys()
-        result = { title : mapping ,id: '', size: mappings[mapping]}
+        result = { title : nodes[mapping].node.label ,id: '', size: mappings[mapping]}
         filter.results.push(result)
       searchData.filters.push(filter)
 
