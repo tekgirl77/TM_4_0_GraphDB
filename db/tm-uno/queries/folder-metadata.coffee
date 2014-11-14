@@ -18,7 +18,7 @@ get_Graph = (options, callback)->
   db            = importService.graph.db
   folder_Ids    = null
   contains      = null
-  articles_Data = null
+  subjects_Data = null
 
   graph.options.nodes.box()#._mass(2)
   graph.options.edges.arrow().widthSelectionMultiplier = 5
@@ -33,29 +33,33 @@ get_Graph = (options, callback)->
 
   loadData =  (queryTitle, next)=>
     db.get {predicate:'title'}, (error, titles)->
-      db.get {predicate:'contains'}, (error, _contains)->
+      db.get {predicate:'contains'}, (error, data)->
+        contains = data
         folder_Ids    = (title.subject for title in titles when title.object == queryTitle)
-        view_Ids     = (contain.object for contain in _contains when folder_Ids.contains(contain.subject))
-        article_Ids  = (contain.object for contain in _contains when view_Ids.contains(contain.subject))
-        importService.get_Subjects_Data article_Ids, (_articles_Data)->
-          contains = _contains
-          articles_Data = _articles_Data
+        view_Ids     = (contain.object for contain in contains when folder_Ids.contains(contain.subject))
+        article_Ids  = (contain.object for contain in contains when view_Ids.contains(contain.subject))
+        subjects_Ids = article_Ids.concat(folder_Ids).concat(view_Ids)
+        importService.get_Subjects_Data subjects_Ids, (data)->
+          subjects_Data = data
           next()
 
   map_Data = (next) =>
     for folder_Id in folder_Ids
       view_Ids     = (contain.object for contain in contains when contain.subject == folder_Id).take(size_Views)
-
-      folder_Node = graph.add_Node(folder_Id, folder_Id)
+      folder_Data = subjects_Data[folder_Id]
+      folder_Node = graph.add_Node(folder_Id, folder_Data.title)._color('orange')._fontSize(30)._mass(3)
       for view_Id in view_Ids
-        article_Ids  = (contain.object for contain in contains when contain.subject == view_Id).take(size_Articles)
-
-        view_Node = graph.add_Node(view_Id, view_Id)
+        view_Data = subjects_Data[view_Id]
+        view_Node = graph.add_Node(view_Id, view_Data.title)._color('#aabbcc')._mass(5)
         graph.add_Edge(folder_Id, view_Id)
-        graph.add_Edge(view_Id, "#{view_Id}_Category")
+        graph.add_Edge(view_Id, "#{view_Id}_Category"  ).to_Node()._label('C')._title('Category'  ).circle().black()._mass(5)
+        graph.add_Edge(view_Id, "#{view_Id}_Phase"     ).to_Node()._label('C')._title('Phase'     ).circle().black()._mass(5)
+        graph.add_Edge(view_Id, "#{view_Id}_Technology").to_Node()._label('C')._title('Technology').circle().black()._mass(5)
+        graph.add_Edge(view_Id, "#{view_Id}_Type"      ).to_Node()._label('C')._title('Type'      ).circle().black()._mass(5)
 
+        article_Ids  = (contain.object for contain in contains when contain.subject == view_Id).take(size_Articles)
         for article_Id in article_Ids
-          article_Data = articles_Data[article_Id]
+          article_Data = subjects_Data[article_Id]
         # graph.add_Edge(folder_Id, view_Id,'folder')
         # graph.add_Edge(view_Id, article_Id,'view')
         # graph.add_Edge(article_Id,article_Data.category  , 'category')
@@ -78,6 +82,9 @@ get_Graph = (options, callback)->
           #view_Node.add_Edge().to_Node().call_Function(format_Article_Node, article_Id,article_Data.title, 'subject for : ' + article_Data.title)
 
           add_Article_To_Metadata("#{view_Id}_Category"  , "#{view_Id}_#{article_Data.category}"  , article_Data.category)
+          add_Article_To_Metadata("#{view_Id}_Phase"     , "#{view_Id}_#{article_Data.phase}"     , article_Data.phase)
+          add_Article_To_Metadata("#{view_Id}_Technology", "#{view_Id}_#{article_Data.technology}", subjects_Data[article_Data.technology])
+          add_Article_To_Metadata("#{view_Id}_Type"      , "#{view_Id}_#{article_Data.type}"      , article_Data.type)
 
           #console.log article_Data
           #console.log(@[name+'_Node'])
