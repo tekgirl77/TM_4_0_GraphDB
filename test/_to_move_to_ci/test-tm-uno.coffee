@@ -69,7 +69,7 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
             graph.nodes.assert_Is_Object()
             done()
 
-    it.only 'run query - metadata-design', (done)->
+    it 'run query - folder-metadata', (done)->
       options = {}
       #importService.load_Data ->
       importService.graph.openDb ->
@@ -78,6 +78,14 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
           #console.log graph
           done();
 
+    it.only 'run query - search-design', (done)->
+      options = {}
+      #importService.load_Data ->
+      importService.graph.openDb ->
+        importService.run_Query 'search-design', options, (graph)->
+          "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
+          #console.log graph
+          done();
 
 
 describe 'Filters', ->

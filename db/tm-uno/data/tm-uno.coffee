@@ -9,7 +9,7 @@ library_Name = if (global.request_Params) then global.request_Params.query['libr
 if not library_Name
   library_Name = 'UNO'
 
-take =2000
+take =-1 #2000
 #console.log "[tm-uno] Library name is: #{library_Name} \n"
 
 #library_Name      = 'Java'
@@ -26,7 +26,6 @@ setupDb = (callback)=>
         callback()
 
 import_Article_Metadata = (article_Id, articleData, next)->
-  type = 'Query'
   category   = articleData.Metadata.Category
   phase      = articleData.Metadata.Phase
   technology = articleData.Metadata.Technology
@@ -41,11 +40,15 @@ import_Article_Metadata = (article_Id, articleData, next)->
 
   importUtil = importService.new_Data_Import_Util()
 
-  importUtil.add_Triplet(article_Id, 'category'  , category)
-  importUtil.add_Triplet(article_Id, 'phase'     , phase)
-  importUtil.add_Triplet(article_Id, 'technology', technology)
-  importUtil.add_Triplet(article_Id, 'type'      , type)
-  importUtil.add_Triplet(article_Id, 'summary'   , summary)
+  importUtil.add_Triplet article_Id, 'category'  , category
+  importUtil.add_Triplet article_Id, 'phase'     , phase
+  importUtil.add_Triplet article_Id, 'technology', technology
+  importUtil.add_Triplet article_Id, 'type'      , type
+
+  importUtil.add_Triplets 'Query', {'is'  : [category, phase, technology, type] }
+
+
+  #importUtil.add_Triplet(article_Id, 'summary'   , summary)
 
 
   importService.graph.db.put importUtil.data, ()->

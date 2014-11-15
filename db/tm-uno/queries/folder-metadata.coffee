@@ -29,8 +29,6 @@ get_Graph = (options, callback)->
                     technology : graph.add_Node('Technology').circle().black()._mass(5)
                     type       : graph.add_Node('Type'      ).circle().black()._mass(5)
 
-  #articles_Node   = graph.add_Node('Articles'      ).circle().black()._mass(5)
-
   loadData =  (queryTitle, next)=>
     db.get {predicate:'title'}, (error, titles)->
       db.get {predicate:'contains'}, (error, data)->
@@ -89,19 +87,6 @@ get_Graph = (options, callback)->
   loadData folder_Name, ->
     map_Data ->
       callback(graph)
-
-      # for folder_Id in folder_Ids
-      #   "here".log()
-      #   view_Ids     = (contain.object for contain in contains when contain.subject == folder_Id)
-      #   for view_Id in view_Ids
-      #     article_Ids  = (contain.object for contain in contains when contain.subject == view_Id)
-      #     for article_Id in article_Ids
-      #       importService.get_Subject_Data article_Id, (data)->
-      #         console.log data
-      #         phase     = (phase.object for phase in phases when phase.subject == article_Id).first()
-      #         graph.add_Edge(folder_Id, view_Id)
-      #         graph.add_Edge(view_Id, article_Id)
-      #         graph.add_Edge(article_Id, phase,"phase")
 
 
 
