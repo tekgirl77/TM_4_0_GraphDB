@@ -19,13 +19,14 @@ class Vis_Edge
     return null if not @graph()
     return @graph().node(@to)
 
-  _color: (value)=>
-    @['color']=value
+
+  set: (key, value)=>
+    @[key]=value
     @
 
-  _style: (value)=>
-    @['style']=value
-    @
+  _color   : (value)=> @set('color'    , value)
+  _label   : (value)=> @set('label'    , value)
+  _style   : (value)=> @set('style'    , value)
 
   #colors
   black       : ()=> @_color('black')

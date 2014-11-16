@@ -59,7 +59,6 @@ get_Graph = (options, callback)->
         for article_Id in article_Ids
           article_Data = subjects_Data[article_Id]
 
-
           add_Metatada = (names)=>
             for name in names
               metadata_Nodes[name].add_Edge(name + '_'+article_Data[name]).to_Node()._label(article_Data[name])

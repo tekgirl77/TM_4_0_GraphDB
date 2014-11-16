@@ -265,7 +265,7 @@ describe 'services | test-Import-Service |', ->
       teamMentor    = importService.teamMentor
 
       importService.setup ->
-        importService.teamMentor.library 'UNO', (library) ->
+        importService.teamMentor.library 'Guidance', (library) ->
           uno_Library = library.assert_Is_Object()
           done()
 
@@ -293,13 +293,13 @@ describe 'services | test-Import-Service |', ->
           importService.get_Subject_Data libraries_Ids.first(), (result)->
             result.assert_Is_Object()
             result.is.assert_Is('Library')
-            result.title.assert_Is('UNO')
+            result.title.assert_Is('Guidance')
             result.guid.assert_Is('be5273b1-d682-4361-99d9-6234f2d47eb7')
             done()
 
     it 'add Library folders', (done)->
       foldersToAdd = ({guid: folder.folderId, title: folder.name} for folder in uno_Library.subFolders)
-      importService.get_Library_Id 'UNO', (libraryId)->
+      importService.get_Library_Id 'Guidance', (libraryId)->
 
         addFolder = (folder, next)->
           importService.add_Db_using_Type_Guid_Title 'Folder', folder.guid, folder.title, (folderId)->
@@ -312,7 +312,7 @@ describe 'services | test-Import-Service |', ->
             done()
 
     it 'get_Library_Folders_Ids and get_Subjects_Data', (done)->
-      importService.get_Library_Folders_Ids 'UNO', (folders_Ids)->
+      importService.get_Library_Folders_Ids 'Guidance', (folders_Ids)->
         folders_Ids.assert_Size_Is(13)
         importService.get_Subjects_Data folders_Ids, (folders_Data)->
           Object.keys(folders_Data).assert_Size_Is(13)

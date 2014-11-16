@@ -2,12 +2,12 @@ async             = require 'async'
 cheerio           = require 'cheerio'
 importService     = null
 library           = null
-library_Name      = 'UNO'
+library_Name      = 'Guidance'
 
 library_Name = if (global.request_Params) then global.request_Params.query['library'] else null
 
 if not library_Name
-  library_Name = 'UNO'
+  library_Name = 'Guidance'
 
 take =-1 #2000
 #console.log "[tm-uno] Library name is: #{library_Name} \n"
@@ -45,10 +45,15 @@ import_Article_Metadata = (article_Id, articleData, next)->
   importUtil.add_Triplet article_Id, 'technology', technology
   importUtil.add_Triplet article_Id, 'type'      , type
 
-  importUtil.add_Triplets 'Query', {'is'  : [category, phase, technology, type] }
+  importUtil.add_Triplet category  , 'is'        , 'Query'
+  importUtil.add_Triplet phase     , 'is'        , 'Query'
+  importUtil.add_Triplet technology, 'is'        , 'Query'
+  importUtil.add_Triplet type      , 'is'        , 'Query'
+
+  #importUtil.add_Triplets 'Query', {'is'  : [category, phase, technology, type] }
 
 
-  #importUtil.add_Triplet(article_Id, 'summary'   , summary)
+  importUtil.add_Triplet(article_Id, 'summary'   , summary)
 
 
   importService.graph.db.put importUtil.data, ()->
@@ -89,10 +94,11 @@ addData = (params,callback)->
   importService = params.importService
   setupDb ->
     importService.add_Db_using_Type_Guid_Title 'Library', library.libraryId, library.name, (library_Id)->
-      import_Folders library_Id, library.subFolders, ->
-        import_Views library_Id, library.views, ->
-          importService.graph.closeDb =>
-            importService.graph.openDb =>
-              callback()
+      import_Articles library_Id, library.guidanceItems, ->
+        import_Folders library_Id, library.subFolders, ->
+          import_Views library_Id, library.views, ->
+            importService.graph.closeDb =>
+              importService.graph.openDb =>
+                callback()
 
 module.exports = addData

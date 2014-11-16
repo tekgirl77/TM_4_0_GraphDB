@@ -18,7 +18,7 @@ describe.only 'db | tm-data | test-data-import |', ->
     json          = data_File.file_Contents()                                                      .assert_Is_Json();
 
   it 'check json data', ->
-    json.name .assert_Is_Equal_To('Uno')
+    json.name .assert_Is_Equal_To('Guidance')
     json.id   .assert_Is_Equal_To('be5273b1-d682-4361-99d9-6234f2d47eb7')
     json.repo .assert_Is_Equal_To('https://github.com/TMContent/Lib_UNO')
     json.site .assert_Is_Equal_To('https://tmdev01-sme.teammentor.net/')

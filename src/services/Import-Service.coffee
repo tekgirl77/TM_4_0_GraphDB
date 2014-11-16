@@ -66,6 +66,7 @@ class ImportService
       callback()
 
   load_Data: (callback)=>
+    "[Import-Service] load_data".log()
     @graph.openDb =>
       files = @path_Data.files()
       loadNextFile = =>

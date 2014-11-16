@@ -17,8 +17,8 @@ class QueryControler
     queryParams = req.query || {}
     importService = new Import_Service(dataId)
 
-    importService.load_Data ->                        # loads all data with all requests
-    #dbService.graphService.openDb ->
+    #importService.load_Data ->                        # loads all data with all requests
+    importService.graph.openDb ->
       importService.run_Query queryId, queryParams, (graph)->
         importService.graph.closeDb ->
         #dbService.graphService.deleteDb ->

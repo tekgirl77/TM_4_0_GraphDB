@@ -21,6 +21,10 @@ describe 'Vis-Edge',->
     Vis_Edge.ctor().to_Node.assert_Is_Function()
     #see 'Vis_Edge - from_Node,to_Node' test from test-Vis-Graph
 
+  it 'set'       ,-> visNode.set('key','---').key     .assert_Is('---')
+  it '_color'    ,-> visNode._color(   'abc').color   .assert_Is('abc')
+  it '_label'    ,-> visNode._label(   'dfg').label   .assert_Is('dfg')
+  it '_style'    ,-> visNode._style(   'hij').style   .assert_Is('hij')
 
   #colors
   colors = ['black', 'blue', 'green','red', 'white']

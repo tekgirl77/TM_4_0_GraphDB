@@ -31,14 +31,6 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
           data.assert_Is_Array()
           done()
 
-    #it 'test query',(done)->
-    #  title = 'UNO'
-    #  importService.get_Library_Id title, (library_Id)->
-    #    #console.log library_Id
-    #    #graph.db.nav('Library').archIn('is').archOut('title').solutions (err,data)->
-    #    #  console.log data
-    #    done()
-
     it 'run query - library', (done)->
       importService.run_Query 'library',  {},(graph)->
         #console.log graph.nodes.size()
@@ -78,14 +70,16 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
           #console.log graph
           done();
 
-    it.only 'run query - search-design', (done)->
-      options = {}
+    it.only 'run query - search', (done)->
+      #@timeout(20000)
+      options = { show: 'iOS'}
       #importService.load_Data ->
       importService.graph.openDb ->
-        importService.run_Query 'search-design', options, (graph)->
+        importService.run_Query 'search', options, (graph)->
           "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
-          #console.log graph
-          done();
+          importService.run_Filter 'tm-search' , graph, (data)->
+            console.log data.containers
+            done();
 
 
 describe 'Filters', ->
@@ -97,8 +91,8 @@ describe 'Filters', ->
 
     importService = new Import_Service(data_id)
     importService.setup ->
-      #importService.load_Data ->
-      importService.graph.openDb ->
+      importService.load_Data ->
+      #importService.graph.openDb ->
         importService.run_Query query_Id, options, (graph)->
           importService.run_Filter filter_Id, graph, (data)->
             importService.graph.closeDb ->

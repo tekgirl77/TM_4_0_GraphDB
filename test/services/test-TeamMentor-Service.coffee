@@ -28,15 +28,15 @@ describe 'services | test-TeamMentor-Service |', ->
       teamMentorService.libraries (libraries)->
         libraries.assert_Is_Object();
         (Object.keys(libraries).size() > 10).assert_Is_True()
-        libraries['UNO']     .assert_Is_Object()
-        libraries['UNO'].name.assert_Is('UNO')
+        libraries['Guidance']     .assert_Is_Object()
+        libraries['Guidance'].name.assert_Is('Guidance')
         done()
 
     it 'library', (done)->
       teamMentorService.library.assert_Is_Function()
-      teamMentorService.library 'UNO', (library)->
+      teamMentorService.library 'Guidance', (library)->
         library.assert_Is_Object()
-        library.name = 'UNO'
+        library.name = 'Guidance'
         done()
 
     it 'article', (done)->

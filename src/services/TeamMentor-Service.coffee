@@ -5,7 +5,8 @@ class TeamMentor_Service
   constructor: (name)->
     @name         = name || '_tm_data'
     @cacheService = new Cache_Service(@name)
-    @tmServer     = 'https://tmdev01-sme.teammentor.net'
+    #@tmServer     = 'https://tmdev01-sme.teammentor.net'
+    @tmServer     = 'https://uno.teammentor.net'
     @asmx         = new TeamMentor_ASMX(@)
 
   tmServerVersion: (callback)->
