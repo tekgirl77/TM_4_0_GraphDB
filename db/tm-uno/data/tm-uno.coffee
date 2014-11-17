@@ -91,13 +91,20 @@ import_Folders = (parent, folders, next)->
   async.each foldersToAdd, import_Folder,-> next()
 
 addData = (params,callback)->
+  "[tm-uno] addData".log()
   importService = params.importService
   setupDb ->
+    "[tm-uno] setupDb".log()
     importService.add_Db_using_Type_Guid_Title 'Library', library.libraryId, library.name, (library_Id)->
+      "[tm-uno] add_Db_using_Type_Guid_Title".log()
       import_Articles library_Id, library.guidanceItems, ->
+        "[tm-uno] import_Articles".log()
         import_Folders library_Id, library.subFolders, ->
+          "[tm-uno] import_Folders".log()
           import_Views library_Id, library.views, ->
+            "[tm-uno] import_Views".log()
             importService.graph.closeDb =>
+              "[tm-uno] closeDb".log()
               importService.graph.openDb =>
                 "[tm-uno] finished loading data".log()
                 callback()
