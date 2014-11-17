@@ -20,9 +20,6 @@ get_Data = (params, callback)->
       to_Node = nodes[edge]
       total = 0
       for to_edge in to_Node.edges
-        console.log (edge + " -> " +  to_edge)
-
-        #console.log '---- ' + to_edge + ' : ' + nodes[to_edge]
         if (nodes[to_edge].edges.size())
           total+= nodes[to_edge].edges.size()
         else

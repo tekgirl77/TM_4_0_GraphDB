@@ -73,13 +73,15 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
     it.only 'run query - search', (done)->
       #@timeout(20000)
       options = { show: 'iOS'}
+      options.show = 'Design'
+      #options.show = 'Implementation'
       #importService.load_Data ->
       importService.graph.openDb ->
         importService.run_Query 'search', options, (graph)->
           "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
-          importService.run_Filter 'tm-search' , graph, (data)->
-            console.log data.containers
-            done();
+          #importService.run_Filter 'tm-search' , graph, (data)->
+            #console.log data.containers
+          done();
 
 
 describe 'Filters', ->
