@@ -1,4 +1,5 @@
 express              = require 'express'
+compress             = require 'compression'
 Data_Controller      = require './controllers/Data-Controller'
 Filter_Controller    = require './controllers/Filter-Controller'
 Query_Controller     = require './controllers/Query-Controller'
@@ -14,6 +15,7 @@ class Server
 
     configure: =>
         @app.set('view engine', 'jade')
+        @app.use(compress())
         @addRoutes()
         @addControlers()
     
