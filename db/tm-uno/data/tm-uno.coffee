@@ -99,6 +99,7 @@ addData = (params,callback)->
           import_Views library_Id, library.views, ->
             importService.graph.closeDb =>
               importService.graph.openDb =>
+                "[tm-uno] finished loading data".log()
                 callback()
 
 module.exports = addData

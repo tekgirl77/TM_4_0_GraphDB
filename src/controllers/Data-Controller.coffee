@@ -15,8 +15,8 @@ class DataControler
   json_Raw_Data: (req,res)=>
     name = req.params.name
     importService = new Import_Service(name)
-    #importService.load_Data ->                  # note that at the moment this is loading all data all the time
-    importService.graph.openDb ->
+    importService.load_Data ->                  # note that at the moment this is loading all data all the time
+    #importService.graph.openDb ->
       importService.graph.allData (data)=>
         importService.graph.closeDb =>
           res.type 'application/json'
