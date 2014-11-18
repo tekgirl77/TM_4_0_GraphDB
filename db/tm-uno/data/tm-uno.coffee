@@ -10,13 +10,6 @@ if not library_Name
   library_Name = 'Guidance'
 
 take = -1
-#console.log "[tm-uno] Library name is: #{library_Name} \n"
-
-#library_Name      = 'Java'
-#library_Name       = 'iOS'
-#library_Name       = 'C++'
-#library_Name       = "PCI DSS Compliance"
-#library_Name       = "CWE"
 
 setupDb = (callback)=>
   importService.graph.deleteDb =>
@@ -41,6 +34,7 @@ create_Metadata_Global_Nodes = (next)=>
   importService.graph.db.put importUtil.data, ()=>
     next()
 
+
 import_Article_Metadata = (article_Id, article_Data, next)->
   importUtil = importService.new_Data_Import_Util()
 
@@ -57,59 +51,22 @@ import_Article_Metadata = (article_Id, article_Data, next)->
       importUtil.add_Triplet(target_Id         , 'contains-article', article_Id)
       importUtil.add_Triplet(target_Id         , 'title', target_Value)
 
+  add_Article_Summary = ()=>
+    html       = article_Data.Content.Data_Json
+    summary    = ""
+    if (article_Data.Content.DataType.lower() is 'html')
+      $          = cheerio.load(html.substring(0,400))
+      summary    = $('p').text().substring(0,200).trim()
+    else
+      summary = html.substring(0,200).replace(/\*/g,'').replace(/\=/g,'')
+
+    importUtil.add_Triplet(article_Id, 'summary', summary)
+
   add_Metadata_Target(target) for target in ['Category', 'Phase', 'Technology', 'Type']
+  add_Article_Summary();
 
   importService.graph.db.put importUtil.data, ()=>
     next()
-
-_import_Article_Metadata = (article_Id, article_Data, next)->
-  #console.log article_Id
-  #console.log article_Data
-
-  #category   = article_Data.Metadata.Category
-  #phase      = article_Data.Metadata.Phase
-  technology = article_Data.Metadata.Technology
-  #type       = article_Data.Metadata.Type
-  html       = article_Data.Content.Data_Json
-
-  #category_Id   = if metadata_Queries[category]   then metadata_Queries[category]   else metadata_Queries[category]   = importService.new_Short_Guid('query')
-  #phase_Id      = if metadata_Queries[phase]      then metadata_Queries[phase]      else metadata_Queries[phase]      = importService.new_Short_Guid('query')
-  #technology_Id = if metadata_Queries[technology] then metadata_Queries[technology] else metadata_Queries[technology] = importService.new_Short_Guid('query')
-  #type_Id       = if metadata_Queries[type]       then metadata_Queries[type]       else metadata_Queries[type]       = importService.new_Short_Guid('query')
-
-  summary    = ""
-  if (article_Data.Content.DataType.lower() is 'html')
-    $          = cheerio.load(html.substring(0,400))
-    summary    = $('p').text().substring(0,200).trim()
-  else
-    summary = html.substring(0,200).replace(/\*/g,'').replace(/\=/g,'')
-
-  importUtil = importService.new_Data_Import_Util()
-
-  #if (category)
-  #  importUtil.add_Triplet article_Id   , 'category'  , category_Id
-  #  importUtil.add_Triplet category_Id  , 'title'     , category
-  #  importUtil.add_Triplet category_Id  , 'is'        , 'Query'
-
-  #if (phase)
-  #  importUtil.add_Triplet article_Id   , 'phase'     , phase_Id
-  #  importUtil.add_Triplet phase_Id     , 'title'     , phase
-  #  importUtil.add_Triplet phase_Id     , 'is'        , 'Query'
-
-  #if (technology)
-  #  importUtil.add_Triplet article_Id   , 'technology', technology_Id
-  #  importUtil.add_Triplet technology_Id, 'title'     , technology
-  #  importUtil.add_Triplet technology_Id, 'is'        , 'Query'
-
-  #if (type)
-  #  importUtil.add_Triplet article_Id   , 'type'  , type_Id
-  #  importUtil.add_Triplet type_Id      , 'title'     , type
-  #  importUtil.add_Triplet type_Id      , 'is'        , 'Query'
-
-  importService.graph.db.put importUtil.data, ()=>
-    next()
-
-
 
 import_Article = (article, next)->
   importService.teamMentor.article article.guid, (article_Data)->
@@ -156,6 +113,5 @@ addData = (params,callback)->
                 importService.graph.openDb =>
                   "[tm-uno] finished loading data".log()
                   callback()
-          #callback()
 
 module.exports = addData
