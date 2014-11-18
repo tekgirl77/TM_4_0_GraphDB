@@ -132,6 +132,9 @@ class ImportService
   add_Db_Contains: (source, target, callback)->
     @graph.add(source, 'contains', target, callback)
 
+  add_Db_Query: (source, target, callback)->
+    @graph.add(source, 'query', target, callback)
+
   add_Db_using_Type_Guid_Title: (type, guid, title, callback)->
     @add_Db type.lower(), guid, {'guid' : guid, 'is' :type, 'title': title}, callback
 

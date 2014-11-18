@@ -70,11 +70,12 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
           #console.log graph
           done();
 
-    it.only 'run query - search', (done)->
+    it 'run query - search', (done)->
       #@timeout(20000)
       options = { show: 'iOS'}
-      options.show = 'Design'
-      #options.show = 'Implementation'
+      #options.show = 'Design'
+      options.show = 'Implementation'
+
       #importService.load_Data ->
       importService.graph.openDb ->
         importService.run_Query 'search', options, (graph)->
@@ -83,6 +84,20 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
             #console.log data.containers
           done();
 
+    it.only 'run query - queries', (done)->
+      @timeout(10000)
+      importService.load_Data ->
+      #importService.graph.openDb ->
+        importService.run_Query 'queries', {}, (graph)->
+          "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
+          done();
+
+    it 'run query - query', (done)->
+      options = { show: 'iOS'}
+      importService.graph.openDb ->
+        importService.run_Query 'query', options, (graph)->
+          "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
+          done();
 
 describe 'Filters', ->
   it 'tm-uno , folder-metadata tm-search',(done)->

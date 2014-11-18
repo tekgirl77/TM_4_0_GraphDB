@@ -18,7 +18,11 @@ get_Graph = (options, callback)->
 
     nodes = ({id: node} for node in nodes)
 
-    graph = { nodes: nodes, edges: edges }
+    #graph = { nodes: nodes, edges: edges }
+    graph  = options.importService.new_Vis_Graph()
+    graph.options.edges.arrow().widthSelectionMultiplier = 5
+    graph.nodes = nodes
+    graph.edges = edges
 
     callback(graph)
 

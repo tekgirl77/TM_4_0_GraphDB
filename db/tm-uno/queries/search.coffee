@@ -21,9 +21,16 @@ get_Graph = (options, callback)->
   load_Data_For_Query = (query, next)=>
     searchTerms = [
                     { subject: query , predicate: 'is', object: 'Query'}
+                    #{ subject: 'Privacy' , predicate: 'is', object: 'Query'}
                     { subject: db.v('article_Id') ,predicate: db.v('metadata'), object: query}
+
+                    #{ subject: db.v('article_Id') ,predicate: db.v('metadata'), object: 'Design'}
+                    #{ subject: db.v('article_Id') ,predicate: 'technology'    , object: 'iOS'}
+                    #{ subject: db.v('article_Id') ,predicate: 'type'          , object: 'Guideline'}
+                    #{ subject: db.v('article_Id') ,predicate: 'category'      , object: 'Cryptography'}
+
                     { subject: db.v('article_Id'), predicate: 'is'            , object: 'Article'}
-                    { subject: db.v('view_Id')   , predicate: 'contains'       , object: db.v('article_Id')}
+                    { subject: db.v('view_Id')   , predicate: 'contains'      , object: db.v('article_Id')}
                   ]
     db.search searchTerms, (error, data)->
       search_Data = data
