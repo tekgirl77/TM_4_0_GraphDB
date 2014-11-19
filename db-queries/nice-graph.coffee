@@ -47,13 +47,15 @@ get_Graph = (options, callback)->
             when 'Search', 'Folder'
               fromNode.color.background =  "#c3c335"
               fromNode.fontSize  = 50
-
             when 'Articles','Queries', 'Metadatas'
               fromNode.color.background = "#92a792"
               fromNode.fontSize  = 50
           #fromNode.mass = 10
-            when 'Query','View'  then fromNode.color.background = "#e6b1b1"
-            when 'Article'       then fromNode.color.background = "#97d997"
+            when 'Query','View'
+              fromNode.color.background = "#e6b1b1"
+            when 'Article'
+              fromNode.color.background = "#97d997"
+              fromNode.fontSize  = 5
             when 'Metadata'      then fromNode.color.background = "#95bff7"
             when 'XRef'
               fromNode.color.background = '#000000'

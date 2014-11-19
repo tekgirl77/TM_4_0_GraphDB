@@ -27,6 +27,7 @@ create_Metadata_Global_Nodes = (next)=>
     target_Id = importService.new_Short_Guid('query')
     importUtil.add_Triplet target_Id, 'title', target
     importUtil.add_Triplet target_Id, 'is', 'Query'
+    importUtil.add_Triplet target_Id, 'is', 'Metadata'
     metadata_Queries[target] = target_Id
 
   add_Metadata_Global_Node(target) for target in ['Category', 'Phase', 'Technology', 'Type']

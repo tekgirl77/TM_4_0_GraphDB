@@ -84,15 +84,16 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
             #console.log data.containers
           done();
 
-    it.only 'run query - queries', (done)->
+    it 'run query - queries', (done)->
       @timeout(10000)
-      importService.load_Data ->
-      #importService.graph.openDb ->
+      #importService.load_Data ->
+      importService.graph.openDb ->
         importService.run_Query 'queries', {}, (graph)->
           "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
           done();
 
     it 'run query - query', (done)->
+      @timeout(10000)
       options = { show: 'iOS'}
       importService.graph.openDb ->
         importService.run_Query 'query', options, (graph)->
@@ -100,20 +101,22 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
           done();
 
 describe 'Filters', ->
-  it 'tm-uno , folder-metadata tm-search',(done)->
+  it.only 'tm-uno , folder-metadata tm-search',(done)->
+    @timeout(10000)
     data_id   = 'tm-uno'          #'data-test'
-    query_Id  = 'folder-metadata' # 'simple'
+    #query_Id  = 'folder-metadata' # 'simple'
+    query_Id = 'query'
     filter_Id = 'tm-search'       #totals'
     options   = { show : 'Logging'}
 
     importService = new Import_Service(data_id)
     importService.setup ->
-      importService.load_Data ->
-      #importService.graph.openDb ->
+      #importService.load_Data ->
+      importService.graph.openDb ->
         importService.run_Query query_Id, options, (graph)->
           importService.run_Filter filter_Id, graph, (data)->
             importService.graph.closeDb ->
-              #console.log data
+              #console.log data.filters
               data.title.assert_Is_String()
               #data.containers.assert_Not_Empty()
               #data.results.assert_Not_Empty()

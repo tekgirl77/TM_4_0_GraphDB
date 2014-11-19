@@ -18,8 +18,8 @@ class ImportService
   constructor: (name)->
     #@name = name || '_tmp_import'
     @name          = if (name) then name else 'test'
-    @cache      = new Cache_Service(@name)
-    @graph      = new Graph_Service(@name)
+    @cache      = new Cache_Service("#{name}_cache")
+    @graph      = new Graph_Service("#{name}")
     @teamMentor = new TeamMentor_Service();
     @path_Root     = "db"
     @path_Name     = "db/#{@name}"

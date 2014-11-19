@@ -7,7 +7,7 @@ open_Article = function(data)
         if (nodeData!= undefined && nodeData.guid)
         {
             console.log(nodeData.guid)
-            window.open('https://tmdev01-sme.teammentor.net/' + nodeData.guid, '_blank')//'articleView')
+            window.open('https://uno.teammentor.net/' + nodeData.guid, '_blank')//'articleView')
         }
     };
 
