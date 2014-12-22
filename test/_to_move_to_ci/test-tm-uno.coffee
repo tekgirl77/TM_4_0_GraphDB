@@ -1,4 +1,5 @@
-#return #long running test - move into CI server
+return
+#long running test - move into CI server
 async            = require 'async'
 Cache_Service    = require('./../../src/services/Cache-Service')
 Graph_Service    = require('./../../src/services/Graph-Service')
@@ -9,7 +10,7 @@ Guid             =  require('./../../src/utils/Guid')
 describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
 
   describe 'load tm-uno data set', ->
-    #@timeout 10000  # for the cases when data needs to be loaded from the network
+    @timeout 0  # for the cases when data needs to be loaded from the network
     importService     = null
 
     before (done)->
@@ -100,8 +101,8 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
           "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
           done();
 
-describe 'Filters', ->
-  it.only 'tm-uno , folder-metadata tm-search',(done)->
+describe '_to_move_to_ci | test-tm-uno | Filters', ->
+  it 'tm-uno , folder-metadata tm-search',(done)->
     @timeout(10000)
     data_id   = 'tm-uno'          #'data-test'
     #query_Id  = 'folder-metadata' # 'simple'

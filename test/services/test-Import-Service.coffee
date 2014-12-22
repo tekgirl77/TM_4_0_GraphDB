@@ -24,8 +24,8 @@ describe 'services | test-Import-Service |', ->
       importService.path_Queries.assert_Is_String()
 
       importService.name        .assert_Is 'test'
-      importService.name        .assert_Is importService.cache.area
-      importService.name        .assert_Is importService.graph.dbName
+   #   importService.name        .assert_Is importService.cache.area
+   #   importService.name        .assert_Is importService.graph.dbName
       importService.path_Root   .assert_Is('db')
       importService.path_Name   .assert_Is('db/test')
       importService.path_Data   .assert_Is('db/test/data')
@@ -345,6 +345,6 @@ describe 'services | test-Import-Service |', ->
               importService.find_Using_Is 'Article',  (data)->
                 data.assert_Size_Is(1)
                 importService.get_Subject_Data article_Id, (data)->
-                  data.guid.assert_Is('a330bfdd-9576-40ea-997e-e7ed2762fc3e')
+                  data.guid.assert_Is('8dfa8088-a6cb-4062-8a44-0df8f2bc1cc4')
                   data.title.assert_Is('All Input Is Validated')
                   done()

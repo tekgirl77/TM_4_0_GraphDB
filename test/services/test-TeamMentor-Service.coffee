@@ -15,7 +15,7 @@ describe 'services | test-TeamMentor-Service |', ->
 
       teamMentorService.name           .assert_Is '_tm_data'
       teamMentorService.name           .assert_Is teamMentorService.cacheService.area
-      teamMentorService.tmServer       .assert_Is 'https://tmdev01-sme.teammentor.net'
+      teamMentorService.tmServer       .assert_Is 'https://uno.teammentor.net'
 
     it 'tmServerVersion', (done)->
       teamMentorService.tmServerVersion.assert_Is_Function()
@@ -27,7 +27,7 @@ describe 'services | test-TeamMentor-Service |', ->
       teamMentorService.libraries.assert_Is_Function()
       teamMentorService.libraries (libraries)->
         libraries.assert_Is_Object();
-        (Object.keys(libraries).size() > 10).assert_Is_True()
+        Object.keys(libraries).assert_Size_Is(2)
         libraries['Guidance']     .assert_Is_Object()
         libraries['Guidance'].name.assert_Is('Guidance')
         done()
@@ -40,13 +40,13 @@ describe 'services | test-TeamMentor-Service |', ->
         done()
 
     it 'article', (done)->
-      article_Guid = 'a330bfdd-9576-40ea-997e-e7ed2762fc3e'
+      article_Guid = '6cdd9588-3483-4054-8bb7-17f790dedf10'
       teamMentorService.article.assert_Is_Function()
       teamMentorService.article article_Guid, (article)->
         article.assert_Is_Object()
         article.Metadata      .assert_Is_Object()
         article.Metadata.Id   .assert_Is(article_Guid)
-        article.Metadata.Title.assert_Is('All Input Is Validated')
+        article.Metadata.Title.assert_Is('Constrain, Reject, And Sanitize Input')
         done()
 
     it 'login (good pwd)', (done)->
@@ -81,8 +81,8 @@ describe 'services | test-TeamMentor-Service |', ->
         data.assert_Is_Array()
         data.first().assert_Is_Object()
         data.first().__type       .assert_Is 'TeamMentor.CoreLib.Library_V3'
-        data.first().libraryId    .assert_Is 'ea854894-8e16-46c8-9c61-737ef46d7e82'
-        data.first().name         .assert_Is '.NET 2.0'
+        data.first().libraryId    .assert_Is 'de693015-55c9-4328-bbc8-42db82ae8b7a'
+        data.first().name         .assert_Is 'Gateways'
         data.first().subFolders   .assert_Is_Array()
         data.first().views        .assert_Is_Array()
         data.first().guidanceItems.assert_Is_Array()
