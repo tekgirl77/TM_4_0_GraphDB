@@ -1,6 +1,6 @@
 levelgraph     = require('levelgraph'   )
 Import_Service = require('./../services/Import-Service')
-GitHub_Service = require('./../services/GitHub-Service')
+GitHub_Service = require('teammentor').GitHub_Service
 
 class QueryControler
   constructor: (server)->

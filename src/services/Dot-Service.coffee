@@ -1,4 +1,5 @@
 require('fluentnode')
+
 dot = require(process.cwd().path_Combine('node_modules/vis/lib/network/dotparser.js'));
 
 class Dot_Service

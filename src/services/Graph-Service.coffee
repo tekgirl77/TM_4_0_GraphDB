@@ -1,5 +1,5 @@
 levelgraph      = require('levelgraph'   )
-GitHub_Service  = require('./GitHub-Service')
+GitHub_Service  = require('teammentor').GitHub_Service
 
 class GraphService
 

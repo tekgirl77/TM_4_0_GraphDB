@@ -2,15 +2,15 @@ require('fluentnode')
 coffeeScript       = require 'coffee-script'
 async              = require('async')
 
-Cache_Service      = require('./Cache-Service')
+Cache_Service      = require('teammentor').Cache_Service
 #Db_Service         = require('./Db-Service')
 Dot_Service        = require './Dot-Service'
 #GitHub_Service     = require('./GitHub-Service')
 Graph_Service      = require('./Graph-Service')
-TeamMentor_Service = require('./TeamMentor-Service')
-Guid               = require('../utils/Guid')
+TeamMentor_Service = require('teammentor').TeamMentor_Service
+Guid               = require('teammentor').Guid
 Data_Import_Util   = require('../utils/Data-Import-Util')
-Vis_Graph          = require('../utils/Vis-Graph')
+Vis_Graph          = require('teammentor').Vis_Graph
 
 
 class ImportService

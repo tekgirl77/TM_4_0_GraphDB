@@ -4,7 +4,7 @@ Data_Controller      = require './controllers/Data-Controller'
 Filter_Controller    = require './controllers/Filter-Controller'
 Query_Controller     = require './controllers/Query-Controller'
 Graph_Controller     = require './controllers/Graph-Controller'
-Jade_Service         = require './services/Jade-Service'
+Jade_Service         = require('teammentor').Jade_Service
 
 class Server
     constructor: ->

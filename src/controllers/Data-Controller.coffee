@@ -1,7 +1,7 @@
 levelgraph     = require('levelgraph'   )
 Import_Service = require('./../services/Import-Service')
-GitHub_Service = require('./../services/GitHub-Service')
-Jade_Service   = require('./../services/Jade-Service')
+GitHub_Service = require('teammentor').GitHub_Service
+Jade_Service   = require('teammentor').Jade_Service
 
 class DataControler
   constructor: (server)->
