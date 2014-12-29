@@ -40,7 +40,7 @@
     "levelgraph": "^0.10.0",
     "node-uuid": "^1.4.1",
     "request": "^2.47.0",
-    "teammentor": "0.0.2",
+    "teammentor": "*",
     "vis": "^3.6.3",
     "xml2js": "^0.4.4"
   },
