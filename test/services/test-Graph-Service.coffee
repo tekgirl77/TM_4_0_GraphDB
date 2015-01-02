@@ -35,12 +35,12 @@ describe 'services | test-Graph-Service |', ->
           done()
 
     it 'deleteDb', (done) ->
-      graphService  = new Graph_Service()
-      graphService.openDb ->
-        expect(graphService.dbPath.file_Exists()).to.be.true
-        graphService.deleteDb ->
-          expect(graphService.dbPath.file_Exists()).to.be.false
-          done()
+      using new Graph_Service(),->
+        @.openDb ->
+          @.dbPath.assert_File_Exists()
+          @.deleteDb ->
+            @.dbPath.file_File_Not_Exists()
+            done()
 
 
   describe 'data operations |', ->
@@ -102,6 +102,23 @@ describe 'services | test-Graph-Service |', ->
         graphService.allData  (data) ->
           expect(data.length).to.equal(0)
           done()
+
+    it 'query', (done)->
+      using graphService,->
+        @.query "all",null, (data)=>
+          size = data.size()
+          @.add '1','2','3', => @.add '10','20','30', => @.add '100','200','300', =>
+            @.query "all",null, (data)=>
+              data.size().assert_Is(size+3)
+              @.query "subject","1", (data)=>
+                data.assert_Is([ { subject: '1', predicate: '2', object: '3' } ])
+                @.query "predicate","20", (data)=>
+                  data.assert_Is([ { subject: '10', predicate: '20', object: '30' } ])
+                  @.query "object","300", (data)=>
+                    data.assert_Is([ { subject: '100', predicate: '200', object: '300' } ])
+                    done()
+
+
 
   describe 'open and close of dbs |', ->
     it 'confirm that open_Dbs stores db ref', (done)->

@@ -34,7 +34,7 @@ class GraphService
       callback()
 
   deleteDb: (callback)=>
-    "[Graph-Service] Deleting The DB".log()
+    #"[Graph-Service] Deleting The DB".log()
     @closeDb =>
       @dbPath.folder_Delete_Recursive()
       callback();
