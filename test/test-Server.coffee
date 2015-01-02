@@ -22,9 +22,9 @@ describe 'test-Server |',->
         expect(server.stop   ).to.be.an('function')
 
         request  server.url(), (error, response, data)->
-          if (error == null)  # means the server is already running
-            done()
-            return
+          #if (error == null)  # means the server is already running
+          #  done()
+          #  return
 
           expect(server.start()).to.equal(server)
 

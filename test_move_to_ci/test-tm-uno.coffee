@@ -2,9 +2,9 @@ return
 #long running test - move into CI server
 async            = require 'async'
 Cache_Service    = require('teammentor').Cache_Service
-Graph_Service    = require('./../../src/services/Graph-Service')
-Import_Service   = require('./../../src/services/Import-Service')
-Data_Import_Util = require('./../../src/utils/Data-Import-Util')
+Graph_Service    = require('./../src/services/Graph-Service')
+Import_Service   = require('./../src/services/Import-Service')
+Data_Import_Util = require('./../src/utils/Data-Import-Util')
 Guid             = require('teammentor').Guid
 
 describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->

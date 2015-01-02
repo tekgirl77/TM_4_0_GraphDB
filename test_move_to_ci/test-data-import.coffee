@@ -1,8 +1,8 @@
 return #long running test - move into CI server
 
 Cache_Service    = require('./../../src/services/Cache-Service')
-Import_Service   = require('./../../src/services/Import-Service')
-Data_Import_Util = require('./../../src/utils/Data-Import-Util')
+Import_Service   = require('./../src/services/Import-Service')
+Data_Import_Util = require('./../src/utils/Data-Import-Util')
 Guid             =  require('./../../src/utils/Guid')
 
 describe.only 'db | tm-data | test-data-import |', ->

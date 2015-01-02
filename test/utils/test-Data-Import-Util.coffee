@@ -73,3 +73,10 @@ describe 'utils | test-Data-Import-Util |', ->
       dataImport.graph_From_Data (graph) ->
         graph.assert_Is_Equal_To result
         done()
+
+    it 'graph_From_Data (subject with long string)',(done)->
+      data = [{subject:'a'.add_Random_Letters(100)}]
+      using new Data_Import_Util(data),->
+        @.graph_From_Data (graph) ->
+          graph.edges[0].from.assert_Size_Is(43)
+          done()

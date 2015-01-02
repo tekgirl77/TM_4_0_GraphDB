@@ -9,14 +9,12 @@ echo '    for CoffeeScript'
 coffeeCoverage --path relative ./src ./.coverage/src
 coffeeCoverage --path relative ./test ./.coverage/test
 
-echo 'Running Tests locally with (html-file-cov)'
-mocha -R html-file-cov ./.coverage/test  --recursive
+echo 'Running with mocha-lcov-reporter and publishing to coveralls'
+mocha -R mocha-lcov-reporter .coverage/test --recursive | sed 's,SF:,SF:src/,;/test/s,src,test,' | ./node_modules/coveralls/bin/coveralls.js
 
 echo 'Removing instrumented node files'
 rm -R .coverage
 
-mv coverage.html .tmCache/coverage.html
+echo 'Opening browser with coveralls page for this project'
 
-echo 'Opening browser with coverage.html'
-
-open .tmCache/coverage.html
+open https://coveralls.io/r/TeamMentor/TM_4_0_GraphDB

@@ -2,7 +2,7 @@ return #long running test - move into CI server
 
 expect          = require('chai'     ).expect
 
-Import_Service   = require('./../../src/services/Import-Service')
+Import_Service   = require('./../src/services/Import-Service')
 
 describe 'db | tm-data | test-queries |', ->
   importService    = null
