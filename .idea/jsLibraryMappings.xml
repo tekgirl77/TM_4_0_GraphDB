@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{TM_4_0_GraphDB node_modules}" />
-    <file url="file://$PROJECT_DIR$/../node-teammentor/src/services/Cache-Service.coffee" libraries="{Node.js v0.10.30 Core Modules}" />
-  </component>
-</project>
