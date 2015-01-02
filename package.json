@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "chai": "^1.9.2",
+    "html-file-cov": "0.0.1",
     "mocha": "^1.21.5",
     "supertest": "^0.14.0",
     "supervisor": "^0.6.0"
