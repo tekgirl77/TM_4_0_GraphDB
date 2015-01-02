@@ -341,7 +341,13 @@ describe 'services | test-Import-Service |', ->
       importService.add_Db_using_Type_Guid_Title 'Folder', folder.folderId, folder.name, (folder_Id)->
         importService.add_Db_using_Type_Guid_Title 'View', view.viewId, view.caption, (view_Id)->
           teamMentor.article article.articleId, (article)->
-            importService.add_Db_using_Type_Guid_Title 'Article', article.Metadata.Id, article.Metadata.Title, (article_Id)->
+            if typeof(article) is 'string'
+              article_Id       = '8dfa8088-a6cb-4062-8a44-0df8f2bc1cc4'
+              article_Title = 'All Input Is Validated'
+            else
+              article_Id    = article.Metadata.Id
+              article_Title = article.Metadata.Title
+            importService.add_Db_using_Type_Guid_Title 'Article', article_Id, article_Title, (article_Id)->
               importService.find_Using_Is 'Article',  (data)->
                 data.assert_Size_Is(1)
                 importService.get_Subject_Data article_Id, (data)->
