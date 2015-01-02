@@ -95,6 +95,11 @@ describe 'services | test-Import-Service |', ->
         graph.edges.first().assert_Is_Equal_To({from:'a' , to: 'b'})
         done()
 
+    it 'run_Query (bad query)', (done)->
+      importService.run_Query null, null, ->
+        importService.run_Query 'aaaa', null, ->
+          done()
+
     it 'run_Filter', (done)->
       importService.setup ->
         importService.run_Query.assert_Is_Function()
@@ -156,6 +161,21 @@ describe 'services | test-Import-Service |', ->
       importService.new_Vis_Graph.assert_Is_Function()
                                  .ctor().nodes.assert_Is_Array()
 
+    it 'load_Data_From_Coffee (bad data)',(done)->
+      importService.load_Data_From_Coffee null , ->
+        importService.load_Data_From_Coffee '', ->
+          importService.load_Data_From_Coffee 'aaaaaaaa', ->
+            importService.load_Data_From_Coffee {}.notHere , ->
+              done()
+
+    it 'load_Data_From_Coffee (no data returns)',(done)->
+      tmp_File = '_tmp_Coffee.coffee'.append_To_Process_Cwd_Path()
+      "add_Data = (options, callback)-> callback();
+       module.exports = add_Data".saveAs(tmp_File);
+      importService.load_Data_From_Coffee tmp_File, (data)->
+        assert_Is_Undefined(data)
+        tmp_File.file_Delete().assert_Is_True()
+        done()
 
   describe 'load data |', ->
     importService = null

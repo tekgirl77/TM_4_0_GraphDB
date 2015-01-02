@@ -47,24 +47,20 @@ class ImportService
     @path_Queries.files()
 
   load_Data_From_Coffee: (file,callback) =>
-    #jsFile = file.replace('/db/','/.dist/db/').replace('.coffee','.js')
-    #if (jsFile and jsFile.file_Exists())
-    #  "executing js version of file: #{jsFile}".log()
-    #  add_Mappings = eval(jsFile.file_Contents().replace('}).call(this);', 'return addData;}).call(this);'))
-    #else
-    #  "executing coffee version of file: #{file}".log()
-    #  add_Mappings = require('coffee-script').eval(file.file_Contents())
-    add_Mappings = require('coffee-script').eval(file.file_Contents())
-    if typeof add_Mappings is 'function'
-      dataImport = new Data_Import_Util()
-      options = {data: dataImport, importService: @}
-      add_Mappings options, =>
-        if dataImport.data.empty()
-          callback()
-        else
-          @graph.db.put dataImport.data , callback
-    else
-      callback()
+    if file != '' and file?
+      code = file.file_Contents()
+      if code != null
+        add_Mappings = require('coffee-script').eval(code)
+        if typeof add_Mappings is 'function'
+          dataImport = new Data_Import_Util()
+          options = {data: dataImport, importService: @}
+          add_Mappings options, =>
+            if dataImport.data.empty()
+              callback()
+            else
+              @graph.db.put dataImport.data , callback
+          return
+    callback()
 
   load_Data: (callback)=>
     #"[Import-Service] load_data".log()
@@ -86,7 +82,6 @@ class ImportService
               new Dot_Service().dot_To_Triplets dot_Data, (triplets)=>
                 @graph.db.put triplets, loadNextFile
             else
-              console.log("not supported" + file.path_Extension())
               loadNextFile()
       loadNextFile()
 
@@ -110,7 +105,7 @@ class ImportService
         options = {importService:@ , graph: graph}
         get_Data options, callback
         return
-    callback({})
+    callback({})   #
 
   #new object Utils
   new_Short_Guid: (title, guid)->
@@ -134,7 +129,7 @@ class ImportService
     @graph.add(source, 'contains', target, callback)
 
   add_Db_Query: (source, target, callback)->
-    @graph.add(source, 'query', target, callback)
+    @graph.add(source, 'query', target, callback)     #
 
   add_Db_using_Type_Guid_Title: (type, guid, title, callback)->
     @add_Db type.lower(), guid, {'guid' : guid, 'is' :type, 'title': title}, callback
@@ -171,7 +166,7 @@ class ImportService
   get_Subject_Data: (subject, callback)=>
     #console.log subject
     if not subject
-      callback {}
+      callback {}   #
     else
       @graph.db.get {subject: subject}, (error, data)=>
         result = {}
@@ -180,9 +175,9 @@ class ImportService
           key = item.predicate
           value = item.object
           if (result[key])         # if there are more than one hit, return an array with them
-            if typeof(result[key])=='string'
-              result[key] = [result[key]]
-            result[key].push(value)
+            if typeof(result[key])=='string'    #
+              result[key] = [result[key]]       #
+            result[key].push(value)             #
           else
             result[key] = value
         callback(result)
@@ -190,10 +185,10 @@ class ImportService
   get_Subjects_Data:(subjects, callback)=>
     result = {}
     if not subjects
-      callback result
-      return
+      callback result                   #
+      return                            #
     if(typeof(subjects) == 'string')
-      subjects = [subjects]
+      subjects = [subjects]             #
     map_Subject_data = (subject, next)=>
       @get_Subject_Data subject, (subjectData)=>
         result[subject] = subjectData
