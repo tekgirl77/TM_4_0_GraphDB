@@ -20,7 +20,8 @@ class GraphService
       #"[openDb]creating".log()
       @db = levelgraph(@dbPath)
       GraphService.open_Dbs[@dbPath] = @db
-    callback()
+    process.nextTick ->
+      callback()
 
   closeDb: (callback)=>
     #"--- In CLOSE DB".log()
@@ -71,6 +72,6 @@ class GraphService
       when "predicate"    then @db.get { predicate: value}, (err, data) -> callback(data)
       when "object"       then @db.get { object: value}   , (err, data) -> callback(data)
       when "all"          then @allData callback
-      else callback(null,[])
+      else callback(null)
 
 module.exports = GraphService

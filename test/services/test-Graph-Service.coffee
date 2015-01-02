@@ -37,6 +37,7 @@ describe 'services | test-Graph-Service |', ->
     it 'deleteDb', (done) ->
       using new Graph_Service(),->
         @.openDb =>
+          log "-----" + @.dbPath
           @.dbPath.assert_File_Exists()
           @.deleteDb =>
             @.dbPath.assert_File_Not_Exists()
@@ -116,7 +117,9 @@ describe 'services | test-Graph-Service |', ->
                   data.assert_Is([ { subject: '10', predicate: '20', object: '30' } ])
                   @.query "object","300", (data)=>
                     data.assert_Is([ { subject: '100', predicate: '200', object: '300' } ])
-                    done()
+                    @.query null,"300", (data)=>
+                      assert_Is_Null(data)
+                      done()
 
 
 
