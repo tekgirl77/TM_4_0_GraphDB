@@ -338,19 +338,16 @@ describe 'services | test-Import-Service |', ->
       folder  = uno_Library.subFolders.first()
       view    = folder.views.first()
       article = { articleId: view.guidanceItems.first()}
-      importService.add_Db_using_Type_Guid_Title 'Folder', folder.folderId, folder.name, (folder_Id)->
-        importService.add_Db_using_Type_Guid_Title 'View', view.viewId, view.caption, (view_Id)->
-          teamMentor.article article.articleId, (article)->
-            if typeof(article) is 'string'
-              article_Id       = '8dfa8088-a6cb-4062-8a44-0df8f2bc1cc4'
-              article_Title = 'All Input Is Validated'
-            else
-              article_Id    = article.Metadata.Id
-              article_Title = article.Metadata.Title
-            importService.add_Db_using_Type_Guid_Title 'Article', article_Id, article_Title, (article_Id)->
-              importService.find_Using_Is 'Article',  (data)->
+      using importService,->
+        @add_Db_using_Type_Guid_Title 'Folder', folder.folderId, folder.name, (folder_Id)=>
+          @add_Db_using_Type_Guid_Title 'View', view.viewId, view.caption, (view_Id)=>
+            id = '8dfa8088-a6cb-4062-8a44-0df8f2bc1cc4'
+            title = 'All Input Is Validated'
+            @add_Db_using_Type_Guid_Title 'Article', id, title, (article_Id)=>
+              article_Id.assert_Is('article-' + id.split('-').last())
+              @find_Using_Is 'Article',  (data)=>
                 data.assert_Size_Is(1)
-                importService.get_Subject_Data article_Id, (data)->
-                  data.guid.assert_Is('8dfa8088-a6cb-4062-8a44-0df8f2bc1cc4')
-                  data.title.assert_Is('All Input Is Validated')
+                @get_Subject_Data article_Id, (data)=>
+                  data.guid.assert_Is(id)
+                  data.title.assert_Is(title)
                   done()
