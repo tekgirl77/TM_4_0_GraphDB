@@ -74,7 +74,6 @@ import_Article = (article, next)->
     title = article_Data.Metadata.Title
     importService.add_Db_using_Type_Guid_Title 'Article', article.guid, title, (article_Id)->
       importService.graph.add article.parent, 'contains-article', article_Id, ->
-      #importService.add_Db_Query article.parent, article_Id, ->
         import_Article_Metadata article_Id, article_Data, next
 
 import_Articles = (parent, article_Ids, next)->
@@ -84,7 +83,6 @@ import_Articles = (parent, article_Ids, next)->
 import_View = (view, next)->
   importService.add_Db_using_Type_Guid_Title 'Query', view.guid, view.title, (view_Id)->
     importService.graph.add view.parent, 'contains-query', view_Id, ->
-    #importService.add_Db_Query view.parent, view_Id, ->
       import_Articles view_Id, view.articles, next
 
 import_Views = (parent, views, next)->
@@ -94,7 +92,6 @@ import_Views = (parent, views, next)->
 import_Folder = (folder, next)->
   importService.add_Db_using_Type_Guid_Title 'Query', folder.guid, folder.title, (folderId)->
     importService.graph.add folder.parent, 'contains-query', folderId, ->
-    #importService.add_Db_Query folder.parent, folderId, ->
       import_Views folderId, folder.views , next
 
 import_Folders = (parent, folders, next)->

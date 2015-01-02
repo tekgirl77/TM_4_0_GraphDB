@@ -119,6 +119,9 @@ describe 'services | test-Import-Service |', ->
           data.number_of_edges.assert_Is_Equal_To(graph.nodes.size())
           done()
 
+    it 'run_Filter (bad data)', (done)->
+      importService.run_Filter null,null,->
+        done()
 
     it 'add_Db and find_Subject', (done)->
       type = 'test'
@@ -177,6 +180,10 @@ describe 'services | test-Import-Service |', ->
         tmp_File.file_Delete().assert_Is_True()
         done()
 
+    it 'get_Subject_Data (bad data)', (done)->
+      importService.get_Subject_Data null, ->
+        done()
+
   describe 'load data |', ->
     importService = null
     path_Data     = null
@@ -187,7 +194,7 @@ describe 'services | test-Import-Service |', ->
     dot_File_1    = null
     dot_File_2    = null
 
-    json_Data_1   = JSON.stringify [{ subject: 'a', predicate : 'b', object:'c'}, { subject: 'a', predicate : 'd', object:'f'}]
+    json_Data_1   = JSON.stringify [{ subject: 'a', predicate : 'b', object:'c'}, { subject: 'a', predicate : 'b', object:'f'}]
     json_Data_2   = JSON.stringify [{ subject: 'g', predicate : 'b', object:'c'}, { subject: 'g', predicate : 'd', object:'f'}]
     coffee_Data_1   = '''add_Data = (options,callback)->
                            options.data.addMappings('a1', [{'b1':'c1'},{ 'd1':'f1'}])
@@ -267,7 +274,17 @@ describe 'services | test-Import-Service |', ->
       importService.load_Data ->
         importService.graph.allData (data)->
           data.assert_Is_Array().assert_Size_Is(11)
-          done()
+          #log data
+          importService.get_Subject_Data "a", (data)->
+            data.assert_Is({ b: [ 'c', 'f' ] })
+            importService.get_Subject_Data "g", (data)->
+              data.assert_Is({ b: 'c', d:'f'})
+
+              importService.get_Subjects_Data null, (data)->
+                data.assert_Is({})
+                importService.get_Subjects_Data 'aaaa', (data)->
+                  data.assert_Is({'aaaa':{}})
+                  done()
 
 
   describe 'load Uno library',->

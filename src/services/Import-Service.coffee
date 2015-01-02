@@ -105,7 +105,7 @@ class ImportService
         options = {importService:@ , graph: graph}
         get_Data options, callback
         return
-    callback({})   #
+    callback({})
 
   #new object Utils
   new_Short_Guid: (title, guid)->
@@ -127,9 +127,6 @@ class ImportService
 
   add_Db_Contains: (source, target, callback)->
     @graph.add(source, 'contains', target, callback)
-
-  add_Db_Query: (source, target, callback)->
-    @graph.add(source, 'query', target, callback)     #
 
   add_Db_using_Type_Guid_Title: (type, guid, title, callback)->
     @add_Db type.lower(), guid, {'guid' : guid, 'is' :type, 'title': title}, callback
@@ -175,9 +172,9 @@ class ImportService
           key = item.predicate
           value = item.object
           if (result[key])         # if there are more than one hit, return an array with them
-            if typeof(result[key])=='string'    #
-              result[key] = [result[key]]       #
-            result[key].push(value)             #
+            if typeof(result[key])=='string'
+              result[key] = [result[key]]
+            result[key].push(value)
           else
             result[key] = value
         callback(result)
