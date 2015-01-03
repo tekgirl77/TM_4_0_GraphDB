@@ -2,7 +2,7 @@ Server  = require('./../src/Server')
 expect  = require('chai').expect
 request = require('request')
 
-describe.only 'test-Server |',->
+describe 'test-Server |',->
 
     server  = new Server()
 
