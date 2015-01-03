@@ -71,10 +71,13 @@ import_Article_Metadata = (article_Id, article_Data, next)->
 
 import_Article = (article, next)->
   importService.teamMentor.article article.guid, (article_Data)->
-    title = article_Data.Metadata.Title
-    importService.add_Db_using_Type_Guid_Title 'Article', article.guid, title, (article_Id)->
-      importService.graph.add article.parent, 'contains-article', article_Id, ->
-        import_Article_Metadata article_Id, article_Data, next
+    if (article_Data? and article_Data.Metadata)
+      title = article_Data.Metadata.Title
+      importService.add_Db_using_Type_Guid_Title 'Article', article.guid, title, (article_Id)->
+        importService.graph.add article.parent, 'contains-article', article_Id, ->
+          import_Article_Metadata article_Id, article_Data, next
+    else
+      next()
 
 import_Articles = (parent, article_Ids, next)->
   articlesToAdd = ({guid: article_Id, parent:parent} for article_Id in article_Ids).take(take)

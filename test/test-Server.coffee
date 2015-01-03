@@ -2,7 +2,7 @@ Server  = require('./../src/Server')
 expect  = require('chai').expect
 request = require('request')
 
-describe 'test-Server |',->
+describe.only 'test-Server |',->
 
     server  = new Server()
 
@@ -16,16 +16,14 @@ describe 'test-Server |',->
         expect(server.addRoutes    ).to.be.an('function')
         expect(server.addControlers).to.be.an('function')
 
-
     it 'start and stop', (done)->
         expect(server.start  ).to.be.an('function')
         expect(server.stop   ).to.be.an('function')
 
         request  server.url(), (error, response, data)->
-          #if (error == null)  # means the server is already running
-          #  done()
-          #  return
-
+          if (error == null)  # means the server is already running
+            return
+            done()
           expect(server.start()).to.equal(server)
 
           expect(server._server.close         ).to.be.an('function')
