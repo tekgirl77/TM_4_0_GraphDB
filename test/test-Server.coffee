@@ -22,8 +22,9 @@ describe 'test-Server |',->
 
         request  server.url(), (error, response, data)->
           if (error == null)  # means the server is already running
-            return
             done()
+            return
+
           expect(server.start()).to.equal(server)
 
           expect(server._server.close         ).to.be.an('function')

@@ -5,7 +5,7 @@ Graph_Controller = require('./../../src/controllers/Graph-Controller')
 Import_Service   = require('./../../src/services/Import-Service')
 Server           = require('./../../src/Server')
 
-describe 'controllers | test-Graph-Controller |', ->
+describe 'controllers | Graph-Controller.test |', ->
 
   describe 'core |', ->
     it 'check ctor',->

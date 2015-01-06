@@ -75,6 +75,6 @@ get_Data = (params, callback)->
     add_Filter('Type')
 
   else
-    'no folder- found!'.log()
+    'no Query found!'.log()
   callback(searchData)
 module.exports = get_Data
