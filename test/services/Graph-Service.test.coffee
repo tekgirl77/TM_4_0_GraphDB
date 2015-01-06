@@ -37,7 +37,6 @@ describe 'services | test-Graph-Service |', ->
     it 'deleteDb', (done) ->
       using new Graph_Service(),->
         @.openDb =>
-          log "-----" + @.dbPath
           @.dbPath.assert_File_Exists()
           @.deleteDb =>
             @.dbPath.assert_File_Not_Exists()
