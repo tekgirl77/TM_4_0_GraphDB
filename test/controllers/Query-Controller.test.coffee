@@ -50,3 +50,11 @@ describe 'controllers | test-Query-Controller |', ->
                       graph = JSON.parse(response.text)
                       expect(graph).to.deep.equal({a:'b'})
                       done()
+
+    it '/data/:dataId/:queryId?show={invalid-query}' , (done)->
+      supertest(app).get('/data/data-test/query/filter/tm-search?show=aaaaaaaaa')
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end (error, response) ->
+                      response.text.assert_Is("{}")   # regression test for [bug #128]
+                      done()

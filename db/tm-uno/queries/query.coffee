@@ -16,11 +16,11 @@ Object.defineProperty Object.prototype, '_get',
 get_Graph = (options, callback)->
 
   importService = options.importService
-  params        = options.params
+  params        = options.params || {}
   graph         = importService.new_Vis_Graph()
   db            = importService.graph.db
 
-  query_Title            = if params && params.show then params.show else 'Data Validation' #iOS'
+  query_Title            = params.show || ''
   filters                = if params.filters then params.filters.split(',') else []
   cache_key              = "#{query_Title}_#{filters}"
   query_Id               = null
@@ -80,12 +80,11 @@ get_Graph = (options, callback)->
         next();
 
   find_Contained_Queries = (query_Id, next)->
+    # note if query_Id is null the db.search will return all data (see bug #128)
     searchTerms = [ { subject: query_Id             , predicate: 'contains-query'  , object: db.v('child-query')}
                     { subject:  db.v('child-query') , predicate: 'title'           , object: db.v('title'      )}]
     db.search searchTerms, (error, data)->
       contained_Queries = data;
-      #contained_Queries_Ids = (item['child-query'] for item in data)
-      #"Found #{contained_Queries.size()} contained queries".log()
       next()
 
   find_Articles = (query_Id, extra_Filters, next)->
@@ -193,11 +192,14 @@ get_Graph = (options, callback)->
 
   map_Metadata_Mappings ->
     find_Query_Id             query_Title       , ()->
-      find_Contained_Queries  query_Id          , ()->
-        find_Articles         query_Id, filters , ()->
-          find_Metadata ->
-            add_Data_To_Graph ->
-              send_Graph_To_Caller()
+      if query_Id is null
+        send_Graph_To_Caller()
+      else
+        find_Contained_Queries  query_Id          , ()->
+          find_Articles         query_Id, filters , ()->
+            find_Metadata ->
+              add_Data_To_Graph ->
+                send_Graph_To_Caller()
 
   return;
 
