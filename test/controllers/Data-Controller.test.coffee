@@ -36,9 +36,9 @@ describe 'controllers | test-Data-Controller |', ->
                     .expect(200)
                     .end (error, response) ->
                       $ = cheerio.load(response.text)
-                      expect($('#title').html()).to.equal("Available data")
+                      $('#title').html().assert_Is("Available data")
                       #expect($('#baseFolder').html()).to.equal("db")
-                      expect($('#dataIds').length).to.be.above(10)
+                      $('#dataIds').length.assert_Bigger_Than(3)
 
                       firstDataId = $('#dataIds a')
                       expect(firstDataId.html()        ).to.equal('data-test')
