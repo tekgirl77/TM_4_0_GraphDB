@@ -35,12 +35,3 @@ describe 'controllers | test-Filter-Controller |', ->
                     json.number_of_nodes.assert_Is_Equal_To(14)
                     json.number_of_edges.assert_Is_Equal_To(12)
                     done()
-
-
-#  describe 'routes |', ->
-#
-#    dataId         = "_tmp_".add_Random_String()
-#    queryId        = "simple-graph"
-#    import_Service = null
-#    graphId        = "graph"
-#    graphTitle     = "Graph View (with Ajax load)"
