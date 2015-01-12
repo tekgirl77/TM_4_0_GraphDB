@@ -4,4 +4,5 @@ node_js:
   - 0.10
 after_script:
    - "echo 'Since tests passed: instrument files, rerun tests and publish results to coveralls' "
+   - "ls -la"
    - "sh -e ./bin/publish-code-coverage.sh"
