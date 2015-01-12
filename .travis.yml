@@ -2,3 +2,6 @@ sudo: false
 language: node_js
 node_js:
   - 0.10
+after_script:
+   - "echo 'Since tests passed: instrument files, rerun tests and publish results to coveralls' "
+   - "sh -e ./node/bin/publish-code-coverage.sh"
