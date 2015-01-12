@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ ! -f ./node_modules/mocha-lcov-reporter/package.json ]; then
+#if [ ! -f ./node_modules/mocha-lcov-reporter/package.json ]; then
   echo 'Installing coverage dependencies'
   npm install jscover
   npm install coffee-coverage
   npm install mocha-lcov-reporter
   npm install coveralls
-fi
+#fi
 
 #set -o errexit # Exit on error
 echo 'Removing cache files'
