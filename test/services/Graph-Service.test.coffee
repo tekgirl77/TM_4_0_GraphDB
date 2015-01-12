@@ -1,7 +1,7 @@
 expect        = require('chai'         ).expect
 Graph_Service  = require('./../../src/services/Graph-Service')
 
-describe 'services | test-Graph-Service |', ->
+describe 'services | Graph-Service.test |', ->
   describe 'core |', ->
     it 'check ctor', ->
       graphService  = new Graph_Service()
@@ -37,10 +37,11 @@ describe 'services | test-Graph-Service |', ->
     it 'deleteDb', (done) ->
       using new Graph_Service(),->
         @.openDb =>
-          @.dbPath.assert_File_Exists()
-          @.deleteDb =>
-            @.dbPath.assert_File_Not_Exists()
-            done()
+          process.nextTick => 
+            @.dbPath.assert_File_Exists()
+            @.deleteDb =>
+              @.dbPath.assert_File_Not_Exists()
+              done()
 
 
   describe 'data operations |', ->
