@@ -13,7 +13,9 @@
     "dev": "./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js",
     "compile": "coffee --output ./.dist/src --compile ./src &&  coffee --output ./.dist/test --compile ./test",
     "coverage": "./bin/local-code-coverage.sh",
-    "coverage-publish": "./bin/publish-code-coverage.sh"
+    "coverage-publish": "./bin/publish-code-coverage.sh",
+    "coverage-local": "node_modules/.bin/onchange 'src/**/*.coffee' 'test/**/*.coffee' -- ./bin/lcov-code-coverage.sh"
+
   },
   "repository": {
     "type": "git",

@@ -10,7 +10,7 @@ coffeeCoverage --path relative ./src ./.coverage/src
 coffeeCoverage --path relative ./test ./.coverage/test
 
 echo 'Running Tests locally with (html-file-cov)'
-mocha -R html-file-cov ./.coverage/test  --recursive
+mocha -R html-file-cov ./.coverage  --recursive
 
 echo 'Removing instrumented node files'
 rm -R .coverage

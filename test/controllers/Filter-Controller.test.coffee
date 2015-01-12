@@ -5,7 +5,7 @@ Filter_Controller = require('./../../src/controllers/Filter-Controller')
 Import_Service    = require('./../../src/services/Import-Service')
 Server            = require('./../../src/Server')
 
-describe 'controllers | test-Filter-Controller |', ->
+describe 'controllers | Filter-Controller.test', ->
 
   filterController = null
   server          = null
@@ -19,6 +19,7 @@ describe 'controllers | test-Filter-Controller |', ->
     Filter_Controller.assert_Is_Function()
     filterController.assert_Is_Object()
     filterController.server.assert_Is_Equal_To(server)
+
 
   it '/data/:dataId/:queryId/filter/:filterId' , (done)->
     dataId   = 'data-test'

@@ -21,9 +21,7 @@ describe 'test-Server |',->
         expect(server.stop   ).to.be.an('function')
 
         request  server.url(), (error, response, data)->
-          if (error == null)  # means the server is already running
-            done()
-            return
+          do(()->done();return;)    if (error == null)  # means the server is already running
 
           expect(server.start()).to.equal(server)
 
@@ -46,11 +44,11 @@ describe 'test-Server |',->
         expect(server.url()).to.equal("http://localhost:1332")
 
 
-    it 'routes', ->        
+    it 'routes', ->
         expect(server.routes         ).to.be.an('function')
         expect(server.routes()       ).to.be.an('array')
         expect(server.routes().size()).to.be.above(0)
-        
+
     it 'Check expected paths', ->
       expectedPaths = [ '/'
                         '/test'

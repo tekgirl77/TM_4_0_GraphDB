@@ -4,7 +4,7 @@ supertest       = require('supertest')
 Data_Controller = require('./../../src/controllers/Data-Controller')
 Server          = require('./../../src/Server')
 
-describe 'controllers | test-Data-Controller |', ->
+describe 'controllers | Data-Controller.test', ->
   server = new Server()
   app    = server.app
   dataController = new Data_Controller(server)
@@ -15,7 +15,6 @@ describe 'controllers | test-Data-Controller |', ->
       expect(Data_Controller      ).to.be.an('function')
       expect(dataController       ).to.be.an('object')
       expect(dataController.server).to.be.undefined
-
       server = new Server()
       dataController = new Data_Controller(server)
       expect(dataController.server).to.equal(server)
@@ -38,7 +37,7 @@ describe 'controllers | test-Data-Controller |', ->
                       $ = cheerio.load(response.text)
                       $('#title').html().assert_Is("Available data")
                       #expect($('#baseFolder').html()).to.equal("db")
-                      $('#dataIds').length.assert_Bigger_Than(3)
+                      $('#dataIds').length.assert_Bigger_Than(1)
 
                       firstDataId = $('#dataIds a')
                       expect(firstDataId.html()        ).to.equal('data-test')
