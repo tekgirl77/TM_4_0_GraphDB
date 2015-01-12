@@ -34,7 +34,7 @@ describe 'services | test-Graph-Service |', ->
           expect(graphService.db                              ).to.equal(null)
           done()
 
-    it 'deleteDb', (done) ->
+    xit 'deleteDb', (done) ->
       using new Graph_Service(),->
         @.openDb =>
           @.dbPath.assert_File_Exists()
