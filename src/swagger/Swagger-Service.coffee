@@ -1,3 +1,4 @@
+require 'fluentnode'
 express                 = require("express")
 bodyParser              = require('body-parser')
 swagger_node_express    = require("swagger-node-express")
