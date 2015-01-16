@@ -91,7 +91,7 @@ class Swagger_Service
     swaggerApi = null
 
     onSuccess = ()->                        # this will be called twitce
-      if swaggerApi.apis.keys().empty()        # means that we are on the first call and the apis value is not loaded
+      if swaggerApi.apis.keys().empty()        # means that we are on the first caol and the apis value is not loaded
         return
       if (swaggerApi.ready)
         callback(swaggerApi.say)

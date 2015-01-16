@@ -1,4 +1,4 @@
-QA_NWR_API              = require './TM-QA-NWR-API'
+QA_NWR_API              = require '../../test/swagger/TM-QA-NWR-API'
 Server                  = require '../../src/Server'
 Swagger_Service         = require '../../src/swagger/Swagger-Service'
 
