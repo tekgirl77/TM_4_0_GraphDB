@@ -32,13 +32,12 @@ describe 'test-Server |',->
               expect(error).to.equal(null)
               expect(response.statusCode).to.equal(404)
 
-              server.stop()
-
-              request server.url(), (error, response,data)->
-                  expect(error        ).to.not.equal(null)
-                  expect(error.message).to.equal('connect ECONNREFUSED')
-                  expect(response     ).to.equal(undefined)
-                  done()
+              server.stop ->
+                  request server.url(), (error, response,data)->
+                      expect(error        ).to.not.equal(null)
+                      expect(error.message).to.equal('connect ECONNREFUSED')
+                      expect(response     ).to.equal(undefined)
+                      done()
 
     it 'url',->
         expect(server.url()).to.equal("http://localhost:1332")

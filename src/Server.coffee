@@ -30,13 +30,15 @@ class Server
         new Query_Controller( @ ).add_Routes()
         new Graph_Controller( @ ).add_Routes()
 
-    start: =>
-        @_server = @app.listen(@port)
+    start: (callback)=>
+        @_server = @app.listen @port, ->
+            callback() if callback
         @
 
-    stop: =>
-        @_server.close()
-        @
+    stop: (callback)=>
+        @_server._connections = 0   # trick the server to believe there are no more connections (I didn't find a nice way to get and open existing connections)
+        @_server.close ->
+            callback() if callback
 
     url: =>
         "http://localhost:#{@port}"
