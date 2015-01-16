@@ -7,10 +7,11 @@ Graph_Controller     = require './controllers/Graph-Controller'
 Jade_Service         = require('teammentor').Jade_Service
 
 class Server
-    constructor: ->
+    constructor: (options)->
+        @.options     = options || {}
         @_server      = null;
         @app          = express()
-        @port         = process.env.PORT || 1332
+        @port         = process.env.PORT || @.options.port || 1332
         @configure()
 
     configure: =>

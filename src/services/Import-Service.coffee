@@ -16,17 +16,17 @@ Vis_Graph          = require('teammentor').Vis_Graph
 class ImportService
 
   constructor: (name)->
-    #@name = name || '_tmp_import'
-    @name          = if (name) then name else 'test'
-    @cache         = new Cache_Service("#{name}_cache")
-    @graph         = new Graph_Service("#{name}")
+    @name          = name || '_tmp_import'
+    #@name          = if (name) then name else 'test'
+    @cache         = new Cache_Service("#{@name}_cache")
+    @graph         = new Graph_Service("#{@name}")
     @teamMentor    = new TeamMentor_Service({tmConfig_File: '.tm-Config.json'});
     @path_Root     = "db"
     @path_Name     = "db/#{@name}"
     @path_Data     = "#{@path_Name}/data"
     @path_Filters  = "#{@path_Name}/filters"
     @path_Queries  = "#{@path_Name}/queries"
- 
+
   setup: (callback)->
     @path_Root   .folder_Create()
     @path_Name   .folder_Create()
@@ -35,7 +35,6 @@ class ImportService
     @path_Queries.folder_Create()
     @graph.openDb ->
       callback()
-
 
     #@load_Data(callback)
 

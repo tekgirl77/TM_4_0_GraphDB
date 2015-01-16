@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #set -o errexit # Exit on error
-echo 'Removing cache files'
-rm -R .tmCache
+#echo 'Removing cache files'
+#rm -R .tmCache
 
 echo 'Creating instrumented node files'
 echo '    for CoffeeScript'

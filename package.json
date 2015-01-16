@@ -15,7 +15,6 @@
     "coverage": "./bin/local-code-coverage.sh",
     "coverage-publish": "./bin/publish-code-coverage.sh",
     "coverage-local": "node_modules/.bin/onchange 'src/**/*.coffee' 'test/**/*.coffee' -- ./bin/lcov-code-coverage.sh"
-
   },
   "repository": {
     "type": "git",
@@ -44,6 +43,7 @@
     "levelgraph": "^0.10.0",
     "node-uuid": "^1.4.1",
     "request": "^2.47.0",
+    "swagger-node-express": "^2.1.3",
     "teammentor": "*",
     "vis": "^3.6.3",
     "xml2js": "^0.4.4"
@@ -55,6 +55,7 @@
     "mocha": "^1.21.5",
     "mocha-lcov-reporter": "0.0.1",
     "supertest": "^0.14.0",
-    "supervisor": "^0.6.0"
+    "supervisor": "^0.6.0",
+    "nwr": "latest"
   }
 }

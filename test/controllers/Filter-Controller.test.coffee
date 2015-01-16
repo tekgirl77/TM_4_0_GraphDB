@@ -21,7 +21,7 @@ describe 'controllers | Filter-Controller.test', ->
     filterController.server.assert_Is_Equal_To(server)
 
 
-  it '/data/:dataId/:queryId/filter/:filterId' , (done)->
+  xit '/data/:dataId/:queryId/filter/:filterId' , (done)->
     dataId   = 'data-test'
     queryId  = 'simple'
     filterId = 'totals'
