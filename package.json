@@ -49,6 +49,7 @@
     "xml2js": "^0.4.4"
   },
   "devDependencies": {
+    "body-parser": "^1.10.1",
     "chai": "^1.9.2",
     "coveralls": "^2.11.2",
     "html-file-cov": "0.0.1",
