@@ -299,6 +299,8 @@ describe 'services | Import-Service.test', ->
     teamMentor    = null
     uno_Library   = null;
 
+    @timeout 10000
+
     before (done)->
       importService = new Import_Service('_temp_Uno')
       cache         = importService.cache
