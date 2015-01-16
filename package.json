@@ -54,8 +54,8 @@
     "html-file-cov": "0.0.1",
     "mocha": "^1.21.5",
     "mocha-lcov-reporter": "0.0.1",
+    "nwr": "^0.1.8",
     "supertest": "^0.14.0",
-    "supervisor": "^0.6.0",
-    "nwr": "latest"
+    "supervisor": "^0.6.0"
   }
 }
