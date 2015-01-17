@@ -1,25 +1,23 @@
-Server                  = require '../../src/Server'
-Swagger_Service         = require '../../src/swagger/Swagger-Service'
+TM_Server        = require '../../src/TM-Server'
+Swagger_Service  = require '../../src/swagger/Swagger-Service'
 
-
-describe 'swagger | Swagger-Service.test', ->
+return
+describe.only 'swagger | Swagger-Service.test', ->
 
   url_server     = null
   server         = null
   url_api_docs   = null
   swaggerService = null
-  
+  swaggerApi     = null
+
   before (done)->
-    server  = new Server()
+    server  = new TM_Server({ port : 12345})
     options = { app: server.app }
     swaggerService = new Swagger_Service options
     swaggerService.set_Defaults()
     server.start()
-    url_server   = server.url()
-    url_api_docs = url_server + '/api-docs'
-    help = url_server + '/docs/?url=' + url_api_docs
-    url_api_docs.GET (html)->
-      html.assert_Is_String()
+    swaggerService.get_Client_Api (api)->
+      swaggerApi = api;
       done()
 
   after (done)->
@@ -27,6 +25,14 @@ describe 'swagger | Swagger-Service.test', ->
       url_api_docs.GET (html)->
         assert_Is_Null(html)
         done()
+
+  it 'check server', (done)->
+    url_server   = server.url()
+    url_api_docs = url_server + '/api-docs'
+    help = url_server + '/docs/?url=' + url_api_docs
+    url_api_docs.GET (html)->
+      html.assert_Is_String()
+      done()
 
   it 'check url_api_docs',(done)->
     url_api_docs.GET_Json (apiDocs)->
@@ -37,9 +43,7 @@ describe 'swagger | Swagger-Service.test', ->
         done()
 
   it 'swagger-client', (done)->
-    swaggerService.get_Client_Api (swaggerApi)->
-
-      swaggerApi.assert_Is_Object
+      swaggerApi.assert_Is_Object()
       using swaggerApi,->
         @.ping    .assert_Is_Function()
         @.sayHello.assert_Is_Function()
@@ -47,21 +51,29 @@ describe 'swagger | Swagger-Service.test', ->
       done()
 
   it 'ping', (done)->
-    swaggerService.get_Client_Api (swaggerApi)->
-      swaggerApi.ping (response)->
-        response.url = swaggerService.url_Api_Say.append 'ping'
-        response.status.assert_Is 200
-        response.method.assert_Is 'GET'
-        response.obj   .assert_Is { ping: 'pong' }
-        done()
+    swaggerApi.ping (response)->
+      response.url = swaggerService.url_Api_Say.append 'ping'
+      response.status.assert_Is 200
+      response.method.assert_Is 'GET'
+      response.obj   .assert_Is { ping: 'pong' }
+      done()
 
   it 'sayHello', (done)->
-    swaggerService.get_Client_Api (swaggerApi)->
-      name = 'abc'.add_5_Random_Letters()
-      swaggerApi.sayHello { name: name }, (response)->
-        response.headers.input['x-powered-by'].assert_Is 'Express',
-        response.url = swaggerService.url_Api_Say.append 'say_Hello'
-        response.status.assert_Is 200
-        response.method.assert_Is 'POST'
-        response.obj   .assert_Is { hello: name }
-        done()
+    name = 'abc'.add_5_Random_Letters()
+    swaggerApi.sayHello { name: name }, (response)->
+      response.headers.input['x-powered-by'].assert_Is 'Express',
+      response.url = swaggerService.url_Api_Say.append 'say_Hello'
+      response.status.assert_Is 200
+      response.method.assert_Is 'POST'
+      response.obj   .assert_Is { hello: name }
+      done()
+
+  #it 'test', (done)->
+  #  #console.log swaggerApi.keys()
+  #  swaggerApi.ping3 (data)->
+  #    log data.obj
+  #  #url = 'http://localhost:1332/data/tm-uno/queries';
+  #  #url.GET_Json (data)->
+  #  #  log data
+  #  #  done()
+  #    done()

@@ -1,7 +1,7 @@
 expect          = require('chai'     ).expect
 supertest       = require('supertest')
 Query_Controller = require('./../../src/controllers/Query-Controller')
-Server          = require('./../../src/Server')
+Server          = require('./../../src/TM-Server')
 
 describe 'controllers | Query-Controller.test', ->
   describe 'core |', ->

@@ -3,7 +3,7 @@
 
 require('coffee-script/register');              // adding coffee-script support
 
-var Server = require('./src/Server');           // gets the express server
+var Server = require('./src/TM-Server');           // gets the express server
 
 var server = new Server().start()               // start server
 

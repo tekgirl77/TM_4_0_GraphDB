@@ -1,5 +1,5 @@
 QA_NWR_API              = require '../../test/swagger/TM-QA-NWR-API'
-Server                  = require '../../src/Server'
+Server                  = require '../../src/TM-Server'
 Swagger_Service         = require '../../src/swagger/Swagger-Service'
 
 describe 'swagger | Swagger-Service.QA.test', ->
@@ -9,7 +9,7 @@ describe 'swagger | Swagger-Service.QA.test', ->
   server = null
 
   before (done)->
-    server  = new Server()
+    server  = new Server({ port : 12345})
     options = { app: server.app }
     swaggerService = new Swagger_Service options
     swaggerService.set_Defaults()
@@ -30,11 +30,7 @@ describe 'swagger | Swagger-Service.QA.test', ->
     page.chrome.open help, ()->
       400.wait ->
         page.html (html,$)->
-          $('.info_title').html().assert_Is('Swagger Hello World App')
-          $('h2').text().trim().assert_Is('say')
-          #page.click 'pet',->
-          #page.chrome.eval_Script "$('.endpoint .options a')[0].click()", ->
-          #page.chrome.eval_Script "$('.endpoint .options a')[1].click()", ->
+          $('.info_title').html().assert_Is('TeamMentor GraphDB 4.0')
           done()
 
   #it 'Issue - Swagger UI Description allows HTML Injection (XSS by Design)', (done)->

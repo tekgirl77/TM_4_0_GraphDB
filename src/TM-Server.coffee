@@ -6,7 +6,7 @@ Query_Controller     = require './controllers/Query-Controller'
 Graph_Controller     = require './controllers/Graph-Controller'
 Jade_Service         = require('teammentor').Jade_Service
 
-class Server
+class TM_Server
     constructor: (options)->
         @.options     = options || {}
         @_server      = null;
@@ -51,6 +51,6 @@ class Server
                 paths.push(item.route.path)               
         return paths
         
-module.exports = Server
+module.exports = TM_Server
 
 

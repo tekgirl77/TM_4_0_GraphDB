@@ -1,13 +1,13 @@
-Server  = require('./../src/Server')
-expect  = require('chai').expect
-request = require('request')
+TM_Server = require('./../src/TM-Server')
+expect    = require('chai').expect
+request   = require('request')
 
 describe 'test-Server |',->
 
-    server  = new Server()
+    server  = new TM_Server({ port : 12345} )
 
     it 'check ctor', ->
-        expect(Server        ).to.be.an('function')
+        expect(TM_Server     ).to.be.an('function')
         expect(server        ).to.be.an('object'  )
         expect(server.app    ).to.be.an('function')
         expect(server.port   ).to.be.an('number'  )
@@ -40,7 +40,7 @@ describe 'test-Server |',->
                       done()
 
     it 'url',->
-        expect(server.url()).to.equal("http://localhost:1332")
+        expect(server.url()).to.equal("http://localhost:12345")
 
 
     it 'routes', ->
@@ -62,3 +62,13 @@ describe 'test-Server |',->
                         '/data/:dataId/:queryId/:graphId'
                       ]
       expect(server.routes()).to.deep.equal(expectedPaths)
+
+
+  require 'fluentnode'                          # import fluentnode apis
+
+  describe 'repl_Me example', ->                # test suite
+    it.only 'repl_Me', (done)->                 # async test
+        @.timeout(0)                            # don't let the test end until done is called
+        fs = require('fs')                      # import the node fs class
+        fs.repl_Me ->                           # repl the fs object (with 'that' var being assigned to 'fs' value)
+            done()                              # end test

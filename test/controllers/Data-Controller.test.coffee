@@ -2,7 +2,7 @@ cheerio         = require('cheerio')
 expect          = require('chai'     ).expect
 supertest       = require('supertest')
 Data_Controller = require('./../../src/controllers/Data-Controller')
-Server          = require('./../../src/Server')
+Server          = require('./../../src/TM-Server')
 
 describe 'controllers | Data-Controller.test', ->
   server = new Server()

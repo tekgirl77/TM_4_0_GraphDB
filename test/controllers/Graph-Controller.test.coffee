@@ -3,7 +3,7 @@ expect           = require('chai'     ).expect
 supertest        = require('supertest')
 Graph_Controller = require('./../../src/controllers/Graph-Controller')
 Import_Service   = require('./../../src/services/Import-Service')
-Server           = require('./../../src/Server')
+Server           = require('./../../src/TM-Server')
 
 describe 'controllers | Graph-Controller.test', ->
 
