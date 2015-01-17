@@ -56,7 +56,6 @@
     "html-file-cov": "latest",
     "mocha": "latest",
     "mocha-lcov-reporter": "latest",
-    "nwr": "latest",
     "supertest": "latest",
     "supervisor": "latest",
     "swagger-client": "^2.0.48"
