@@ -62,13 +62,3 @@ describe 'test-Server |',->
                         '/data/:dataId/:queryId/:graphId'
                       ]
       expect(server.routes()).to.deep.equal(expectedPaths)
-
-
-  require 'fluentnode'                          # import fluentnode apis
-
-  describe 'repl_Me example', ->                # test suite
-    it.only 'repl_Me', (done)->                 # async test
-        @.timeout(0)                            # don't let the test end until done is called
-        fs = require('fs')                      # import the node fs class
-        fs.repl_Me ->                           # repl the fs object (with 'that' var being assigned to 'fs' value)
-            done()                              # end test
