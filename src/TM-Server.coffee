@@ -6,11 +6,12 @@ Query_Controller     = require './controllers/Query-Controller'
 Graph_Controller     = require './controllers/Graph-Controller'
 Jade_Service         = require('teammentor').Jade_Service
 
-class Server
-    constructor: ->
+class TM_Server
+    constructor: (options)->
+        @.options     = options || {}
         @_server      = null;
         @app          = express()
-        @port         = process.env.PORT || 1332
+        @port         = process.env.PORT || @.options.port || 1332
         @configure()
 
     configure: =>
@@ -29,13 +30,15 @@ class Server
         new Query_Controller( @ ).add_Routes()
         new Graph_Controller( @ ).add_Routes()
 
-    start: =>
-        @_server = @app.listen(@port)
+    start: (callback)=>
+        @_server = @app.listen @port, ->
+            callback() if callback
         @
 
-    stop: =>
-        @_server.close()
-        @
+    stop: (callback)=>
+        @_server._connections = 0   # trick the server to believe there are no more connections (I didn't find a nice way to get and open existing connections)
+        @_server.close ->
+            callback() if callback
 
     url: =>
         "http://localhost:#{@port}"
@@ -48,6 +51,6 @@ class Server
                 paths.push(item.route.path)               
         return paths
         
-module.exports = Server
+module.exports = TM_Server
 
 

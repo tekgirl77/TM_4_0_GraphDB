@@ -13,7 +13,8 @@
     "dev": "./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js",
     "compile": "coffee --output ./.dist/src --compile ./src &&  coffee --output ./.dist/test --compile ./test",
     "coverage": "./bin/local-code-coverage.sh",
-    "coverage-publish": "./bin/publish-code-coverage.sh"
+    "coverage-publish": "./bin/publish-code-coverage.sh",
+    "coverage-local": "node_modules/.bin/onchange 'src/**/*.coffee' 'test/**/*.coffee' -- ./bin/lcov-code-coverage.sh"
   },
   "repository": {
     "type": "git",
@@ -31,28 +32,32 @@
   },
   "homepage": "https://github.com/TeamMentor/TM_4_0_GraphDB",
   "dependencies": {
-    "async": "^0.9.0",
-    "cheerio": "^0.18.0",
-    "coffee-script": "^1.8.0",
-    "compression": "^1.2.0",
-    "express": "^4.10.1",
-    "fluentnode": "*",
-    "github": "^0.2.2",
-    "jade": "^1.7.0",
-    "levelgraph": "^0.10.0",
-    "node-uuid": "^1.4.1",
-    "request": "^2.47.0",
-    "teammentor": "*",
-    "vis": "^3.6.3",
-    "xml2js": "^0.4.4"
+    "async": "latest",
+    "body-parser": "latest",
+    "cheerio": "latest",
+    "coffee-script": "latest",
+    "compression": "latest",
+    "express": "latest",
+    "fluentnode": "latest",
+    "github": "latest",
+    "jade": "latest",
+    "levelgraph": "latest",
+    "node-uuid": "latest",
+    "request": "latest",
+    "swagger-client": "^2.0.48",
+    "swagger-node-express": "latest",
+    "teammentor": "latest",
+    "vis": "latest",
+    "xml2js": "latest"
   },
   "devDependencies": {
-    "chai": "^1.9.2",
-    "coveralls": "^2.11.2",
-    "html-file-cov": "0.0.1",
-    "mocha": "^1.21.5",
-    "mocha-lcov-reporter": "0.0.1",
-    "supertest": "^0.14.0",
-    "supervisor": "^0.6.0"
+    "chai": "latest",
+    "coveralls": "latest",
+    "html-file-cov": "latest",
+    "mocha": "latest",
+    "mocha-lcov-reporter": "latest",
+    "supertest": "latest",
+    "supervisor": "latest",
+    "swagger-client": "^2.0.48"
   }
 }

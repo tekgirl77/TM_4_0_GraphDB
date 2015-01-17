@@ -1,7 +1,7 @@
 expect        = require('chai'         ).expect
 Graph_Service  = require('./../../src/services/Graph-Service')
 
-describe 'services | test-Graph-Service |', ->
+describe 'services | Graph-Service.test |', ->
   describe 'core |', ->
     it 'check ctor', ->
       graphService  = new Graph_Service()
@@ -21,8 +21,8 @@ describe 'services | test-Graph-Service |', ->
     it 'openDb and closeDb', (done)->
       graphService  = new Graph_Service()
 
-      expect(graphService.openDb).to.be.an('function');
-      expect(graphService.closeDb).to.be.an('function');
+      expect(graphService.openDb).to.be.an('function')
+      expect(graphService.closeDb).to.be.an('function')
 
       expect(graphService.dbPath.folder_Exists()).to.equal(false)
       expect(graphService.db                    ).to.equal(null)
@@ -37,10 +37,12 @@ describe 'services | test-Graph-Service |', ->
     xit 'deleteDb', (done) ->
       using new Graph_Service(),->
         @.openDb =>
-          @.dbPath.assert_File_Exists()
-          @.deleteDb =>
-            @.dbPath.assert_File_Not_Exists()
-            done()
+          #process.nextTick =>
+          10.wait ()=>
+            @.dbPath.assert_File_Exists()
+            @.deleteDb =>
+              @.dbPath.assert_File_Not_Exists()
+              done()
 
 
   describe 'data operations |', ->
@@ -55,16 +57,16 @@ describe 'services | test-Graph-Service |', ->
     it 'add', (done)->
       expect(graphService.add).to.be.an('function')
       graphService.allData (data)->
-          expect(data).to.be.empty
-          graphService.add "a","b","c", ->
-            graphService.query  "subject", "a", (data)->
-              expect(data                  ).to.not.equal(null)
-              expect(data                  ).to.be.an('array')
-              expect(data.first()          ).to.be.an('object')
-              expect(data.first().subject  ).to.equal('a')
-              expect(data.first().predicate).to.equal('b')
-              expect(data.first().object   ).to.equal('c')
-              done()
+        expect(data).to.be.empty
+        graphService.add "a","b","c", ->
+          graphService.query  "subject", "a", (data)->
+            expect(data                  ).to.not.equal(null)
+            expect(data                  ).to.be.an('array')
+            expect(data.first()          ).to.be.an('object')
+            expect(data.first().subject  ).to.equal('a')
+            expect(data.first().predicate).to.equal('b')
+            expect(data.first().object   ).to.equal('c')
+            done()
 
     it 'get_Subject', (done)->
       expect(graphService.get_Subject).to.be.an('function')
@@ -116,7 +118,7 @@ describe 'services | test-Graph-Service |', ->
                   data.assert_Is([ { subject: '10', predicate: '20', object: '30' } ])
                   @.query "object","300", (data)=>
                     data.assert_Is([ { subject: '100', predicate: '200', object: '300' } ])
-                    @.query null,"300", (data)=>
+                    @.query null,"300", (data)->
                       assert_Is_Null(data)
                       done()
 

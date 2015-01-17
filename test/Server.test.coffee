@@ -1,13 +1,13 @@
-Server  = require('./../src/Server')
-expect  = require('chai').expect
-request = require('request')
+TM_Server = require('./../src/TM-Server')
+expect    = require('chai').expect
+request   = require('request')
 
 describe 'test-Server |',->
 
-    server  = new Server()
+    server  = new TM_Server({ port : 12345} )
 
     it 'check ctor', ->
-        expect(Server        ).to.be.an('function')
+        expect(TM_Server     ).to.be.an('function')
         expect(server        ).to.be.an('object'  )
         expect(server.app    ).to.be.an('function')
         expect(server.port   ).to.be.an('number'  )
@@ -21,9 +21,7 @@ describe 'test-Server |',->
         expect(server.stop   ).to.be.an('function')
 
         request  server.url(), (error, response, data)->
-          if (error == null)  # means the server is already running
-            done()
-            return
+          do(()->done();return;)    if (error == null)  # means the server is already running
 
           expect(server.start()).to.equal(server)
 
@@ -34,23 +32,22 @@ describe 'test-Server |',->
               expect(error).to.equal(null)
               expect(response.statusCode).to.equal(404)
 
-              server.stop()
-
-              request server.url(), (error, response,data)->
-                  expect(error        ).to.not.equal(null)
-                  expect(error.message).to.equal('connect ECONNREFUSED')
-                  expect(response     ).to.equal(undefined)
-                  done()
+              server.stop ->
+                  request server.url(), (error, response,data)->
+                      expect(error        ).to.not.equal(null)
+                      expect(error.message).to.equal('connect ECONNREFUSED')
+                      expect(response     ).to.equal(undefined)
+                      done()
 
     it 'url',->
-        expect(server.url()).to.equal("http://localhost:1332")
+        expect(server.url()).to.equal("http://localhost:12345")
 
 
-    it 'routes', ->        
+    it 'routes', ->
         expect(server.routes         ).to.be.an('function')
         expect(server.routes()       ).to.be.an('array')
         expect(server.routes().size()).to.be.above(0)
-        
+
     it 'Check expected paths', ->
       expectedPaths = [ '/'
                         '/test'

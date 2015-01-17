@@ -1,9 +1,9 @@
 cheerio         = require('cheerio'  )
 expect          = require('chai'     ).expect
 supertest       = require('supertest')
-Server          = require('./../../src/Server')
+Server          = require('./../../src/TM-Server')
 
-describe 'views | test-views',->
+describe 'views | views.test',->
 
   app = new Server().app
 

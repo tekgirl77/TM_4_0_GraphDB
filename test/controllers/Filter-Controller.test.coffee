@@ -3,9 +3,9 @@ cheerio           = require('cheerio')
 supertest         = require('supertest')
 Filter_Controller = require('./../../src/controllers/Filter-Controller')
 Import_Service    = require('./../../src/services/Import-Service')
-Server            = require('./../../src/Server')
+Server            = require('./../../src/TM-Server')
 
-describe 'controllers | test-Filter-Controller |', ->
+describe 'controllers | Filter-Controller.test', ->
 
   filterController = null
   server          = null
@@ -20,7 +20,8 @@ describe 'controllers | test-Filter-Controller |', ->
     filterController.assert_Is_Object()
     filterController.server.assert_Is_Equal_To(server)
 
-  it '/data/:dataId/:queryId/filter/:filterId' , (done)->
+
+  xit '/data/:dataId/:queryId/filter/:filterId' , (done)->
     dataId   = 'data-test'
     queryId  = 'simple'
     filterId = 'totals'
@@ -35,12 +36,3 @@ describe 'controllers | test-Filter-Controller |', ->
                     json.number_of_nodes.assert_Is_Equal_To(14)
                     json.number_of_edges.assert_Is_Equal_To(12)
                     done()
-
-
-#  describe 'routes |', ->
-#
-#    dataId         = "_tmp_".add_Random_String()
-#    queryId        = "simple-graph"
-#    import_Service = null
-#    graphId        = "graph"
-#    graphTitle     = "Graph View (with Ajax load)"

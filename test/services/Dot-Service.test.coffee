@@ -7,12 +7,13 @@ describe 'services | test-Dot-Service |', ->
   dotService  = new Dot_Service()
 
   it 'check ctor',->
-    expect(Dot_Service                 ).to.be.an  ('function')
-    expect(dotService                  ).to.be.an  ('object'  )
-    expect(dotService.dot              ).to.be.an  ('object'  )
-    expect(dotService.dot_To_Graph     ).to.be.an  ('function')
-    expect(dotService.dot_To_Triplets  ).to.be.an  ('function')
-    expect(dotService.graph_To_Triplets).to.be.an  ('function')
+    Dot_Service.assert_Is_Function()
+    using dotService, ->
+      @                  .assert_Is_Object()
+      @.dot              .assert_Is_Object()
+      @.dot_To_Graph     .assert_Is_Function()
+      @.dot_To_Triplets  .assert_Is_Function()
+      @.graph_To_Triplets.assert_Is_Function()
 
   it 'dot_To_Graph (simple)', (done)->
 

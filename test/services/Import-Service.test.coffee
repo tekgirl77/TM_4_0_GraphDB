@@ -1,12 +1,16 @@
 Import_Service = require('./../../src/services/Import-Service')
 async          = require('async')
 
-describe 'services | test-Import-Service |', ->
+describe 'services | Import-Service.test', ->
 
   describe 'core', ->
-    importService = new Import_Service()
+    importService = null
+
+    before ->
+      importService = new Import_Service('Import-Service.test')
 
     after (done)->
+      #add importService cache removals
       importService.graph.deleteDb ->
 
         done()
@@ -23,13 +27,13 @@ describe 'services | test-Import-Service |', ->
       importService.path_Data   .assert_Is_String()
       importService.path_Queries.assert_Is_String()
 
-      importService.name        .assert_Is 'test'
+      importService.name        .assert_Is 'Import-Service.test'
    #   importService.name        .assert_Is importService.cache.area
    #   importService.name        .assert_Is importService.graph.dbName
       importService.path_Root   .assert_Is('db')
-      importService.path_Name   .assert_Is('db/test')
-      importService.path_Data   .assert_Is('db/test/data')
-      importService.path_Queries.assert_Is('db/test/queries')
+      importService.path_Name   .assert_Is('db/Import-Service.test')
+      importService.path_Data   .assert_Is('db/Import-Service.test/data')
+      importService.path_Queries.assert_Is('db/Import-Service.test/queries')
       importService.path_Name.folder_Delete_Recursive().assert_Is_True()
 
     it 'check ctor (name)', ->
@@ -140,7 +144,7 @@ describe 'services | test-Import-Service |', ->
       importService.add_Is id, value, ->
         importService.find_Using_Is value, (data)->
           data.first().assert_Is(id)
-          done();
+          done()
 
     it 'add_Is, find_Using_Title', (done)->
       id    = 'title_id'
@@ -184,7 +188,7 @@ describe 'services | test-Import-Service |', ->
       importService.get_Subject_Data null, ->
         done()
 
-  describe 'load data |', ->
+  describe '| load data', ->
     importService = null
     path_Data     = null
     json_File_1   = null
@@ -294,6 +298,8 @@ describe 'services | test-Import-Service |', ->
     graph         = null
     teamMentor    = null
     uno_Library   = null;
+
+    @timeout 10000
 
     before (done)->
       importService = new Import_Service('_temp_Uno')
