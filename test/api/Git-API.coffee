@@ -2,7 +2,7 @@ TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
 Git_API = require '../../src/api/Git-API'
 
-describe.only 'api | Git-Service.test', ->
+describe 'api | Git-Service.test', ->
 
   #describe 'directly',->
   #  it 'git_Exec', (done)->
@@ -72,6 +72,7 @@ describe.only 'api | Git-Service.test', ->
           done()
 
       it 'pull', (done)->
+        @timeout(5000)
         clientApi.pull (data)->
           #data.obj.data.assert_Contains('@')
           log data.obj
