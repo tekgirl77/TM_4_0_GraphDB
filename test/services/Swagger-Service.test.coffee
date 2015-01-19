@@ -1,8 +1,7 @@
 TM_Server        = require '../../src/TM-Server'
-Swagger_Service  = require '../../src/swagger/Swagger-Service'
+Swagger_Service  = require '../../src/services/Swagger-Service'
 
-return
-describe.only 'swagger | Swagger-Service.test', ->
+describe 'swagger | Swagger-Service.test', ->
 
   url_server     = null
   server         = null
@@ -12,11 +11,11 @@ describe.only 'swagger | Swagger-Service.test', ->
 
   before (done)->
     server  = new TM_Server({ port : 12345})
-    options = { app: server.app }
+    options = { app: server.app ,  port : 12345}
     swaggerService = new Swagger_Service options
     swaggerService.set_Defaults()
     server.start()
-    swaggerService.get_Client_Api (api)->
+    swaggerService.get_Client_Api 'say', (api)->
       swaggerApi = api;
       done()
 
@@ -28,7 +27,7 @@ describe.only 'swagger | Swagger-Service.test', ->
 
   it 'check server', (done)->
     url_server   = server.url()
-    url_api_docs = url_server + '/api-docs'
+    url_api_docs = url_server + '/v1.0/api-docs'
     help = url_server + '/docs/?url=' + url_api_docs
     url_api_docs.GET (html)->
       html.assert_Is_String()
@@ -36,10 +35,10 @@ describe.only 'swagger | Swagger-Service.test', ->
 
   it 'check url_api_docs',(done)->
     url_api_docs.GET_Json (apiDocs)->
-        apiDocs.assert_Is {"apiVersion":"1.0.0","swaggerVersion":"1.2","apis":[{"path":"/say"}],"info":{"title":"Swagger Hello World App","description":"This is simple hello world","termsOfServiceUrl":"http://localhost/terms/","contact":"abc@name.com","license":"Apache 2.0","licenseUrl":"http://www.apache.org/licenses/LICENSE-2.0.html"}}
+        apiDocs.assert_Is_Object()
         apiDocs.apiVersion.assert_Is('1.0.0')
         apiDocs.swaggerVersion.assert_Is('1.2')
-        apiDocs.apis[0].path.assert_Is('/say')
+        apiDocs.apis[0].path.assert_Is('/graphs')
         done()
 
   it 'swagger-client', (done)->
@@ -52,7 +51,7 @@ describe.only 'swagger | Swagger-Service.test', ->
 
   it 'ping', (done)->
     swaggerApi.ping (response)->
-      response.url = swaggerService.url_Api_Say.append 'ping'
+      response.url = swaggerService.url_Api_Docs.append 'say/ping'
       response.status.assert_Is 200
       response.method.assert_Is 'GET'
       response.obj   .assert_Is { ping: 'pong' }
@@ -62,7 +61,7 @@ describe.only 'swagger | Swagger-Service.test', ->
     name = 'abc'.add_5_Random_Letters()
     swaggerApi.sayHello { name: name }, (response)->
       response.headers.input['x-powered-by'].assert_Is 'Express',
-      response.url = swaggerService.url_Api_Say.append 'say_Hello'
+      response.url = swaggerService.url_Api_Docs.append 'say/say_Hello'
       response.status.assert_Is 200
       response.method.assert_Is 'POST'
       response.obj   .assert_Is { hello: name }

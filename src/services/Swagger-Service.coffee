@@ -20,10 +20,9 @@ class Swagger_Service
     @.app          = @.options.app || express()
     @.apiInfo      = @.options.apiInfo || apiInfo
     @.swagger      = null
-    @.port         = 1332
+    @.port         = @.options.port || 1332
     @.server       = "http://localhost:#{@.port}"
-    @.url_Api_Docs = @.server.append('/api-docs')
-    @.url_Api_Say  = @.url_Api_Docs.append('/say')
+    @.url_Api_Docs = @.server.append('/v1.0/api-docs')
 
   path_Swagger_UI: ()=>
     for path in require.cache.keys()
@@ -35,6 +34,7 @@ class Swagger_Service
     docs_handler = express.static(@path_Swagger_UI());
 
     @app.get /^\/docs(\/.*)?$/, (req, res, next)->
+      log req.url
       if (req.url == '/docs') # express static barfs on root url w/o trailing slash
         res.writeHead(302, { 'Location' : req.url + '/' });
         res.end();
@@ -60,7 +60,7 @@ class Swagger_Service
 
   swagger_Setup: =>
     @swagger.setApiInfo(@.apiInfo)
-    @swagger.configureSwaggerPaths("", "api-docs", "")
+    @swagger.configureSwaggerPaths("", "v1.0/api-docs", "")
     @swagger.configure(@server, "1.0.0");
     @
 
@@ -88,16 +88,18 @@ class Swagger_Service
      .swagger_Setup()
     @
 
-  get_Client_Api: (callback)=>
+  get_Client_Api: (apiName, callback)=>
+    api_Url = @.url_Api_Docs.append("/#{apiName}")
+
     swaggerApi = null
 
     onSuccess = ()->                        # this will be called twitce
       if swaggerApi.apis.keys().empty()        # means that we are on the first caol and the apis value is not loaded
         return
       if (swaggerApi.ready)
-        callback(swaggerApi.say)
+        callback(swaggerApi[apiName])
 
-    options    = { url: @url_Api_Say, success:onSuccess }
+    options    = { url: api_Url, success:onSuccess }
     swaggerApi = new Swagger_Client.SwaggerApi(options)
 
   add_Get_Method: (area, name, action)=>
