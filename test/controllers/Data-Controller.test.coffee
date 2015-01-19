@@ -27,8 +27,8 @@ describe 'controllers | Data-Controller.test', ->
       expect(server        ).to.be.instanceOf(Server)
       expect(dataController).to.be.instanceOf(Data_Controller)
 
-    it 'add_Routes', ->
-      expect(dataController.server.routes()).to.contain('/data/:name')
+    #it 'add_Routes', ->
+    #  expect(dataController.server.routes()).to.contain('/data/:name')
       #console.log(dataController.server.routes())
 
 

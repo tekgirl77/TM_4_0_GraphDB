@@ -14,7 +14,7 @@ describe 'test-Server |',->
         expect(server._server).to.equal(null)
 
         expect(server.addRoutes    ).to.be.an('function')
-        expect(server.addControlers).to.be.an('function')
+        #expect(server.addControlers).to.be.an('function')
 
     it 'start and stop', (done)->
         expect(server.start  ).to.be.an('function')
@@ -51,14 +51,14 @@ describe 'test-Server |',->
     it 'Check expected paths', ->
       expectedPaths = [ '/'
                         '/test'
-                        '/data'
-                        '/data/:name'
-                        '/data/:dataId/:queryId/filter/:filterId'
-                        '/data/:dataId/:queryId'
-                        '/lib/vis.js'
-                        '/lib/vis.css'
-                        '/lib/jquery.min.js'
-                        '/data/graphs/scripts/:script.js'
-                        '/data/:dataId/:queryId/:graphId'
+                        #'/data'
+                        #'/data/:name'
+                        #'/data/:dataId/:queryId/filter/:filterId'
+                        #'/data/:dataId/:queryId'
+                        #'/lib/vis.js'
+                        #'/lib/vis.css'
+                        #'/lib/jquery.min.js'
+                        #'/data/graphs/scripts/:script.js'
+                        #'/data/:dataId/:queryId/:graphId'
                       ]
       expect(server.routes()).to.deep.equal(expectedPaths)
