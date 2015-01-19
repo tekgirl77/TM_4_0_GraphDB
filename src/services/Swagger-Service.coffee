@@ -36,7 +36,7 @@ class Swagger_Service
     @app.get /^\/docs(\/.*)?$/, (req, res, next)->
       log req.url
       if (req.url == '/docs') # express static barfs on root url w/o trailing slash
-        res.writeHead(302, { 'Location' : req.url + '/' });
+        res.writeHead(302, { 'Location' : req.url + '/?url=http://localhost:1332/v1.0/api-docs' });
         res.end();
         return;
       req.url = req.url.substr('/docs'.length); # take off leading /docs so that connect locates file correctly

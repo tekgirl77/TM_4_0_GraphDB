@@ -11,23 +11,21 @@ class Git_API
             status: { name: 'status' , params: []}
             remote: { name: 'remote' , params: ['-v']}
             log   : { name: 'log'    , params: ['--graph', '--pretty=oneline', '-15']}
+            pull  : { name: 'pull'   , params: ['origin']}
 
     git_Exec: (command)=>
       git_Exec_Method
 
     git_Exec_Method : (command)=>
         (req,res)=>
-            command.params.unshift(command.name)
+            params = [command.name].concat(command.params)
 
             result = ''
-
-            childProcess = child_process.spawn('git', command.params)
-
-            childProcess.stdout.on 'data', (data)-> result += data.str().trim()
-            childProcess.stderr.on 'data', (data)-> result += data.str().trim()
-
-            childProcess.on 'exit', ()->
-                res.send { 'data' : result }
+            options = { cwd : __dirname}
+            using child_process.spawn('git', params),->
+                @.stdout.on 'data', (data)-> result += data.str()
+                @.stderr.on 'data', (data)-> result += data.str()
+                @.on 'exit'       , (    )-> res.send JSON.stringify(result)
 
     add_Git_Command: (command)=>
       get_Command =
@@ -41,6 +39,7 @@ class Git_API
       @add_Git_Command(@.commands.status)
       @add_Git_Command(@.commands.remote)
       @add_Git_Command(@.commands.log)
+      @add_Git_Command(@.commands.pull)
 
 
 module.exports = Git_API

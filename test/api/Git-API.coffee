@@ -55,18 +55,24 @@ describe.only 'api | Git-Service.test', ->
 
       it 'status', (done)->
         clientApi.status (data)->
-          log data.obj.data
-          data.obj.data.assert_Contains('commit')
+          log data.obj
+          data.obj.assert_Contains('commit')
           done()
 
       it 'remote', (done)->
         clientApi.remote (data)->
-          data.obj.data.assert_Contains('@')
-          log data.obj.data
+          data.obj.assert_Contains(':')
+          log data.obj
           done()
 
       it 'log', (done)->
         clientApi.log (data)->
-          data.obj.data.assert_Contains('*')
-          log data.obj.data
+          data.obj.assert_Contains('*')
+          log data.obj
+          done()
+
+      it 'pull', (done)->
+        clientApi.pull (data)->
+          #data.obj.data.assert_Contains('@')
+          log data.obj
           done()
