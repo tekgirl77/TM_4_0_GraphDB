@@ -4,17 +4,18 @@ Git_API = require '../../src/api/Git-API'
 
 describe.only 'api | Git-Service.test', ->
 
-  describe 'directly',->
-    it 'git_Exec', (done)->
-        using new Git_API(), ->
-            @git_Exec 'status', (result)->
-                log result
-                done()
+  #describe 'directly',->
+  #  it 'git_Exec', (done)->
+  #      using new Git_API(), ->
+  #          @git_Exec 'status', (result)->
+  #              log result
+  #              done()
 
   describe 'via web api',->
 
       tmServer       = null
       swaggerService =  null
+      clientApi      = null
 
       before (done)->
         tmServer  = new TM_Server({ port : 12345})
@@ -22,10 +23,13 @@ describe.only 'api | Git-Service.test', ->
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()
         #swaggerService.setup()
-        new Git_API().add_Methods(swaggerService)
+
+        new Git_API({swaggerService: swaggerService}).add_Methods()
         swaggerService.swagger_Setup()
         tmServer.start()
-        done()
+        swaggerService.get_Client_Api 'git', (swaggerApi)->
+            clientApi = swaggerApi
+            done()
 
       after (done)->
         tmServer.stop ->
@@ -34,7 +38,7 @@ describe.only 'api | Git-Service.test', ->
       it 'constructor', ->
         Git_API.assert_Is_Function()
 
-      it 'check git section exists', (done)->
+      xit 'check git section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
           api_Paths = (api.path for api in docs.apis)
           api_Paths.assert_Contains('/list')
@@ -44,13 +48,25 @@ describe.only 'api | Git-Service.test', ->
             data.apiVersion    .assert_Is('1.0.0')
             data.swaggerVersion.assert_Is('1.2')
             data.resourcePath  .assert_Is('/git')
+            clientApi.assert_Is_Object()
+            clientApi.status.assert_Is_Function()
+            clientApi.remote.assert_Is_Function()
             done()
 
-      it 'call Git method', (done)->
-        swaggerService.get_Client_Api 'git', (clientApi)->
-          clientApi.assert_Is_Object()
-          clientApi.status (data)->
-            #log data.obj.toString()
-            data.obj.data.assert_Contains('On branch')
-            #log new String(data.obj)#.assert_Contains('On branch')
-            done()
+      it 'status', (done)->
+        clientApi.status (data)->
+          log data.obj.data
+          data.obj.data.assert_Contains('commit')
+          done()
+
+      it 'remote', (done)->
+        clientApi.remote (data)->
+          data.obj.data.assert_Contains('@')
+          log data.obj.data
+          done()
+
+      it 'log', (done)->
+        clientApi.log (data)->
+          data.obj.data.assert_Contains('*')
+          log data.obj.data
+          done()

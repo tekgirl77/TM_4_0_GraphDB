@@ -1,18 +1,46 @@
 require 'fluentnode'
 
+child_process = require('child_process')
+
 class Git_API
-    constructor: ->
+    constructor: (options)->
+      @.options        = options || {}
+      @.swaggerService = @options.swaggerService
 
-    git_Exec : (cmd, callback)=>
-        'git'.start_Process_Capture_Console_Out cmd, callback
+      @commands =
+            status: { name: 'status' , params: []}
+            remote: { name: 'remote' , params: ['-v']}
+            log   : { name: 'log'    , params: ['--graph', '--pretty=oneline', '-15']}
+
+    git_Exec: (command)=>
+      git_Exec_Method
+
+    git_Exec_Method : (command)=>
+        (req,res)=>
+            command.params.unshift(command.name)
+
+            result = ''
+
+            childProcess = child_process.spawn('git', command.params)
+
+            childProcess.stdout.on 'data', (data)-> result += data.str().trim()
+            childProcess.stderr.on 'data', (data)-> result += data.str().trim()
+
+            childProcess.on 'exit', ()->
+                res.send { 'data' : result }
+
+    add_Git_Command: (command)=>
+      get_Command =
+            spec   : { path : "/git/#{command.name}/", nickname : command.name}
+            action : @git_Exec_Method(command)
 
 
-    add_Methods: (swaggerService)=>
+      @.swaggerService.addGet(get_Command)
 
-        status =
-          spec              : { path : "/git/status/", nickname : "status"}
-          action            : (req, res)=> @git_Exec 'status', (result)-> res.send {'data': result}
+    add_Methods: ()=>
+      @add_Git_Command(@.commands.status)
+      @add_Git_Command(@.commands.remote)
+      @add_Git_Command(@.commands.log)
 
-        swaggerService.addGet(status)
 
 module.exports = Git_API
