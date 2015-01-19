@@ -18,17 +18,17 @@ class TM_Server
         @app.set('view engine', 'jade')
         @app.use(compress())
         @addRoutes()
-        @addControlers()
+        #@addControlers()
     
     addRoutes: =>
         @app.get '/'    , (req,res)-> res.send(new Jade_Service().enableCache().renderJadeFile('/views/index.jade'))
         @app.get '/test', (req,res)-> res.send('this is a test')
 
-    addControlers: =>
-        new Data_Controller(  @) .add_Routes()
-        new Filter_Controller(@).add_Routes()
-        new Query_Controller( @ ).add_Routes()
-        new Graph_Controller( @ ).add_Routes()
+    #addControlers: =>
+    #    new Data_Controller(  @) .add_Routes()
+    #    new Filter_Controller(@).add_Routes()
+    #    new Query_Controller( @ ).add_Routes()
+    #    new Graph_Controller( @ ).add_Routes()
 
     start: (callback)=>
         @_server = @app.listen @port, ->
