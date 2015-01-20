@@ -38,12 +38,21 @@ class Content_Service
             callback(result)
         execMethod(null, res)
 
+
   convert_Library_Data: (callback)=>
     @.library_Json_Folder (json_Folder, library_Folder)->
-      for file in library_Folder.files_Recursive(".xml")#.take(10)
+
+      convert_Library_File = (file, next)=>
+        json_File = file.replace(library_Folder, json_Folder)
+                        .replace('.xml','.json')
+        json_File.parent_Folder().folder_Create()
         xml2js.parseString file.file_Contents(), (error, json) ->
-          #callback json.string._
-          log json?.TeamMentor_Article?.Metadata?.first().Title
-      callback()
+          if not error
+            json.save_Json(json_File)
+          next()
+
+      xml_Files = library_Folder.files_Recursive(".xml")
+
+      async.each xml_Files,convert_Library_File, callback
 
 module.exports = Content_Service

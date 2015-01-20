@@ -43,8 +43,13 @@ describe.only '| services | Content-Service.test', ->
           folder.assert_Contains(folder)
           done()
 
-  it.only 'convert_Library_Data', (done)->
+  it 'convert_Library_Data', (done)->
     using contentService,->
-      @.convert_Library_Data ()->
-
-        done()
+      @.convert_Library_Data ()=>
+        @.library_Json_Folder (json_Folder, library_Folder)->
+          xml_Files = library_Folder.files_Recursive(".xml")
+          json_Files = json_Folder.files_Recursive(".json")
+          xml_Files.assert_Not_Empty()
+                   .assert_Size_Is(json_Files.size())
+          ">>>> There were #{json_Files.size()} json files".log()
+          done()
