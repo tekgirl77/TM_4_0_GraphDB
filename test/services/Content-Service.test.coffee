@@ -27,6 +27,14 @@ describe '| services | Content-Service.test', ->
               .assert_Contains(process.cwd())
         done()
 
+  it 'library_Json_Folder', (done)->
+    using contentService,->
+      @.library_Folder (folder)=>
+        @.library_Json_Folder (json_Folder, library_Folder)->
+          library_Folder.assert_Is(folder)
+          json_Folder   .assert_Is(library_Folder.append('-json'))
+          done()
+
   it 'load_Library_Data',(done)->
     @timeout(10000)         # git it time to clone
     using contentService,->
@@ -34,3 +42,9 @@ describe '| services | Content-Service.test', ->
         @.load_Library_Data (result)->
           folder.assert_Contains(folder)
           done()
+
+  it.only 'convert_Library_Data', (done)->
+    using contentService,->
+      @.convert_Library_Data ()->
+
+        done()
