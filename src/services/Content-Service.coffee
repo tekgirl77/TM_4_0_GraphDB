@@ -30,5 +30,7 @@ class Content_Service
             callback(result)
         execMethod(null, res)
 
+  convert_Library_Data: (callback)=>
+    callback()
 
 module.exports = Content_Service
