@@ -1,6 +1,6 @@
 Content_Service = require '../../src/services/Content-Service'
 
-describe '| services | Content-Service.test', ->
+describe.only '| services | Content-Service.test', ->
 
   contentService = null
 
