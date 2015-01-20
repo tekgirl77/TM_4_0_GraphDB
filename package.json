@@ -5,14 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register --recursive -R list",
-    "test-js": "./node_modules/mocha/bin/mocha --recursive -R list ./.dist/test",
+    "test": "node ./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register --recursive -R list",
+    "test-js": "node ./node_modules/mocha/bin/mocha --recursive -R list ./.dist/test",
     "clear-cache": "touch .tmCache/.deleteCacheNext",
     "watch": "mocha -w --compilers coffee:coffee-script/register --watch-extensions jade  --recursive -R list",
-    "watch-js": "./node_modules/mocha/bin/mocha --recursive -R list -w ./.dist/test",
-    "dev": "./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js",
+    "watch-js": "node ./node_modules/mocha/bin/mocha --recursive -R list -w ./.dist/test",
+    "dev": "node ./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js",
     "compile": "coffee --output ./.dist/src --compile ./src &&  coffee --output ./.dist/test --compile ./test",
     "coverage": "./bin/local-code-coverage.sh",
+    "installWinSvc": "node ./node_modules/winser/bin/winser -i",
+    "uninstallWinSvc": "node ./node_modules/winser/bin/winser -r",
     "coverage-publish": "./bin/publish-code-coverage.sh",
     "coverage-local": "node_modules/.bin/onchange 'src/**/*.coffee' 'test/**/*.coffee' -- ./bin/lcov-code-coverage.sh"
   },
@@ -48,6 +50,7 @@
     "swagger-node-express": "latest",
     "teammentor": "latest",
     "vis": "latest",
+    "winser": "latest",
     "xml2js": "latest"
   },
   "devDependencies": {
