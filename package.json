@@ -13,8 +13,8 @@
     "dev": "node ./node_modules/supervisor/lib/cli-wrapper.js -e 'coffee,js' index.js",
     "compile": "coffee --output ./.dist/src --compile ./src &&  coffee --output ./.dist/test --compile ./test",
     "coverage": "./bin/local-code-coverage.sh",
-    "installWinSrvc": "node ./node_modules/winser/bin/winser -i", 
-    "removeWinSrvc": "node ./node_modules/winser/bin/winser -r", 
+    "installWinSvc": "node ./node_modules/winser/bin/winser -i",
+    "uninstallWinSvc": "node ./node_modules/winser/bin/winser -r",
     "coverage-publish": "./bin/publish-code-coverage.sh",
     "coverage-local": "node_modules/.bin/onchange 'src/**/*.coffee' 'test/**/*.coffee' -- ./bin/lcov-code-coverage.sh"
   },
