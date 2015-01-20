@@ -13,7 +13,7 @@ echo 'Running Tests locally with (html-file-cov)'
 mocha -R html-file-cov ./.coverage  --recursive
 
 echo 'Removing instrumented node files'
-rm -R .coverage
+rm -f -R .coverage
 
 mv coverage.html .tmCache/coverage.html
 

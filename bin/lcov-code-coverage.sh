@@ -8,7 +8,7 @@ fi
 
 #set -o errexit # Exit on error
 echo 'Removing cache files'
-rm -R .tmCache
+rm -f -R .tmCache
 
 mocha --compilers coffee:coffee-script/register --recursive
 
