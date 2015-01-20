@@ -1,6 +1,6 @@
 Config_Service = require '../../src/services/Config-Service'
 
-describe 'services | Config-Service.test', ->
+describe '| services | Config-Service.test', ->
 
   options       = null
   configService = null
@@ -38,8 +38,10 @@ describe 'services | Config-Service.test', ->
 
   it 'get_Defaults', ()->
     using configService.get_Defaults(), ->
-      @.tm_3_5_Server.assert_Is 'https://tmdev01-uno.teammentor.net'
+      @.tm_3_5_Server .assert_Is 'https://tmdev01-uno.teammentor.net'
       @.content_Folder.assert_Is './.tmCache/_TM_3_5_Content'
+      @.default_Repo  .assert_Is 'https://github.com/TMContent/Lib_Vulnerabilities.git'
+      @.current_Repo  .assert_Is 'Lib_Vulnerabilities'
 
   it 'save_Config', (done)->
     done()

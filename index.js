@@ -14,8 +14,10 @@ function add_Swagger(app)
     var swaggerService = new Swagger_Service(options)
     swaggerService.set_Defaults()
 
-    var Git_API = require('./src/api/Git-API')
-    new Git_API({swaggerService: swaggerService}).add_Methods()
+
+    new (require('./src/api/Git-API'))({swaggerService: swaggerService}).add_Methods()
+    new (require('./src/api/Config-API'))({swaggerService: swaggerService}).add_Methods()
+
     swaggerService.swagger_Setup()
   }
 
