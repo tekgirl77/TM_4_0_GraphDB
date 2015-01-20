@@ -2,7 +2,7 @@ TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
 Git_API = require '../../src/api/Git-API'
 
-describe 'api | Git-Service.test', ->
+describe '| api | Git-API.test', ->
 
   #describe 'directly',->
   #  it 'git_Exec', (done)->
@@ -11,7 +11,7 @@ describe 'api | Git-Service.test', ->
   #              log result
   #              done()
 
-  describe 'via web api',->
+  describe '| via web api',->
 
       tmServer       = null
       swaggerService =  null
@@ -38,7 +38,7 @@ describe 'api | Git-Service.test', ->
       it 'constructor', ->
         Git_API.assert_Is_Function()
 
-      xit 'check git section exists', (done)->
+      it 'check git section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
           api_Paths = (api.path for api in docs.apis)
           api_Paths.assert_Contains('/list')
@@ -55,25 +55,26 @@ describe 'api | Git-Service.test', ->
 
       it 'status', (done)->
         clientApi.status (data)->
-          log data.obj
+          #log data.obj
           data.obj.assert_Contains('commit')
           done()
 
       it 'remote', (done)->
         clientApi.remote (data)->
           data.obj.assert_Contains(':')
-          log data.obj
+          #log data.obj
           done()
 
       it 'log', (done)->
         clientApi.log (data)->
           data.obj.assert_Contains('*')
-          log data.obj
+          #log data.obj
           done()
 
       it 'pull', (done)->
         @timeout(5000)
         clientApi.pull (data)->
           #data.obj.data.assert_Contains('@')
-          log data.obj
+          #log data.obj
+          data.obj.assert_Is_Not(' ')
           done()
