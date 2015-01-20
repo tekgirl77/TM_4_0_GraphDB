@@ -1,6 +1,6 @@
 Content_Service = require '../../src/services/Content-Service'
 
-describe.only '| services | Content-Service.test', ->
+describe '| services | Content-Service.test', ->
 
   contentService = null
 
@@ -43,13 +43,23 @@ describe.only '| services | Content-Service.test', ->
           folder.assert_Contains(folder)
           done()
 
-  it 'convert_Library_Data', (done)->
+  it 'convert_Xml_To_Json', (done)->
     using contentService,->
-      @.convert_Library_Data ()=>
-        @.library_Json_Folder (json_Folder, library_Folder)->
-          xml_Files = library_Folder.files_Recursive(".xml")
-          json_Files = json_Folder.files_Recursive(".json")
-          xml_Files.assert_Not_Empty()
-                   .assert_Size_Is(json_Files.size())
-          ">>>> There were #{json_Files.size()} json files".log()
-          done()
+      @.convert_Xml_To_Json ()=>
+        @.library_Json_Folder (json_Folder, library_Folder)=>
+          @json_Files (jsons)=>
+            @xml_Files (xmls)->
+              xmls.assert_Not_Empty()
+                  .assert_Size_Is(jsons.size())
+              done()
+
+  it 'load_Data', (done)->
+    using contentService,->
+      @.library_Json_Folder (json_Folder, library_Folder)=>
+        json_Folder.folder_Delete_Recursive()
+        @load_Data =>
+          @json_Files (jsons)=>
+            @xml_Files (xmls)=>
+              xmls.assert_Size_Is(jsons.size())
+              @load_Data =>
+                done()

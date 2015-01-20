@@ -1,7 +1,7 @@
 Import_Service = require('./../../src/services/Import-Service')
 async          = require('async')
 
-describe 'services | Import-Service.test', ->
+describe '| services | Import-Service.test', ->
 
   describe 'core', ->
     importService = null
@@ -21,7 +21,6 @@ describe 'services | Import-Service.test', ->
       importService.name        .assert_Is_String()
       importService.cache       .assert_Is_Object()#.assert_Instance_Of()
       importService.graph       .assert_Is_Object()
-      importService.teamMentor  .assert_Is_Object()
       importService.path_Root   .assert_Is_String()
       importService.path_Name   .assert_Is_String()
       importService.path_Data   .assert_Is_String()
@@ -290,6 +289,26 @@ describe 'services | Import-Service.test', ->
                   data.assert_Is({'aaaa':{}})
                   done()
 
+
+  describe '| load Library data',->
+    importService = null
+
+    before (done)->
+      using new Import_Service(), ->
+        importService = @
+        @.content.load_Data ->
+          done()
+
+    it 'library', (done)->
+      importService.library (library)->
+        library.assert_Is_Object()
+        using library.guidanceExplorer.library.first()["$"],->
+          @.name.assert_Is 'be5273b1-d682-4361-99d9-6204f2d47eb7'
+          @.caption.assert_Is 'Vulnerabilities'
+          done()
+
+
+  return
 
   describe 'load Uno library',->
     importService = null

@@ -3,24 +3,22 @@ coffeeScript       = require 'coffee-script'
 async              = require('async')
 
 Cache_Service      = require('teammentor').Cache_Service
-#Db_Service         = require('./Db-Service')
 Dot_Service        = require './Dot-Service'
-#GitHub_Service     = require('./GitHub-Service')
 Graph_Service      = require('./Graph-Service')
-TeamMentor_Service = require('teammentor').TeamMentor_Service
+#TeamMentor_Service = require('teammentor').TeamMentor_Service
 Guid               = require('teammentor').Guid
 Data_Import_Util   = require('../utils/Data-Import-Util')
 Vis_Graph          = require('teammentor').Vis_Graph
-
+Content_Service    = require('./Content-Service')
 
 class ImportService
 
   constructor: (name)->
     @name          = name || '_tmp_import'
-    #@name          = if (name) then name else 'test'
     @cache         = new Cache_Service("#{@name}_cache")
     @graph         = new Graph_Service("#{@name}")
-    @teamMentor    = new TeamMentor_Service({tmConfig_File: '.tm-Config.json'});
+    @content       = new Content_Service()
+    #@teamMentor    = new TeamMentor_Service({tmConfig_File: '.tm-Config.json'});
     @path_Root     = "db"
     @path_Name     = "db/#{@name}"
     @path_Data     = "#{@path_Name}/data"
@@ -213,5 +211,14 @@ class ImportService
       #                       .archOut('title').as('title')
       #                       .bind('Canonicalization')
       #                        #.archOut('contains')
+
+  # assumes that there is only one Xml file which represents the library
+  library: (callback)=>
+    @.content.library_Json_Folder (folder)->
+      if  folder.files().empty()
+        callback null
+      else
+        callback folder.files().first().load_Json()
+
 
 module.exports = ImportService

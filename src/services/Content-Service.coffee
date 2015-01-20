@@ -9,6 +9,7 @@ class Content_Service
   constructor: (options)->
     @.options        = options || {}
     @.configService  = @options.configService || new Config_Service()
+    @.force_Reload   = false
 
   library_Folder: (callback)=>
     @.configService.get_Config (config)->
@@ -31,7 +32,6 @@ class Content_Service
         git_Command =
           name  : 'clone'
           params:["#{source_Repo}","#{target_Folder}"]
-        log git_Command
         execMethod = new Git_API().git_Exec_Method(git_Command)
         res =
           send: (result)->
@@ -39,7 +39,7 @@ class Content_Service
         execMethod(null, res)
 
 
-  convert_Library_Data: (callback)=>
+  convert_Xml_To_Json: (callback)=>
     @.library_Json_Folder (json_Folder, library_Folder)->
 
       convert_Library_File = (file, next)=>
@@ -54,5 +54,24 @@ class Content_Service
       xml_Files = library_Folder.files_Recursive(".xml")
 
       async.each xml_Files,convert_Library_File, callback
+
+  json_Files: (callback)->
+    @.library_Json_Folder (json_Folder, library_Folder)->
+      callback json_Folder.files_Recursive(".json")
+
+  load_Data: (callback)=>
+    @.library_Json_Folder (json_Folder, library_Folder)=>
+     @json_Files (jsons)=>
+      @xml_Files (xmls)=>
+        if @force_Reload or xmls.empty() or jsons.size() isnt xmls.size()
+          @load_Library_Data =>
+            @convert_Xml_To_Json =>
+              callback()
+        else
+          callback();
+
+  xml_Files: (callback)->
+    @.library_Json_Folder (json_Folder, library_Folder)->
+      callback library_Folder.files_Recursive(".xml")
 
 module.exports = Content_Service
