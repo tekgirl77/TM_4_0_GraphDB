@@ -37,7 +37,6 @@ describe '| api | Config-API.test', ->
       it 'check config section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
           api_Paths = (api.path for api in docs.apis)
-          api_Paths.assert_Contains('/list')
           api_Paths.assert_Contains('/config')
 
           swaggerService.url_Api_Docs.append("/config").GET_Json (data)->

@@ -86,7 +86,8 @@ class ImportService
     queryFile = @path_Queries.path_Combine("#{queryName}.coffee")
     if(queryFile.file_Not_Exists())
       queryFile = process.cwd().path_Combine('db-queries').path_Combine("#{queryName}.coffee")
-    if(queryFile.file_Exists())
+
+    if(queryFile?.fullPath()?.file_Exists())
       get_Graph = coffeeScript.eval(queryFile.fullPath().file_Contents())
       if typeof get_Graph is 'function'
         options = {importService:@ , params: params}

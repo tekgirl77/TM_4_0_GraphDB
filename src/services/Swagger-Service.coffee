@@ -82,9 +82,9 @@ class Swagger_Service
           action: (req, res)-> res.send {'hello': req.params.name }
 
     @.setup()
-     .add_GraphDB_Methods()
-     .addGet(ping)
-     .addPost(helloWorld)
+     #.add_GraphDB_Methods()
+     #.addGet(ping)
+     #.addPost(helloWorld)
      .swagger_Setup()
     @
 
@@ -117,61 +117,61 @@ class Swagger_Service
      else
         @.addGet(action_spec)
 
-  add_GraphDB_Methods: ()=>
-
-    #@.swagger.addValidator (req, path, httpMethod)->
-    #  key = '1nds-oiqr-nrid-vu23-o5f1'
-    #  if req.url.contains(key) or req.url.contains('list')
-    #    return true
-    #  return false;
-
-
-    Import_Service   = require('../services/Import-Service')
-    importService     = new Import_Service('tm-uno')
-    importService.graph.openDb ->
-
-    sendQuery =  (req,res, queryName,params)->
-        log params
-        importService.run_Query queryName, params, (data)->
-            res.send data.json_pretty()
-
-    sendFilter =  (req,res, filterName,params)->
-      query_Id = 'query'
-      filter_Id = filterName #'totals' #'tm-search'       #totals'
-      options   = params
-
-      importService.run_Query query_Id, options, (graph)->
-        importService.run_Filter filter_Id, graph, (data)->
-            res.send data.json_pretty()
-
-    @.add_Get_Method 'graphs','library'  , (req,res) -> sendQuery(req, res, 'library' ,{} )
-    @.add_Get_Method 'graphs','queries'  , (req,res) -> sendQuery(req, res, 'queries', {} )
-    @.add_Get_Method 'graphs','query'    , (req,res) -> sendQuery(req, res, 'query',  req.params)
-
-    @.add_Get_Method 'view' ,'tm-search' , (req,res) -> sendFilter(req, res, 'tm-search', req.params)
-    @.add_Get_Method 'view' ,'totals'    , (req,res) -> sendFilter(req, res, 'totals',  {})
-
-    @.add_Get_Method 'list','articles'   , (req,res) -> sendFilter(req, res, 'query',  req.params)
-    @.add_Get_Method('list','queries'    , ()->{ 'a' :43} )
-
-    @.add_Get_Method('list','category'   , ()->{ 'a' :43} )
-    @.add_Get_Method('list','technology' , ()->{ 'a' :43} )
-    @.add_Get_Method('list','type'       , ()->{ 'a' :43} )
-    @.add_Get_Method('list','phase'      , ()->{ 'a' :43} )
-
-    @.add_Get_Method('search','title'    , ()->{ 'a' :43})
-    @.add_Get_Method('search','text'     , ()->{ 'a' :43})
-    @.add_Get_Method('search','medatada' , ()->{ 'a' :43})
-
-    @.add_Get_Method('admin','config'  , ()->{ 'a' :43})
-    @.add_Get_Method('admin','status'  , ()->{ 'a' :43})
-    @.add_Get_Method('admin','git-pull' , ()->{ 'a' :43})
-    @.add_Get_Method('admin','run-tests' , ()->{ 'a' :43})
-    @.add_Get_Method('admin','restart'  , ()->{ 'a' :43})
-
-
-
-
-    @
+#  add_GraphDB_Methods: ()=>
+#
+#    #@.swagger.addValidator (req, path, httpMethod)->
+#    #  key = '1nds-oiqr-nrid-vu23-o5f1'
+#    #  if req.url.contains(key) or req.url.contains('list')
+#    #    return true
+#    #  return false;
+#
+#
+#    Import_Service   = require('../services/Import-Service')
+#    importService     = new Import_Service('tm-uno')
+#    importService.graph.openDb ->
+#
+#    sendQuery =  (req,res, queryName,params)->
+#        log params
+#        importService.run_Query queryName, params, (data)->
+#            res.send data.json_pretty()
+#
+#    sendFilter =  (req,res, filterName,params)->
+#      query_Id = 'query'
+#      filter_Id = filterName #'totals' #'tm-search'       #totals'
+#      options   = params
+#
+#      importService.run_Query query_Id, options, (graph)->
+#        importService.run_Filter filter_Id, graph, (data)->
+#            res.send data.json_pretty()
+#
+#    @.add_Get_Method 'graphs','library'  , (req,res) -> sendQuery(req, res, 'library' ,{} )
+#    @.add_Get_Method 'graphs','queries'  , (req,res) -> sendQuery(req, res, 'queries', {} )
+#    @.add_Get_Method 'graphs','query'    , (req,res) -> sendQuery(req, res, 'query',  req.params)
+#
+#    @.add_Get_Method 'view' ,'tm-search' , (req,res) -> sendFilter(req, res, 'tm-search', req.params)
+#    @.add_Get_Method 'view' ,'totals'    , (req,res) -> sendFilter(req, res, 'totals',  {})
+#
+#    @.add_Get_Method 'list','articles'   , (req,res) -> sendFilter(req, res, 'query',  req.params)
+#    @.add_Get_Method('list','queries'    , ()->{ 'a' :43} )
+#
+#    @.add_Get_Method('list','category'   , ()->{ 'a' :43} )
+#    @.add_Get_Method('list','technology' , ()->{ 'a' :43} )
+#    @.add_Get_Method('list','type'       , ()->{ 'a' :43} )
+#    @.add_Get_Method('list','phase'      , ()->{ 'a' :43} )
+#
+#    @.add_Get_Method('search','title'    , ()->{ 'a' :43})
+#    @.add_Get_Method('search','text'     , ()->{ 'a' :43})
+#    @.add_Get_Method('search','medatada' , ()->{ 'a' :43})
+#
+#    @.add_Get_Method('admin','config'  , ()->{ 'a' :43})
+#    @.add_Get_Method('admin','status'  , ()->{ 'a' :43})
+#    @.add_Get_Method('admin','git-pull' , ()->{ 'a' :43})
+#    @.add_Get_Method('admin','run-tests' , ()->{ 'a' :43})
+#    @.add_Get_Method('admin','restart'  , ()->{ 'a' :43})
+#
+#
+#
+#
+#    @
 
 module.exports = Swagger_Service

@@ -59,6 +59,7 @@ get_Graph = (options, callback)->
         next()
 
   map_Metadata_Mappings = (next)->
+
     query_Metadata = {}
 
     searchTerms = [{ subject:  db.v('query_Id'   ), predicate: 'is'              , object: 'Metadata'        }

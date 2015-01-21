@@ -41,7 +41,6 @@ describe '| api | Git-API.test', ->
       it 'check git section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
           api_Paths = (api.path for api in docs.apis)
-          api_Paths.assert_Contains('/list')
           api_Paths.assert_Contains('/git')
 
           swaggerService.url_Api_Docs.append("/git").GET_Json (data)->
