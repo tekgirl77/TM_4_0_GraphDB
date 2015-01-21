@@ -1,3 +1,4 @@
+async           = require 'async'
 Content_Service = require '../../src/services/Content-Service'
 
 describe '| services | Content-Service.test', ->
@@ -55,11 +56,32 @@ describe '| services | Content-Service.test', ->
 
   it 'load_Data', (done)->
     using contentService,->
-      @.library_Json_Folder (json_Folder, library_Folder)=>
+      @library_Json_Folder (json_Folder, library_Folder)=>
         json_Folder.folder_Delete_Recursive()
+        @._json_Files = null
         @load_Data =>
           @json_Files (jsons)=>
             @xml_Files (xmls)=>
               xmls.assert_Size_Is(jsons.size())
               @load_Data =>
                 done()
+
+  it 'article_Data', (done)->
+    using contentService,->
+      check_File = (xml_File, next)=>
+        article_Id  = xml_File.file_Name().remove('.xml')
+        @article_Data article_Id, (article_Data)->
+          if (article_Data.TeamMentor_Article)
+            using article_Data.TeamMentor_Article, ->
+              @.assert_Is_Object()
+              @.Metadata.assert_Is_Object()
+              @.Content.assert_Is_Object()
+          next()
+
+      @.xml_Files (xml_Files)->
+        async.each xml_Files.take(10), check_File, done
+
+          #guid = '00869e27-75c2-4ba3-a91b-d15aea30411d'
+
+
+        #log article_Data

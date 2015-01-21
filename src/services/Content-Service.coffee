@@ -10,6 +10,8 @@ class Content_Service
     @.options        = options || {}
     @.configService  = @options.configService || new Config_Service()
     @.force_Reload   = false
+    @._json_Files     = null
+    @._xml_Files      = null
 
   library_Folder: (callback)=>
     @.configService.get_Config (config)->
@@ -55,9 +57,13 @@ class Content_Service
 
       async.each xml_Files,convert_Library_File, callback
 
-  json_Files: (callback)->
-    @.library_Json_Folder (json_Folder, library_Folder)->
-      callback json_Folder.files_Recursive(".json")
+  json_Files: (callback)=>
+    if @._json_Files and @._json_Files.not_Empty()
+      callback @._json_Files
+    else
+      @.library_Json_Folder (json_Folder, library_Folder)=>
+        @._json_Files = json_Folder.files_Recursive(".json")
+        callback @._json_Files
 
   load_Data: (callback)=>
     @.library_Json_Folder (json_Folder, library_Folder)=>
@@ -70,8 +76,20 @@ class Content_Service
         else
           callback();
 
-  xml_Files: (callback)->
-    @.library_Json_Folder (json_Folder, library_Folder)->
-      callback library_Folder.files_Recursive(".xml")
+  xml_Files: (callback)=>
+    if @._xml_Files and @._xml_Files.not_Empty()
+      callback @._xml_Files
+    else
+      @.library_Json_Folder (json_Folder, library_Folder)=>
+        @._xml_Files = library_Folder.files_Recursive(".xml")
+        callback @._xml_Files
+
+  article_Data: (articleId, callback) =>
+    @json_Files (jsonFiles) =>
+      article_File = jsonFile for jsonFile in jsonFiles when jsonFile.contains(articleId)
+      if article_File and article_File.file_Exists()
+        callback article_File.load_Json().TeamMentor_Article
+      else
+        callback null
 
 module.exports = Content_Service
