@@ -25,8 +25,6 @@ describe '| services | Config-Service.test', ->
 
   it 'config_File_Path', ->
     using configService.config_File_Path(), ->
-      @.parent_Folder().path_Combine('package.json')
-                       .assert_File_Not_Exists('path should not be in the root of the repo')
       @.file_Name()    .assert_Is(options.config_File)
       process.cwd()    .assert_Contains(@.parent_Folder())
 
