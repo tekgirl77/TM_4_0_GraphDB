@@ -1,9 +1,5 @@
 express              = require 'express'
 compress             = require 'compression'
-Data_Controller      = require './controllers/Data-Controller'
-Filter_Controller    = require './controllers/Filter-Controller'
-Query_Controller     = require './controllers/Query-Controller'
-Graph_Controller     = require './controllers/Graph-Controller'
 Jade_Service         = require('teammentor').Jade_Service
 
 class TM_Server
@@ -17,12 +13,12 @@ class TM_Server
     configure: =>
         @app.set('view engine', 'jade')
         @app.use(compress())
-        @addRoutes()
+        #@addRoutes()
         #@addControlers()
     
-    addRoutes: =>
-        @app.get '/'    , (req,res)-> res.send(new Jade_Service().enableCache().renderJadeFile('/views/index.jade'))
-        @app.get '/test', (req,res)-> res.send('this is a test')
+    #addRoutes: =>
+    #    @app.get '/'    , (req,res)-> res.send(new Jade_Service().enableCache().renderJadeFile('/views/index.jade'))
+    #    @app.get '/test', (req,res)-> res.send('this is a test')
 
     #addControlers: =>
     #    new Data_Controller(  @) .add_Routes()

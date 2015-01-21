@@ -13,7 +13,7 @@ describe 'test-Server |',->
         expect(server.port   ).to.be.an('number'  )
         expect(server._server).to.equal(null)
 
-        expect(server.addRoutes    ).to.be.an('function')
+        #expect(server.addRoutes    ).to.be.an('function')
         #expect(server.addControlers).to.be.an('function')
 
     it 'start and stop', (done)->
@@ -46,11 +46,11 @@ describe 'test-Server |',->
     it 'routes', ->
         expect(server.routes         ).to.be.an('function')
         expect(server.routes()       ).to.be.an('array')
-        expect(server.routes().size()).to.be.above(0)
+        expect(server.routes().size()).to.be.equal(0)
 
     it 'Check expected paths', ->
-      expectedPaths = [ '/'
-                        '/test'
+      expectedPaths = [] #'/'
+                        #'/test'
                         #'/data'
                         #'/data/:name'
                         #'/data/:dataId/:queryId/filter/:filterId'
@@ -60,5 +60,5 @@ describe 'test-Server |',->
                         #'/lib/jquery.min.js'
                         #'/data/graphs/scripts/:script.js'
                         #'/data/:dataId/:queryId/:graphId'
-                      ]
+                      #]
       expect(server.routes()).to.deep.equal(expectedPaths)
