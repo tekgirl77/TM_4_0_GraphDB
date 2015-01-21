@@ -72,8 +72,8 @@ class GraphDB_API
         show : req.params.value
       options = { importService : new Import_Service('tm-uno') }
       tmGuidance  = new TM_Guidance options
-      tmGuidance.load_Data ()=>
-      #options.importService.graph.loadDb ->
+      #tmGuidance.load_Data ()=>
+      options.importService.graph.openDb ->
         options.importService.run_Query query_Id, params, (graph)->
         #res.send graph.json_pretty()
           options.importService.run_Filter filter_Id, graph, (data)->

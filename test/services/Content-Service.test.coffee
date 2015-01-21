@@ -24,7 +24,7 @@ describe '| services | Content-Service.test', ->
       @.library_Folder (folder)->
         folder.assert_Folder_Exists()
               .assert_Contains('.tmCache/_TM_3_5_Content')
-              .assert_Contains('Lib_Vulnerabilities')
+              .assert_Contains('Lib_')
               .assert_Contains(process.cwd())
         done()
 
@@ -45,6 +45,7 @@ describe '| services | Content-Service.test', ->
           done()
 
   it 'convert_Xml_To_Json', (done)->
+    @timeout 15000
     using contentService,->
       @.convert_Xml_To_Json ()=>
         @.library_Json_Folder (json_Folder, library_Folder)=>
@@ -55,6 +56,7 @@ describe '| services | Content-Service.test', ->
               done()
 
   it 'load_Data', (done)->
+    @timeout 10000
     using contentService,->
       @library_Json_Folder (json_Folder, library_Folder)=>
         json_Folder.folder_Delete_Recursive()

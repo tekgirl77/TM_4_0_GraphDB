@@ -243,7 +243,7 @@ class ImportService
     view =
       id       : json_View['$'].id
       name     : json_View['$'].caption
-      articles : json_View.items.first().item
+      articles : json_View.items.first().item || []
     target_Views.push view
     view.articles
 

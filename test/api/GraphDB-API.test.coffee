@@ -37,6 +37,7 @@ describe '| api | GraphDB-API.test', ->
         GraphDB_API.assert_Is_Function()
 
       it 'reload', (done)->
+        @timeout 10000
         clientApi.reload (data)->
           data.obj.assert_Is('data reloaded')
           done()
@@ -58,7 +59,7 @@ describe '| api | GraphDB-API.test', ->
 
       it 'contents', (done)->
         clientApi.contents { value: 'iOs'}, (data)->
-          data.obj.assert_Size_Is(1942)
+          data.obj.assert_Size_Is_Bigger_Than(1940)
           done()
 
       it 'subject', (done)->
@@ -68,24 +69,30 @@ describe '| api | GraphDB-API.test', ->
 
       it 'predicate', (done)->
         clientApi.predicate { value: 'title'}, (data)->
-          data.obj.assert_Size_Is(219)
+          data.obj.assert_Size_Is_Bigger_Than(218)
           done()
 
       it 'object', (done)->
-        clientApi.object { value: 'A1-Injection'}, (data)->
-          data.obj.first().object.assert_Is('A1-Injection')
-          done()
+        clientApi.predicate { value: 'title'}, (data)->
+          value = data.obj.first().object
+          clientApi.object { value: value}, (data)->
+            data.obj.first().object.assert_Is value
+            done()
 
       it 'query', (done)->
-        clientApi.query { value: 'A1-Injection'}, (data)->
-          data.obj.assert_Is_Object()
-          data.obj.nodes.assert_Not_Empty()
-          #log data.obj
-          done()
+        clientApi.predicate { value: 'contains-query'}, (data)->
+          value = data.obj.first().subject
+          clientApi.query { value: value}, (data)->
+            data.obj.assert_Is_Object()
+            data.obj.nodes.assert_Not_Empty()
+            #log data.obj
+            done()
 
       it 'filter', (done)->
-        clientApi.filter { value: 'Authentication'}, (data)->
-          data.obj.assert_Is_Object()
-          #data.obj.results.assert_Not_Empty()
-          #log data.obj
-          done()
+        clientApi.predicate { value: 'contains-query'}, (data)->
+          value = data.obj.first().subject
+          log value
+          clientApi.filter { value: value}, (data)->
+            data.obj.assert_Is_Object()
+            data.obj.results.assert_Not_Empty()
+            done()

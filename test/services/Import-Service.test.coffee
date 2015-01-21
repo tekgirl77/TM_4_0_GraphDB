@@ -300,27 +300,30 @@ describe '| services | Import-Service.test', ->
           done()
 
     it 'library_Json', (done)->
-      importService.library_Json (library_Json)->
-        library_Json.assert_Is_Object()
-        using library_Json.guidanceExplorer.library.first()["$"], ->
-          @.name.assert_Is 'be5273b1-d682-4361-99d9-6204f2d47eb7'
-          @.caption.assert_Is 'Vulnerabilities'
-          done()
+      importService.library (library)->
+        importService.library_Json (library_Json)->
+          library_Json.assert_Is_Object()
+          using library_Json.guidanceExplorer.library.first()["$"], ->
+            @.name.assert_Is library.id
+            @.caption.assert_Is library.name
+            done()
 
     it 'parse_Library_Json', (done)->
-      importService.library_Json (json)->
-        importService.parse_Library_Json (json), (library)->
-          using library, ->
-            @.id      .assert_Is 'be5273b1-d682-4361-99d9-6204f2d47eb7'
-            @.name    .assert_Is 'Vulnerabilities'
-            @.folders .assert_Size_Is(1)
-            @.articles.assert_Size_Is(182)
-            @.views   .assert_Empty()
-            done()
+      importService.library (library)->
+        importService.library_Json (library_Json)->
+        importService.library_Json (json)->
+          importService.parse_Library_Json (json), (_library)->
+            using _library, ->
+              @.id      .assert_Is library.id
+              @.name    .assert_Is library.name
+              @.folders .assert_Size_Is_Bigger_Than(0)
+              @.articles.assert_Size_Is_Bigger_Than(50)
+              @.views   .assert_Empty()
+              done()
 
     it 'library', (done)->
       importService.library (library)->
-        library.name.assert_Is 'Vulnerabilities'
+        library.name.assert_Is_String()
         done()
 
     it 'article_Data', (done)->
