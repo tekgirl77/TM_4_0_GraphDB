@@ -21,7 +21,7 @@ echo 'Running with mocha-lcov-reporter and publishing to coveralls'
 mocha -R mocha-lcov-reporter .coverage --recursive | sed 's,SF:,SF:src/,;/test/s,src,test,' | ./node_modules/coveralls/bin/coveralls.js
 
 echo 'Removing instrumented node files'
-rm -R .coverage
+rm -f -R .coverage
 
 echo 'Opening browser with coveralls page for this project'
 
