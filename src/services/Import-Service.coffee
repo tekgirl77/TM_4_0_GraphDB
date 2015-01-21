@@ -259,9 +259,11 @@ class ImportService
     json_Library    = json.guidanceExplorer.library.first()
     library.id      = json_Library["$"].name
     library.name    = json_Library["$"].caption
+
     for item in json_Library.libraryStructure
       if (item.folder)
-        library.articles = @add_Json_Folder library.folders,  item.folder.first()
+        for folder in item.folder
+          library.articles = @add_Json_Folder library.folders,  folder
     callback(library)
 
   library: (callback)=>
