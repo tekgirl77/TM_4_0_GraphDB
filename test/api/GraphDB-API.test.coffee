@@ -1,6 +1,6 @@
 TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
-GraphDB_API = require '../../src/api/GraphDB-API'
+GraphDB_API      = require '../../src/api/GraphDB-API'
 
 describe '| api | GraphDB-API.test', ->
 
@@ -13,17 +13,19 @@ describe '| api | GraphDB-API.test', ->
 
       before (done)->
         graphDbApi = new GraphDB_API()
-        tmServer   = new TM_Server({ port : 12345})
-        options    = { app: tmServer.app ,  port : tmServer.port}
-        swaggerService = new Swagger_Service options
-        swaggerService.set_Defaults()
-        #swaggerService.setup()
 
-        new GraphDB_API({swaggerService: swaggerService}).add_Methods()
-        swaggerService.swagger_Setup()
-        tmServer.start()
+        graphDbApi.importService.content.load_Data ->
+          tmServer   = new TM_Server({ port : 12345})
+          options    = { app: tmServer.app ,  port : tmServer.port}
+          swaggerService = new Swagger_Service options
+          swaggerService.set_Defaults()
+          #swaggerService.setup()
 
-        swaggerService.get_Client_Api 'graph-db', (swaggerApi)->
+          new GraphDB_API({swaggerService: swaggerService}).add_Methods()
+          swaggerService.swagger_Setup()
+          tmServer.start()
+
+          swaggerService.get_Client_Api 'graph-db', (swaggerApi)->
             clientApi = swaggerApi
             done()
 
@@ -33,6 +35,11 @@ describe '| api | GraphDB-API.test', ->
 
       it 'constructor', ->
         GraphDB_API.assert_Is_Function()
+
+      it 'reload', (done)->
+        clientApi.reload (data)->
+          data.obj.assert_Is('data reloaded')
+          done()
 
       it 'check config section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
@@ -47,11 +54,6 @@ describe '| api | GraphDB-API.test', ->
             clientApi.assert_Is_Object()
             #clientApi.aaa.assert_Is_Function()
             #clientApi.bbb.assert_Is_Function()
-            done()
-
-      it 'reload', (done)->
-          clientApi.reload (data)->
-            data.obj.assert_Is('data reloaded')
             done()
 
       it 'contents', (done)->
@@ -75,7 +77,7 @@ describe '| api | GraphDB-API.test', ->
           done()
 
       it 'query', (done)->
-        clientApi.query { value: 'iOS'}, (data)->
+        clientApi.query { value: 'A1-Injection'}, (data)->
           data.obj.assert_Is_Object()
           data.obj.nodes.assert_Not_Empty()
           #log data.obj
@@ -85,5 +87,5 @@ describe '| api | GraphDB-API.test', ->
         clientApi.filter { value: 'Authentication'}, (data)->
           data.obj.assert_Is_Object()
           #data.obj.results.assert_Not_Empty()
-          log data.obj
+          #log data.obj
           done()

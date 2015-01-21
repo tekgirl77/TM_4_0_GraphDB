@@ -1,9 +1,9 @@
 require 'fluentnode'
 Import_Service        = require '../services/Import-Service'
 TM_Guidance           = require '../graph/tm-uno/data/tm-uno'
-swagger_node_express  = require("swagger-node-express")
+swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes
-errors                = swagger_node_express.errors;
+errors                = swagger_node_express.errors
 
 class GraphDB_API
     constructor: (options)->

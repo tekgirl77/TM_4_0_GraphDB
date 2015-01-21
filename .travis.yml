@@ -5,8 +5,7 @@ node_js:
   - 0.10
 
 before_install:
-   - "export DISPLAY=:99.0"
-   - "sh -e /etc/init.d/xvfb start"
+   - "bin/clone-default-repo.sh"
 
 after_script:
    - "echo 'Since tests passed: instrument files, rerun tests and publish results to coveralls' "
