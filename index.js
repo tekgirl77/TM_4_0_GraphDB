@@ -15,9 +15,11 @@ function add_Swagger(app)
     swaggerService.set_Defaults()
 
 
-    new (require('./src/api/Git-API'    ))({swaggerService: swaggerService}).add_Methods()
-    new (require('./src/api/Config-API' ))({swaggerService: swaggerService}).add_Methods()
+    new (require('./src/api/Data-API'   ))({swaggerService: swaggerService}).add_Methods()
+    new (require('./src/api/Content-API'))({swaggerService: swaggerService}).add_Methods()
     new (require('./src/api/GraphDB-API'))({swaggerService: swaggerService}).add_Methods()
+    new (require('./src/api/Config-API' ))({swaggerService: swaggerService}).add_Methods()
+    new (require('./src/api/Git-API'    ))({swaggerService: swaggerService}).add_Methods()
 
     swaggerService.swagger_Setup()
   }

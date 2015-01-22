@@ -5,7 +5,7 @@ node_js:
   - 0.10
 
 before_install:
-   - "bin/clone-default-repo.sh"
+   - "#bin/clone-default-repo.sh"
 
 after_script:
    - "echo 'Since tests passed: instrument files, rerun tests and publish results to coveralls' "
