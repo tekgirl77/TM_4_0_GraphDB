@@ -9,7 +9,7 @@ Guid             = require('teammentor').Guid
 describe '| graph | test-tm-queries', ->
 
   describe 'load tm-uno data set', ->
-    @timeout 0  # for the cases when data needs to be loaded from the network
+    
     importService     = null
 
     before (done)->
