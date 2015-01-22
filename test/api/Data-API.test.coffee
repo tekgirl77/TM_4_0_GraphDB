@@ -46,13 +46,13 @@ describe '| api | Data-API.test', ->
             clientApi.assert_Is_Object()
             done()
 
-      it 'article', (done)->
+      it 'id', (done)->
         clientApi.articles (data)->
           articles = data.obj
           article_Id = articles.keys().first()
           article = articles[articles.keys().first()]
           log article_Id
-          clientApi.article {id: article_Id }, (data)->
+          clientApi.id {id: article_Id }, (data)->
             data.obj[article_Id].assert_Is(article)
             done()
 

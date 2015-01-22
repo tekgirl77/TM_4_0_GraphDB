@@ -48,7 +48,7 @@ describe '| api | Content-API.test', ->
 
 
       it 'load_Library_Data', (done)->
-        @.timeout(20000)
+        @.timeout(0)
         clientApi.load_Library_Data (data)->
           data.obj.assert_Is_String()
           done()
