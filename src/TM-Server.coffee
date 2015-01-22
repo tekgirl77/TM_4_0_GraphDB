@@ -17,8 +17,9 @@ class TM_Server
         #@addControlers()
     
     #addRoutes: =>
-    #    @app.get '/'    , (req,res)-> res.send(new Jade_Service().enableCache().renderJadeFile('/views/index.jade'))
-    #    @app.get '/test', (req,res)-> res.send('this is a test')
+        @app.get '/'    , (req,res) -> res.redirect 'docs'
+        #@app.get '/'    , (req,res) -> res.send(new Jade_Service().enableCache().renderJadeFile('/views/index.jade'))
+        # @app.get '/test', (req,res)-> res.send('this is a test')
 
     #addControlers: =>
     #    new Data_Controller(  @) .add_Routes()

@@ -15,7 +15,7 @@ class GraphDB_API
       get_Command =
             spec   : { path : "/graph-db/#{name}/", nickname : name}
             action : (req,res)=> @[name](req, res)
-      if name isnt 'contents' and name isnt 'reload'
+      if ['contents','queries','reload'].not_Contains name
         get_Command.spec.path += '{value}'
         get_Command.spec.parameters = [ paramTypes.path('value', 'method param value', 'string') ]
 
@@ -65,6 +65,16 @@ class GraphDB_API
             #callback data
             res.send data.json_pretty()
 
+    queries: (req,res)=>
+      queryName = 'queries'
+      params    = {}
+
+      @.importService.graph.openDb =>
+        @.importService.run_Query queryName, params, (data)=>
+          @.importService.graph.closeDb ->
+            #log data
+            res.send data.json_pretty()
+
     filter: (req,res)=>
       query_Id = 'query'
       filter_Id = 'tm-search' #'totals' #'tm-search'       #totals'
@@ -96,6 +106,7 @@ class GraphDB_API
       @add_Get_Method 'predicate'
       @add_Get_Method 'object'
       @add_Get_Method 'query'
+      @add_Get_Method 'queries'
       @add_Get_Method 'filter'
       @add_Get_Method 'reload'
 

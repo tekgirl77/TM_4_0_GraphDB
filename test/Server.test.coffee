@@ -46,10 +46,10 @@ describe 'test-Server |',->
     it 'routes', ->
         expect(server.routes         ).to.be.an('function')
         expect(server.routes()       ).to.be.an('array')
-        expect(server.routes().size()).to.be.equal(0)
+        expect(server.routes().size()).to.be.equal(1)
 
     it 'Check expected paths', ->
-      expectedPaths = [] #'/'
+      expectedPaths = [ '/' ]
                         #'/test'
                         #'/data'
                         #'/data/:name'

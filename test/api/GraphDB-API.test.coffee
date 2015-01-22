@@ -88,6 +88,14 @@ describe '| api | GraphDB-API.test', ->
             #log data.obj
             done()
 
+      it 'queries', (done)->
+
+        clientApi.queries {}, (data)->
+          data.obj.assert_Is_Object()
+          data.obj.nodes.assert_Not_Empty()
+          #log data.obj
+          done()
+
       it 'filter', (done)->
         clientApi.predicate { value: 'contains-query'}, (data)->
           value = data.obj.first().subject
