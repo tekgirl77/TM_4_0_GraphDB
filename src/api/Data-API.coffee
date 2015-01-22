@@ -16,7 +16,7 @@ class Data_API
             spec   : { path : "/data/#{name}/", nickname : name}
             action : @[name]
 
-      if name is 'article'
+      if name is 'id'
         get_Command.spec.path += '{id}'
         get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string') ]
 
@@ -43,10 +43,10 @@ class Data_API
           @.importService.get_Subjects_Data articles_Ids, (data)=>
             @._close_DB_and_Send res, data
 
-    article: (req,res)=>
-      article_Id = req.params.id
+    id: (req,res)=>
+      id = req.params.id
       @._open_DB =>
-        @.importService.get_Subjects_Data [article_Id], (data)=>
+        @.importService.get_Subjects_Data [id], (data)=>
           @._close_DB_and_Send res, data
 
 
@@ -55,10 +55,17 @@ class Data_API
                           { subject: v('id') , predicate: 'title'         , object: v('title')}]
       @._send_Search searchTerms, res
 
+    library: (req,res)=>
+      @._open_DB =>
+        @.importService.library (library)=>
+          @._close_DB_and_Send res, library
+
     add_Methods: ()=>
-      @add_Get_Method 'article'
+      @add_Get_Method 'id'
       @add_Get_Method 'articles'
+      @add_Get_Method 'library'
       @add_Get_Method 'queries'
+
 
 
 module.exports = Data_API

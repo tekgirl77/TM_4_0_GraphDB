@@ -61,6 +61,14 @@ describe '| api | Data-API.test', ->
           data.obj.keys().assert_Size_Is_Bigger_Than(50)
           done()
 
+      it 'library', (done)->
+        clientApi.library (data)->
+          library = data.obj
+          library.assert_Is_Object()
+          library.folders.assert_Not_Empty()
+          library.articles.assert_Not_Empty()
+          done()
+
       it 'queries', (done)->
         clientApi.queries (data)->
           data.obj.assert_Size_Is_Bigger_Than(10)
