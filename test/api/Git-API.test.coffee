@@ -58,6 +58,11 @@ describe '| api | Git-API.test', ->
           data.obj.assert_Contains('commit')
           done()
 
+      it 'head', (done)->
+        clientApi.head (data)->
+          data.obj.assert_Is_String()
+          done()
+
       it 'remote', (done)->
         clientApi.remote (data)->
           data.obj.assert_Contains(':')
@@ -65,10 +70,12 @@ describe '| api | Git-API.test', ->
           done()
 
       it 'log', (done)->
-        clientApi.log (data)->
-          data.obj.assert_Contains('*')
-          #log data.obj
-          done()
+        clientApi.head (head)->
+          clientApi.log (data)->
+            data.obj.assert_Contains('*')
+                    .assert_Contains(head.obj.trim())
+            #log data.obj
+            done()
 
       it 'pull', (done)->
         @timeout(5000)

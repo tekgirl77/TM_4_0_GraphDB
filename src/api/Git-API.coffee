@@ -8,21 +8,20 @@ class Git_API
       @.swaggerService = @options.swaggerService
 
       @commands =
-            status: { name: 'status' , params: []}
-            remote: { name: 'remote' , params: ['-v']}
-            log   : { name: 'log'    , params: ['--graph', '--pretty=oneline', '-15']}
-            pull  : { name: 'pull'   , params: ['origin']}
+            status: { name: 'status' , params: ['status']}
+            head  : { name: 'head'   , params: ['log', '-1', '--pretty=%H' ]}
+            remote: { name: 'remote' , params: ['remote', '-v']}
+            log   : { name: 'log'    , params: ['log', '--graph', '--pretty=oneline', '-15']}
+            pull  : { name: 'pull'   , params: ['pull', 'origin']}
 
     git_Exec: (command)=>
       git_Exec_Method
 
     git_Exec_Method : (command)=>
         (req,res)=>
-            params = [command.name].concat(command.params)
-
             result = ''
             options = { cwd : __dirname}
-            using child_process.spawn('git', params),->
+            using child_process.spawn('git', command.params),->
                 @.stdout.on 'data', (data)-> result += data.str()
                 @.stderr.on 'data', (data)-> result += data.str()
                 @.on 'exit'       , (    )-> res.send JSON.stringify(result)
@@ -37,6 +36,7 @@ class Git_API
 
     add_Methods: ()=>
       @add_Git_Command(@.commands.status)
+      @add_Git_Command(@.commands.head)
       @add_Git_Command(@.commands.remote)
       @add_Git_Command(@.commands.log)
       @add_Git_Command(@.commands.pull)

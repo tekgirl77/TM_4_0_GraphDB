@@ -37,7 +37,7 @@ describe '| services | Content-Service.test', ->
           done()
 
   it 'load_Library_Data',(done)->
-    @timeout(10000)         # git it time to clone
+    @timeout(20000)         # git it time to clone
     using contentService,->
       @.library_Folder (folder)=>
         @.load_Library_Data (result)->
@@ -46,14 +46,16 @@ describe '| services | Content-Service.test', ->
 
   it 'convert_Xml_To_Json', (done)->
     @timeout 15000
-    using contentService,->
-      @.convert_Xml_To_Json ()=>
-        @.library_Json_Folder (json_Folder, library_Folder)=>
-          @json_Files (jsons)=>
-            @xml_Files (xmls)->
-              xmls.assert_Not_Empty()
-                  .assert_Size_Is(jsons.size())
-              done()
+    contentService.json_Files (files)->
+      (done();return) if files.not_Empty()
+      using contentService,->
+        @.convert_Xml_To_Json ()=>
+          @.library_Json_Folder (json_Folder, library_Folder)=>
+            @json_Files (jsons)=>
+              @xml_Files (xmls)->
+                xmls.assert_Not_Empty()
+                    .assert_Size_Is(jsons.size())
+                done()
 
   it 'load_Data', (done)->
     @timeout 10000

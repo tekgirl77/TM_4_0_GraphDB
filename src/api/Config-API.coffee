@@ -10,7 +10,7 @@ class Config_API
     add_Get_Method: (name)=>
       get_Command =
             spec   : { path : "/config/#{name}/", nickname : name}
-            action : (req,res)=> res.send JSON.stringify @[name]()
+            action : (req,res)=> res.send @[name]().json_pretty()
 
       @.swaggerService.addGet(get_Command)
 

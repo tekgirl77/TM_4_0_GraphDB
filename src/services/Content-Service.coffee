@@ -27,35 +27,43 @@ class Content_Service
       callback json_Folder, library_Folder
 
   load_Library_Data: (callback)=>
-    @.configService.get_Config (config)=>
-      @.library_Folder (folder)->
-        source_Repo = config.default_Repo
-        target_Folder = folder
-        git_Command =
-          name  : 'clone'
-          params:["#{source_Repo}","#{target_Folder}"]
-        execMethod = new Git_API().git_Exec_Method(git_Command)
-        res =
-          send: (result)->
-            callback(result)
-        execMethod(null, res)
+    @.xml_Files (xmlFiles)=>
+      if xmlFiles.not_Empty() and @.force_Reload is false
+        callback("data load skipped")
+      else
+        @.configService.get_Config (config)=>
+          @.library_Folder (folder)->
+            source_Repo = config.default_Repo
+            target_Folder = folder
+            target_Folder.folder_Delete_Recursive()
+            git_Command =
+              name  : 'clone'
+              params:['clone', "#{source_Repo}","#{target_Folder}"]
+            execMethod = new Git_API().git_Exec_Method(git_Command)
+            res =
+              send: (result)->
+                callback(result)
+            execMethod(null, res)
 
 
   convert_Xml_To_Json: (callback)=>
-    @.library_Json_Folder (json_Folder, library_Folder)->
+    @.json_Files (json_Files)=>
+      if json_Files.not_Empty() and @.force_Reload is false
+        callback()
+      else
+        @.library_Json_Folder (json_Folder, library_Folder)->
+          convert_Library_File = (file, next)=>
+            json_File = file.replace(library_Folder, json_Folder)
+                            .replace('.xml','.json')
+            json_File.parent_Folder().folder_Create()
+            xml2js.parseString file.file_Contents(), (error, json) ->
+              if not error
+                json.save_Json(json_File)
+              next()
 
-      convert_Library_File = (file, next)=>
-        json_File = file.replace(library_Folder, json_Folder)
-                        .replace('.xml','.json')
-        json_File.parent_Folder().folder_Create()
-        xml2js.parseString file.file_Contents(), (error, json) ->
-          if not error
-            json.save_Json(json_File)
-          next()
+          xml_Files = library_Folder.files_Recursive(".xml")
 
-      xml_Files = library_Folder.files_Recursive(".xml")
-
-      async.each xml_Files,convert_Library_File, callback
+          async.each xml_Files,convert_Library_File, callback
 
   json_Files: (callback)=>
     if @._json_Files and @._json_Files.not_Empty()
