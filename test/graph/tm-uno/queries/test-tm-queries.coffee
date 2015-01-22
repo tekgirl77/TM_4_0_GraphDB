@@ -1,12 +1,12 @@
 #long running test - move into CI server
 async            = require 'async'
 Cache_Service    = require('teammentor').Cache_Service
-Graph_Service    = require('./../../src/services/Graph-Service')
-Import_Service   = require('./../../src/services/Import-Service')
-Data_Import_Util = require('./../../src/utils/Data-Import-Util')
+Graph_Service    = require('./../../../../src/services/Graph-Service')
+Import_Service   = require('./../../../../src/services/Import-Service')
+Data_Import_Util = require('./../../../../src/utils/Data-Import-Util')
 Guid             = require('teammentor').Guid
 
-describe.only '_to_move_to_ci | test-tm-uno | test-data-import |', ->
+describe '| graph | test-tm-queries', ->
 
   describe 'load tm-uno data set', ->
     @timeout 0  # for the cases when data needs to be loaded from the network
@@ -14,26 +14,17 @@ describe.only '_to_move_to_ci | test-tm-uno | test-data-import |', ->
 
     before (done)->
       importService     = new Import_Service('tm-uno')
-      #"opening the db".log()
       importService.graph.openDb ->
         done()
 
     after (done)->
-      #"closing the db".log()
       importService.graph.closeDb ->
         done()
-#(req,res) -> sendQuery(req, res, 'library')
-    xit 'loadData',  (done)->
-      importService.load_Data.assert_Is_Function()
-      importService.load_Data ->
-        importService.graph.allData (data)->
-          data.assert_Is_Array()
-          done()
 
     it 'run query - library', (done)->
       importService.run_Query 'library',  {},(graph)->
         console.log graph.nodes
-        graph.nodes.assert_Is_Empty()
+        assert_Is_Undefined graph.nodes
         done()
 
     it 'run query - folder-metadata (with show value)', (done)->
@@ -92,25 +83,3 @@ describe.only '_to_move_to_ci | test-tm-uno | test-data-import |', ->
         importService.run_Query 'query', options, (graph)->
           "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
           done();
-
-describe '_to_move_to_ci | test-tm-uno | Filters', ->
-  it 'tm-uno , folder-metadata tm-search',(done)->
-    @timeout(10000)
-    data_id   = 'tm-uno'          #'data-test'
-    #query_Id  = 'folder-metadata' # 'simple'
-    query_Id = 'query'
-    filter_Id = 'tm-search'       #totals'
-    options   = { show : 'Logging'}
-
-    importService = new Import_Service(data_id)
-    importService.setup ->
-      #importService.load_Data ->
-      importService.graph.openDb ->
-        importService.run_Query query_Id, options, (graph)->
-          importService.run_Filter filter_Id, graph, (data)->
-            importService.graph.closeDb ->
-              #console.log data.filters
-              data.title.assert_Is_String()
-              #data.containers.assert_Not_Empty()
-              #data.results.assert_Not_Empty()
-              done()

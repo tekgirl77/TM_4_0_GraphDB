@@ -86,6 +86,9 @@ class ImportService
     queryFile = @path_Queries.path_Combine("#{queryName}.coffee")
     if(queryFile.file_Not_Exists())
       queryFile = process.cwd().path_Combine('db-queries').path_Combine("#{queryName}.coffee")
+    if(queryFile.file_Not_Exists())
+      queryFile = __dirname.path_Combine('../graph/tm-uno/queries').path_Combine("#{queryName}.coffee")
+      log queryFile
 
     if(queryFile?.fullPath()?.file_Exists())
       get_Graph = coffeeScript.eval(queryFile.fullPath().file_Contents())
@@ -97,6 +100,9 @@ class ImportService
 
   run_Filter: (filterName, graph, callback)=>
     filterFile = @path_Filters.path_Combine("#{filterName}.coffee")
+    if(filterFile.file_Not_Exists())
+      filterFile = __dirname.path_Combine('../graph/tm-uno/filters').path_Combine("#{filterName}.coffee")
+
     if(filterFile.file_Exists())
       get_Data = coffeeScript.eval(filterFile.fullPath().file_Contents())
       if typeof get_Data is 'function'
