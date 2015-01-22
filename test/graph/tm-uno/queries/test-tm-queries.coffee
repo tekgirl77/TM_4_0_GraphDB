@@ -1,13 +1,12 @@
-return
 #long running test - move into CI server
 async            = require 'async'
 Cache_Service    = require('teammentor').Cache_Service
-Graph_Service    = require('./../src/services/Graph-Service')
-Import_Service   = require('./../src/services/Import-Service')
-Data_Import_Util = require('./../src/utils/Data-Import-Util')
+Graph_Service    = require('./../../src/services/Graph-Service')
+Import_Service   = require('./../../src/services/Import-Service')
+Data_Import_Util = require('./../../src/utils/Data-Import-Util')
 Guid             = require('teammentor').Guid
 
-describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
+describe.only '_to_move_to_ci | test-tm-uno | test-data-import |', ->
 
   describe 'load tm-uno data set', ->
     @timeout 0  # for the cases when data needs to be loaded from the network
@@ -23,8 +22,8 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
       #"closing the db".log()
       importService.graph.closeDb ->
         done()
-(req,res) -> sendQuery(req, res, 'library')
-    it 'loadData',  (done)->
+#(req,res) -> sendQuery(req, res, 'library')
+    xit 'loadData',  (done)->
       importService.load_Data.assert_Is_Function()
       importService.load_Data ->
         importService.graph.allData (data)->
@@ -33,33 +32,21 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
 
     it 'run query - library', (done)->
       importService.run_Query 'library',  {},(graph)->
-        #console.log graph.nodes.size()
-        graph.nodes.assert_Is_Object()
+        console.log graph.nodes
+        graph.nodes.assert_Is_Empty()
         done()
 
-    it 'run query - library-all', (done)->
-      importService.run_Query 'library-all',  {},(graph)->
-        #console.log graph
-        graph.nodes.assert_Is_Object()
-        done()
-
-    it 'run query - folders-and-views', (done)->
-      importService.run_Query 'folders-and-views', {}, (graph)->
-        #console.log graph.json_pretty()
-        graph.nodes.assert_Is_Object()
-        done()
-
-    it 'run query - folder-metadata', (done)->
+    it 'run query - folder-metadata (with show value)', (done)->
       options = {show:'Top iOS Threats'}
       #{show:'Canonicalization'}
       options.show ="Test Folder"
 
-      importService.load_Data ->
-        importService.run_Query 'folder-metadata', options, (graph)->
-          importService.graph.allData (allData)->
-            #console.log graph.json_pretty()
-            graph.nodes.assert_Is_Object()
-            done()
+      #importService.load_Data ->
+      importService.run_Query 'folder-metadata', options, (graph)->
+        importService.graph.allData (allData)->
+          #console.log graph.json_pretty()
+          graph.nodes.assert_Is_Object()
+          done()
 
     it 'run query - folder-metadata', (done)->
       options = {}
@@ -69,6 +56,12 @@ describe '_to_move_to_ci | test-tm-uno | test-data-import |', ->
           "There are #{graph.nodes.size()} and #{graph.edges.size()} edges".log()
           #console.log graph
           done();
+
+    it 'run query - folders-and-views', (done)->
+      importService.run_Query 'folders-and-views', {}, (graph)->
+        #console.log graph.json_pretty()
+        graph.nodes.assert_Is_Object()
+        done()
 
     it 'run query - search', (done)->
       #@timeout(20000)
