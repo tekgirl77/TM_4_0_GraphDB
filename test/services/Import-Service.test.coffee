@@ -384,8 +384,38 @@ describe '| services | Import-Service.test', ->
             titles.assert_Contains ['Phase', 'Type', 'Technology', 'Category']
             done()
 
-    #NOT WORKING AS IT SHOULD
-    #it 'map_Query_Tree', (done)->
+    it 'get_Queries_Mappings', (done)->
+      using importService, ->
+        @.get_Queries_Mappings (queries_Mappings)=>
+          queries_Mappings.keys().assert_Size_Is_Bigger_Than(10)
+          query_Id = queries_Mappings.keys().first()
+          query    = queries_Mappings[query_Id];
+          query.assert_Is_Object()
+          done();
+
+    it 'get_Query_Mappings', (done)->
+      using importService, ->
+        @.find_Queries (queries_Ids)=>
+          @.get_Query_Mappings queries_Ids.first(), (query_Mappings)=>
+            query_Mappings.assert_Is_Object()
+            done();
+
+    it.only 'get_Query_Tree', (done)->
+      using importService, ->
+        @.find_Root_Queries (query_Ids)=>
+          @.get_Query_Tree query_Ids.first(), (query_Tree)->
+            log query_Tree
+            done()
+
+    it 'get_Article_Queries', (done)->
+      using importService, ->
+        @.get_Articles_Queries (articles_Queries)->
+          articles_Queries.keys().assert_Not_Empty()
+          done();
+
+
+
+    #it.only 'map_Query_Tree', (done)->
     #  using importService, ->
     #    @.find_Root_Queries (queries)=>
     #      @.map_Query_Tree queries.first(), (queryTree)=>

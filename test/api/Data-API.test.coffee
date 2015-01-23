@@ -51,7 +51,6 @@ describe '| api | Data-API.test', ->
           articles = data.obj
           article_Id = articles.keys().first()
           article = articles[articles.keys().first()]
-          log article_Id
           clientApi.id {id: article_Id }, (data)->
             data.obj[article_Id].assert_Is(article)
             done()
@@ -92,3 +91,25 @@ describe '| api | Data-API.test', ->
               (item.id for item in data.obj).assert_Contains(query_Id)
               done()
 
+      it 'queries_mappings, query_mappings', (done)=>
+        clientApi.queries_mappings (data)=>
+          queries_Mappings = data.obj
+          queriesIds = queries_Mappings.keys()
+          clientApi.query_mappings {id: queriesIds.first()}, (data)=>
+            query_Mappings = data.obj
+            query_Mappings.assert_Is(queries_Mappings[queriesIds.first()])
+            done()
+
+      it 'root_queries, query_tree', (done)=>
+        clientApi.root_queries (data)=>
+          query_Ids = data.obj
+          clientApi.query_tree {id: query_Ids.first() }, (data)=>
+            query_Tree = data.obj
+            log query_Tree
+            query_Tree.id.assert_Is(query_Ids.first() )
+            done()
+
+      it 'articles_queries', (done)=>
+        clientApi.articles_queries (articles_Queries)=>
+          articles_Queries.keys().assert_Not_Empty()
+          done();

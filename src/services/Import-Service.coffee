@@ -88,7 +88,7 @@ class ImportService
       queryFile = process.cwd().path_Combine('db-queries').path_Combine("#{queryName}.coffee")
     if(queryFile.file_Not_Exists())
       queryFile = __dirname.path_Combine('../graph/tm-uno/queries').path_Combine("#{queryName}.coffee")
-      log queryFile
+      #log queryFile
 
     if(queryFile?.fullPath()?.file_Exists())
       get_Graph = coffeeScript.eval(queryFile.fullPath().file_Contents())
@@ -208,28 +208,109 @@ class ImportService
       async.each queries, check_Query, ->
         callback rootQueries
 
-  #NOT WORKING AS IT SHOULD
- #map_Query_Tree: (root_Query_Id, callback)=>
 
+  get_Queries_Mappings: (callback)=>
+    @find_Queries (query_Ids)=>
+      @get_Subjects_Data query_Ids, (queries)=>
 
- #  map_Query = (query_Id, next)=>
- #    log query_Id
- #    query_Node =
- #      id     : query_Id
- #      queries: []
+        map_Contains_Article = (article_Ids, target)->
+            if article_Ids
+              if typeof article_Ids is 'string'
+                article_Ids = [article_Ids]
+              for article_Id in article_Ids || []
+                target.add(new String(article_Id))
 
+        for query_Id in query_Ids
+          query = queries[query_Id]
+          query.queries ?= []
+          query.articles ?= []
 
- #    @find_Query_Queries query_Id, (queries)->
- #      targets =
- #      #if queries.empty()
- #      #  next()
- #      #else
- #      #  async.eachSeries queries, map_Query , ->
- #      #    next(query_Node)
+          child_Query_Ids = query['contains-query']
+          if child_Query_Ids
+            if typeof child_Query_Ids is 'string'
+              child_Query_Ids = [child_Query_Ids]
 
- #  map_Query root_Query_Id, (query_Tree)->
- #    callback(query_Tree)
+          for child_Query_Id in child_Query_Ids || []
+            child_Query = queries[child_Query_Id]
+            child_Query.id = child_Query_Id
+            query.queries.add(child_Query)
+            child_Query.parents ?= []
+            child_Query.parents.add(query_Id)
+            map_Contains_Article child_Query['contains-article'],query.articles
 
+          map_Contains_Article query['contains-article'],query.articles
+
+        for query_Id in query_Ids
+          query = queries[query_Id]
+          delete query['contains-query']
+          delete query['contains-article']
+
+        #log queries['query-bc822b4e49a5'].json_pretty() #'query-6234f2d47eb7'] #'query-bc822b4e49a5']
+        callback(queries)
+
+  get_Query_Mappings: (query_Id,callback)=>
+    @get_Queries_Mappings (queries_Mappings)=>
+      callback queries_Mappings[query_Id]
+
+  get_Query_Tree: (query_Id,callback)=>
+    @get_Query_Mappings query_Id, (query_Mappings)=>
+      query_Tree =
+        id          : query_Id
+        title       : query_Mappings?.title
+        resultsTitle: "Showing #{query_Mappings?.articles.size()} articles",
+        containers  : []
+        results     : []
+        filters     : []
+      for query in query_Mappings.queries
+        container =
+          id   : query.id
+          title: query.title
+          size : query.articles.size()
+        query_Tree.containers.add container
+
+      @get_Subjects_Data query_Mappings.articles, (data)=>
+        for article_Id in query_Mappings.articles
+          query_Tree.results.add data[article_Id]
+
+      @get_Articles_Queries (articles_Queries)=>
+        add_Mapping =  (title, next)=>
+          @find_Using_Title (title), (data)=>
+            query_Id = data.first()
+            filter =
+              title: title
+              results: []
+            #for article_Id in query_Mappings.articles
+            #  article_Queries = articles_Queries[article_Id].queries
+            #  for article_Query_Id in article_Queries.keys()
+                #filter.results.add article_Queries[article_Query_Id]
+
+              #for query in articles_Queries[article_Id].queries
+              #  filter.results.add(query)
+              #if query
+              #  filter.results[query_Id] ?= { title: query.title , id:query_Id, size: 0}
+              #  filter.results[query_Id].size++
+
+            query_Tree.filters.add(filter)
+            next()
+
+        add_Mapping 'Category', =>
+          add_Mapping 'Technology', =>
+            add_Mapping 'Type', =>
+              add_Mapping 'Phase', =>
+                callback query_Tree
+
+  get_Articles_Queries: (callback)=>
+    @get_Queries_Mappings (queries_Mappings)=>
+      articles_Queries = {}
+
+      for query_Id in queries_Mappings.keys()
+        query = queries_Mappings[query_Id]
+        for article_Id in  query.articles
+          articles_Queries[article_Id] ?= { queries: {}}
+          query = queries_Mappings[query_Id]
+          articles_Queries[article_Id].queries[query_Id] = { title: query.title , is: query.is }
+
+      callback articles_Queries
 
 
   get_Subject_Data: (subject, callback)=>
