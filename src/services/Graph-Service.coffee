@@ -46,6 +46,21 @@ class GraphService
       throw err if err
       callback()
 
+  get_Subjects: (callback)=>
+    @db.search [{ subject  : @db.v("subject")}], (err, data)->
+      resuls = (item.subject for item in data) .unique()
+      callback(resuls)
+
+  get_Predicates: (callback)=>
+    @db.search [{ predicate  : @db.v("predicate")}], (err, data)->
+      resuls = (item.predicate for item in data) .unique()
+      callback(resuls)
+
+  get_Objects: (callback)=>
+    @db.search [{ object  : @db.v("object")}], (err, data)->
+      resuls = (item.object for item in data) .unique()
+      callback(resuls)
+
   get_Subject: (subject, callback)->
     @db.get {subject:subject}, (err,data)->
       throw err if err
@@ -62,6 +77,13 @@ class GraphService
       subject  : @db.v("subject"),
       predicate: @db.v("predicate"),
       object   : @db.v("object"),
+    }], (err, data)->callback(data)
+
+  search: (subject, predicate, object, callback)=>
+    @db.search [{
+      subject  : subject    || @db.v("subject")
+      predicate: predicate  || @db.v("predicate")
+      object   : object     || @db.v("object")
     }], (err, data)->callback(data)
 
   query: (key, value, callback)->

@@ -1,6 +1,6 @@
 TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
-Data_API = require '../../src/api/Data-API'
+Data_API         = require '../../src/api/Data-API'
 
 describe '| api | Data-API.test', ->
 
@@ -73,3 +73,22 @@ describe '| api | Data-API.test', ->
         clientApi.queries (data)->
           data.obj.assert_Size_Is_Bigger_Than(10)
           done()
+
+      it 'articles, article_parent_queries', (done)=>
+        clientApi.articles (data)=>
+          article_Id = data.obj.keys().first()
+          clientApi.article_parent_queries { id: article_Id }, (data) =>
+            query_Id = data.obj.first()
+            clientApi.articles { id: query_Id }, (data)=>
+              data.obj.keys().contains(article_Id)
+              done()
+
+      it 'queries, query_parent_queries', (done)=>
+        clientApi.queries (data)=>
+          query_Id    = data.obj.first().id
+          clientApi.query_parent_queries {id:query_Id}, (data)=>
+            parent_Query = data.obj.first()
+            clientApi.queries {id:parent_Query}, (data)=>
+              (item.id for item in data.obj).assert_Contains(query_Id)
+              done()
+

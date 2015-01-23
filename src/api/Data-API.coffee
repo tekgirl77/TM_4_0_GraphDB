@@ -16,7 +16,8 @@ class Data_API
             spec   : { path : "/data/#{name}/", nickname : name}
             action : @[name]
 
-      if name is 'id'
+      if ['id', 'query_queries', 'query_articles', 'query_queries',
+          'article_parent_queries','query_parent_queries'].contains(name)
         get_Command.spec.path += '{id}'
         get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string') ]
 
@@ -51,9 +52,33 @@ class Data_API
 
 
     queries: (req,res)=>
-      searchTerms = (v)->[{                    predicate: 'contains-query', object: v('id')   }
-                          { subject: v('id') , predicate: 'title'         , object: v('title')}]
+      searchTerms = (v)->[{ subject: v('id') , predicate: 'is'     , object: 'Query'   }
+                          { subject: v('id') , predicate: 'title'  , object: v('title')}]
       @._send_Search searchTerms, res
+
+    query_articles: (req,res)=>
+      query_Id = req.params.id
+      @._open_DB =>
+        @.importService.find_Query_Articles query_Id, (articles)=>
+          @._close_DB_and_Send res, articles
+
+    query_queries: (req,res)=>
+      query_Id = req.params.id
+      @._open_DB =>
+        @.importService.find_Query_Queries query_Id, (articles)=>
+          @._close_DB_and_Send res, articles
+
+    article_parent_queries: (req,res)=>
+      article_Id = req.params.id
+      @._open_DB =>
+        @.importService.find_Article_Parent_Queries article_Id, (queries)=>
+          @._close_DB_and_Send res, queries
+
+    query_parent_queries: (req,res)=>
+      query_Id = req.params.id
+      @._open_DB =>
+        @.importService.find_Query_Parent_Queries query_Id, (queries)=>
+          @._close_DB_and_Send res, queries
 
     library: (req,res)=>
       @._open_DB =>
@@ -65,6 +90,10 @@ class Data_API
       @add_Get_Method 'articles'
       @add_Get_Method 'library'
       @add_Get_Method 'queries'
+      @add_Get_Method 'query_articles'
+      @add_Get_Method 'query_queries'
+      @add_Get_Method 'article_parent_queries'
+      @add_Get_Method 'query_parent_queries'
 
 
 

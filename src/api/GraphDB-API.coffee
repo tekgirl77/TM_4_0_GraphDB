@@ -11,13 +11,19 @@ class GraphDB_API
       @.swaggerService = @options.swaggerService
       @.importService   = new Import_Service('tm-uno')
 
-    add_Get_Method: (name)=>
+    add_Get_Method: (name, params)=>
       get_Command =
-            spec   : { path : "/graph-db/#{name}/", nickname : name}
-            action : (req,res)=> @[name](req, res)
-      if ['contents','queries','reload'].not_Contains name
-        get_Command.spec.path += '{value}'
-        get_Command.spec.parameters = [ paramTypes.path('value', 'method param value', 'string') ]
+            spec       : { path : "/graph-db/#{name}", nickname : name, parameters : []}
+            action     : (req,res)=> @[name](req, res)
+
+
+      for param in params
+        get_Command.spec.path += "/{#{param}}"
+        get_Command.spec.parameters.push(paramTypes.path(param, 'method parameter', 'string'))
+
+      #if ['contents','queries','reload'].not_Contains name
+      #  get_Command.spec.path += '{value}'
+      #  get_Command.spec.parameters = [ paramTypes.path('value', 'method param value', 'string') ]
 
       @.swaggerService.addGet(get_Command)
 
@@ -35,10 +41,27 @@ class GraphDB_API
             @.closeDb ->
               callback data
 
+    send_Search: (subject, predicate, object,res)=>
+      @.importService.graph.openDb =>
+        @.importService.graph.search subject, predicate, object, (data)=>
+          @.importService.graph.closeDb ->
+            res.send data.json_pretty()
 
     contents: (req, res)=>
       @call_Graph_Method 'allData', (data)->
-        res.send JSON.stringify data
+        res.send data.json_pretty()
+
+    subjects: (req, res)=>
+      @call_Graph_Method 'get_Subjects', (data)->
+        res.send data.json_pretty()
+
+    predicates: (req, res)=>
+      @call_Graph_Method 'get_Predicates', (data)->
+        res.send data.json_pretty()
+
+    objects: (req, res)=>
+      @call_Graph_Method 'get_Objects', (data)->
+        res.send data.json_pretty()
 
     subject: (req, res)=>
       value = req.params?.value || ''
@@ -65,6 +88,16 @@ class GraphDB_API
             #callback data
             res.send data.json_pretty()
 
+    sub_pre: (req,res)=>
+      subject   = req.params.subject
+      predicate = req.params.predicate
+      @.send_Search subject, predicate, undefined, res
+
+    pre_obj: (req,res)=>
+      predicate = req.params.predicate
+      object    = req.params.object
+      @.send_Search undefined, predicate, object, res
+
     queries: (req,res)=>
       queryName = 'queries'
       params    = {}
@@ -82,10 +115,8 @@ class GraphDB_API
         show : req.params.value
       options = { importService : new Import_Service('tm-uno') }
       tmGuidance  = new TM_Guidance options
-      #tmGuidance.load_Data ()=>
       options.importService.graph.openDb ->
         options.importService.run_Query query_Id, params, (graph)->
-        #res.send graph.json_pretty()
           options.importService.run_Filter filter_Id, graph, (data)->
             options.importService.graph.closeDb ->
               res.send data.json_pretty()
@@ -101,14 +132,19 @@ class GraphDB_API
 
     add_Methods: ()=>
 
-      @add_Get_Method 'contents'
-      @add_Get_Method 'subject'
-      @add_Get_Method 'predicate'
-      @add_Get_Method 'object'
-      @add_Get_Method 'query'
-      @add_Get_Method 'queries'
-      @add_Get_Method 'filter'
-      @add_Get_Method 'reload'
+      @add_Get_Method 'contents'   , []
+      @add_Get_Method 'subjects'   , []
+      @add_Get_Method 'predicates' , []
+      @add_Get_Method 'objects'    , []
+      @add_Get_Method 'subject'    , ['value']
+      @add_Get_Method 'predicate'  , ['value']
+      @add_Get_Method 'object'     , ['value']
+      @add_Get_Method 'query'      , ['value']
+      @add_Get_Method 'sub_pre'    , ['subject', 'predicate']
+      @add_Get_Method 'pre_obj'    , ['predicate','object']
+      @add_Get_Method 'queries'    , []
+      @add_Get_Method 'filter'     , ['value']
+      @add_Get_Method 'reload'     , []
 
 
 

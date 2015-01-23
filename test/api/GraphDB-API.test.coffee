@@ -62,6 +62,21 @@ describe '| api | GraphDB-API.test', ->
           data.obj.assert_Size_Is_Bigger_Than(1940)
           done()
 
+      it 'subjects', (done)->
+        clientApi.subjects (data)->
+          data.obj.assert_Not_Empty()
+          done()
+
+      it 'predicates', (done)->
+        clientApi.predicates (data)->
+          data.obj.assert_Not_Empty()
+          done()
+
+      it 'objects', (done)->
+        clientApi.objects (data)->
+          data.obj.assert_Not_Empty()
+          done()
+
       it 'subject', (done)->
         clientApi.subject { value: 'query-'}, (data)->
           data.obj.assert_Size_Is(0)
@@ -79,6 +94,12 @@ describe '| api | GraphDB-API.test', ->
             data.obj.first().object.assert_Is value
             done()
 
+      it 'pre_obj', (done)->
+        clientApi['pre_obj'] { predicate: 'is' , object: 'Article'}, (data)->
+          data.obj.assert_Not_Empty()
+                  .first().subject.assert_Contains 'article-'
+          done()
+
       it 'query', (done)->
         clientApi.predicate { value: 'contains-query'}, (data)->
           value = data.obj.first().subject
@@ -89,7 +110,6 @@ describe '| api | GraphDB-API.test', ->
             done()
 
       it 'queries', (done)->
-
         clientApi.queries {}, (data)->
           data.obj.assert_Is_Object()
           data.obj.nodes.assert_Not_Empty()
@@ -99,7 +119,6 @@ describe '| api | GraphDB-API.test', ->
       it 'filter', (done)->
         clientApi.predicate { value: 'contains-query'}, (data)->
           value = data.obj.first().subject
-          log value
           clientApi.filter { value: value}, (data)->
             data.obj.assert_Is_Object()
             data.obj.results.assert_Not_Empty()

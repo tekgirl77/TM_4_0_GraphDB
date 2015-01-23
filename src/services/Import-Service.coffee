@@ -141,6 +141,8 @@ class ImportService
   add_Title: (id, title_Value, callback)->
     @graph.add id,'title',title_Value, callback
 
+  #SEARCH Data
+
   find_Using_Is: (value, callback)=>
     @graph.db.nav(value).archIn('is')
                         .solutions (err,data) ->
@@ -164,6 +166,72 @@ class ImportService
                .solutions (err,data) ->
                   callback (item.x0 for item in data)
 
+  find_Articles: (callback)=>
+    @graph.db.nav('Article').archIn('is').as('article')
+                            .solutions (err,data) ->
+                              callback (item.article for item in data)
+
+  find_Queries: (callback)=>
+    @graph.db.nav('Query').archIn('is').as('query')
+                           .solutions (err,data) ->
+                              callback (item.query for item in data)
+
+  find_Query_Articles: (query_Id, callback)=>
+    @graph.db.nav(query_Id).archOut('contains-article').as('article')
+                           .solutions (err,data) ->
+                              callback (item.article for item in data)
+
+  find_Query_Queries: (query_Id, callback)=>
+    @graph.db.nav(query_Id).archOut('contains-query').as('query')
+                           .solutions (err,data) ->
+                              callback (item.query for item in data)
+
+  find_Article_Parent_Queries: (article_Id, callback)=>
+    @graph.db.nav(article_Id).archIn('contains-article').as('query')
+                             .solutions (err,data) ->
+                                callback (item.query for item in data)
+
+  find_Query_Parent_Queries: (query_Id, callback)=>
+    @graph.db.nav(query_Id).archIn('contains-query').as('query')
+                           .solutions (err,data) ->
+                              callback (item.query for item in data)
+
+  find_Root_Queries: (callback)=>
+    rootQueries = []
+
+    check_Query = (queryId, next)=>
+      @find_Query_Parent_Queries queryId, (parentQueries)->
+        rootQueries.add(queryId) if parentQueries.empty()
+        next()
+
+    @.find_Queries (queries)->
+      async.each queries, check_Query, ->
+        callback rootQueries
+
+  #NOT WORKING AS IT SHOULD
+ #map_Query_Tree: (root_Query_Id, callback)=>
+
+
+ #  map_Query = (query_Id, next)=>
+ #    log query_Id
+ #    query_Node =
+ #      id     : query_Id
+ #      queries: []
+
+
+ #    @find_Query_Queries query_Id, (queries)->
+ #      targets =
+ #      #if queries.empty()
+ #      #  next()
+ #      #else
+ #      #  async.eachSeries queries, map_Query , ->
+ #      #    next(query_Node)
+
+ #  map_Query root_Query_Id, (query_Tree)->
+ #    callback(query_Tree)
+
+
+
   get_Subject_Data: (subject, callback)=>
     #console.log subject
     if not subject
@@ -186,10 +254,10 @@ class ImportService
   get_Subjects_Data:(subjects, callback)=>
     result = {}
     if not subjects
-      callback result                   #
-      return                            #
+      callback result
+      return
     if(typeof(subjects) == 'string')
-      subjects = [subjects]             #
+      subjects = [subjects]
     map_Subject_data = (subject, next)=>
       @get_Subject_Data subject, (subjectData)=>
         result[subject] = subjectData
@@ -197,27 +265,31 @@ class ImportService
     async.each subjects, map_Subject_data, -> callback(result)
 
 
-  get_Libraries_Ids: (callback)=>
-    @graph.db.nav('Library').archIn('is').solutions (err,data) ->
-      callback (item.x0 for item in data)
+ #get_Libraries_Ids: (callback)=>
+ #  @graph.db.nav('Library').archIn('is').solutions (err,data) ->
+ #    callback (item.x0 for item in data)
 
-  get_Library_Id: (title, callback)=>
-    @graph.db.nav('Library').archIn('is').as('id')
-                            .archOut('title').as('title')
-                            .bind(title)
-                            .solutions (err,data) ->
-                              callback if data.first() then data.first().id else null
+ #get_Library_Id: (title, callback)=>
+ #  @graph.db.nav('Library').archIn('is').as('id')
+ #                          .archOut('title').as('title')
+ #                          .bind(title)
+ #                          .solutions (err,data) ->
+ #                            callback if data.first() then data.first().id else null
 
-  get_Library_Folders_Ids: (title, callback)=>
-    folders_Ids = []
-    @get_Library_Id title, (library_id)=>
-      @find_Subject_Contains library_id, callback
+ #get_Library_Folders_Ids: (title, callback)=>
+ #  folders_Ids = []
+ #  @get_Library_Id title, (library_id)=>
+ #    @find_Subject_Contains library_id, callback
 
-      #callback(folders_Ids)
-      #@graph.db.nav('Folder').archIn('is').as('id')
-      #                       .archOut('title').as('title')
-      #                       .bind('Canonicalization')
-      #                        #.archOut('contains')
+ #    #callback(folders_Ids)
+ #    #@graph.db.nav('Folder').archIn('is').as('id')
+ #    #                       .archOut('title').as('title')
+ #    #                       .bind('Canonicalization')
+ #    #                        #.archOut('contains')
+
+
+
+  #Library JSON Import (move to another file
 
   # assumes that there is only one Xml file which represents the library
 

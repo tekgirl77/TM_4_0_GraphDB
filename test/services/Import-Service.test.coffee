@@ -332,3 +332,62 @@ describe '| services | Import-Service.test', ->
             @.article_Data library.articles.first(), (article_Data)->
               article_Data.assert_Is_Object()
               done()
+
+  describe '| search Library data',->
+    importService = null
+
+    before (done)->
+      using new Import_Service(), ->
+        importService = @
+        @.content.load_Data =>
+          importService.graph.openDb ->
+            done()
+
+    after (done)->
+      importService.graph.closeDb ->
+        done()
+
+    it 'find_Queries', (done)->
+      using importService, ->
+        @find_Queries (queries)->
+          queries.assert_Not_Empty()
+          done()
+
+    it 'find_Articles', (done)->
+      using importService, ->
+        @find_Articles (articles)->
+          articles.assert_Not_Empty()
+          done()
+
+    it 'find_Articles, find_Article_Parent_Queries, find_Query_Articles', (done)->
+      using importService, ->
+        @.find_Articles (articles)=>
+          @find_Article_Parent_Queries articles.first(), (parent_Queries)=>
+            @find_Query_Articles parent_Queries.first(), (query_Articles)=>
+              query_Articles.assert_Contains(articles.first())
+              done()
+
+    it 'find_Queries, find_Query_Parent_Queries, find_Query_Queries', (done)->
+      using importService, ->
+        @.find_Queries (queries)=>
+          @find_Query_Parent_Queries queries.first(), (parent_Queries)=>
+            @find_Query_Queries parent_Queries.first(), (query_Queries)=>
+              query_Queries.assert_Contains(queries.first())
+              done()
+
+    it 'find_Root_Queries', (done)->
+      using importService, ->
+        @.find_Root_Queries (queries)=>
+          queries.assert_Size_Is 5
+          @.get_Subjects_Data queries, (data)=>
+            titles = (data[key].title for key in data.keys())
+            titles.assert_Contains ['Phase', 'Type', 'Technology', 'Category']
+            done()
+
+    #NOT WORKING AS IT SHOULD
+    #it 'map_Query_Tree', (done)->
+    #  using importService, ->
+    #    @.find_Root_Queries (queries)=>
+    #      @.map_Query_Tree queries.first(), (queryTree)=>
+    #        log queryTree
+    #        done()
