@@ -17,8 +17,9 @@ class Data_API
             action : @[name]
 
       if ['id', 'query_queries', 'query_articles', 'query_queries',
-          'article_parent_queries','query_parent_queries',
-          'query_mappings', 'query_tree'].contains(name)
+          'query_parent_queries',
+          'query_mappings', 'query_tree',
+          'article_parent_queries'].contains(name)
         get_Command.spec.path += '{id}'
         get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string') ]
 
@@ -69,12 +70,6 @@ class Data_API
         @.importService.find_Query_Queries query_Id, (articles)=>
           @._close_DB_and_Send res, articles
 
-    article_parent_queries: (req,res)=>
-      article_Id = req.params.id
-      @._open_DB =>
-        @.importService.find_Article_Parent_Queries article_Id, (queries)=>
-          @._close_DB_and_Send res, queries
-
     query_parent_queries: (req,res)=>
       query_Id = req.params.id
       @._open_DB =>
@@ -108,6 +103,12 @@ class Data_API
         @.importService.get_Articles_Queries (queries)=>
           @._close_DB_and_Send res, queries
 
+    article_parent_queries: (req,res)=>
+      query_Id = req.params.id
+      @._open_DB =>
+        @.importService.map_Article_Parent_Queries query_Id, (articleParentQueries)=>
+          @._close_DB_and_Send res, articleParentQueries
+
     library: (req,res)=>
       @._open_DB =>
         @.importService.library (library)=>
@@ -120,13 +121,13 @@ class Data_API
       @add_Get_Method 'queries'
       @add_Get_Method 'query_articles'
       @add_Get_Method 'query_queries'
-      @add_Get_Method 'article_parent_queries'
       @add_Get_Method 'query_parent_queries'
       @add_Get_Method 'queries_mappings'
       @add_Get_Method 'query_mappings'
       @add_Get_Method 'root_queries'
       @add_Get_Method 'query_tree'
       @add_Get_Method 'articles_queries'
+      @add_Get_Method 'article_parent_queries'
 
 
 module.exports = Data_API

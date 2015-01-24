@@ -34,7 +34,6 @@ class Swagger_Service
     docs_handler = express.static(@path_Swagger_UI());
 
     @app.get /^\/docs(\/.*)?$/, (req, res, next)->
-      log req.url
       if (req.url == '/docs') # express static barfs on root url w/o trailing slash
         res.writeHead(302, { 'Location' : req.url + '/?url=http://localhost:1332/v1.0/api-docs' });
         res.end();
@@ -54,9 +53,9 @@ class Swagger_Service
     @swagger.addGet(getSpec)
     @
 
-  addPost: (getSpec)=>
-    @swagger.addPost(getSpec)
-    @
+  #addPost: (getSpec)=>
+  #  @swagger.addPost(getSpec)
+  #  @
 
   swagger_Setup: =>
     @swagger.setApiInfo(@.apiInfo)
@@ -66,20 +65,20 @@ class Swagger_Service
 
   set_Defaults: =>
 
-    ping =
-          spec              : { path : "/say/ping/", nickname : "ping"}
-          action            : (req, res)-> res.send {'ping': 'pong'}
-
-    helloWorld =
-          spec:
-                 path       : "/say/helloWorld/{name}"
-                 notes      : "says hello"
-                 method     : "GET"
-                 summary    : "hello world"
-                 parameters : [ paramTypes.path('name', 'name to stay hello to', 'string') ]
-                 nickname   : "sayHello"
-                 responseMessages : [errors.invalid('name'), errors.notFound('name')]
-          action: (req, res)-> res.send {'hello': req.params.name }
+    #ping =
+    #      spec              : { path : "/say/ping/", nickname : "ping"}
+    #      action            : (req, res)-> res.send {'ping': 'pong'}
+    #
+    #helloWorld =
+    #      spec:
+    #             path       : "/say/helloWorld/{name}"
+    #             notes      : "says hello"
+    #             method     : "GET"
+    #             summary    : "hello world"
+    #             parameters : [ paramTypes.path('name', 'name to stay hello to', 'string') ]
+    #             nickname   : "sayHello"
+    #             responseMessages : [errors.invalid('name'), errors.notFound('name')]
+    #      action: (req, res)-> res.send {'hello': req.params.name }
 
     @.setup()
      #.add_GraphDB_Methods()
@@ -102,20 +101,20 @@ class Swagger_Service
     options    = { url: api_Url, success:onSuccess }
     swaggerApi = new Swagger_Client.SwaggerApi(options)
 
-  add_Get_Method: (area, name, action)=>
-     action_spec =
-        spec              : { path : "/#{area}/#{name}/", nickname : name}
-        action            :   action   #(req, res)->  res.send getData(req,res)
+  #add_Get_Method: (area, name, action)=>
+  #   action_spec =
+  #      spec              : { path : "/#{area}/#{name}/", nickname : name}
+  #      action            :   action   #(req, res)->  res.send getData(req,res)
 
 
-     if name is 'query' or name is 'tm-search'
-        action_spec.spec.path += '{show}'
-        action_spec.spec.parameters = [ paramTypes.path('show', 'value to filter by', 'string') ]
+  #   if name is 'query' or name is 'tm-search'
+  #      action_spec.spec.path += '{show}'
+  #      action_spec.spec.parameters = [ paramTypes.path('show', 'value to filter by', 'string') ]
 
-     if area is 'search'
-        @.addPost(action_spec)
-     else
-        @.addGet(action_spec)
+  #   if area is 'search'
+  #      @.addPost(action_spec)
+  #   else
+  #      @.addGet(action_spec)
 
 #  add_GraphDB_Methods: ()=>
 #

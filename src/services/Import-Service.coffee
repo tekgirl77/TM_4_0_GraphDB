@@ -11,6 +11,8 @@ Data_Import_Util   = require('../utils/Data-Import-Util')
 Vis_Graph          = require('teammentor').Vis_Graph
 Content_Service    = require('./Content-Service')
 
+Local_Cache        = { Queries_Mappings : null , }
+
 class ImportService
 
   constructor: (name)->
@@ -210,6 +212,8 @@ class ImportService
 
 
   get_Queries_Mappings: (callback)=>
+    ( callback(Local_Cache.Queries_Mappings);return) if (Local_Cache.Queries_Mappings)
+
     @find_Queries (query_Ids)=>
       @get_Subjects_Data query_Ids, (queries)=>
 
@@ -245,7 +249,7 @@ class ImportService
           delete query['contains-query']
           delete query['contains-article']
 
-        #log queries['query-bc822b4e49a5'].json_pretty() #'query-6234f2d47eb7'] #'query-bc822b4e49a5']
+        Local_Cache.Queries_Mappings = queries
         callback(queries)
 
   get_Query_Mappings: (query_Id,callback)=>
@@ -261,43 +265,49 @@ class ImportService
         containers  : []
         results     : []
         filters     : []
-      for query in query_Mappings.queries
-        container =
-          id   : query.id
-          title: query.title
-          size : query.articles.size()
-        query_Tree.containers.add container
+      if not query_Mappings
+        callback query_Tree
+      else 
+        for query in query_Mappings.queries
+          container =
+            id   : query.id
+            title: query.title
+            size : query.articles.size()
+          query_Tree.containers.add container
 
-      @get_Subjects_Data query_Mappings.articles, (data)=>
-        for article_Id in query_Mappings.articles
-          query_Tree.results.add data[article_Id]
+        @get_Subjects_Data query_Mappings.articles, (data)=>
+          for article_Id in query_Mappings.articles
+            query_Tree.results.add data[article_Id]
 
-      @get_Articles_Queries (articles_Queries)=>
-        add_Mapping =  (title, next)=>
-          @find_Using_Title (title), (data)=>
-            query_Id = data.first()
-            filter =
-              title: title
-              results: []
-            #for article_Id in query_Mappings.articles
-            #  article_Queries = articles_Queries[article_Id].queries
-            #  for article_Query_Id in article_Queries.keys()
-                #filter.results.add article_Queries[article_Query_Id]
+          callback query_Tree
 
-              #for query in articles_Queries[article_Id].queries
-              #  filter.results.add(query)
-              #if query
-              #  filter.results[query_Id] ?= { title: query.title , id:query_Id, size: 0}
-              #  filter.results[query_Id].size++
+     #@get_Articles_Queries (articles_Queries)=>
+     #  add_Mapping =  (title, next)=>
+     #    @find_Using_Title (title), (data)=>
+     #      query_Id = data.first()
+     #      filter =
+     #        title: title
+     #        results: []
+     #      #for article_Id in query_Mappings.articles
+     #      #  article_Queries = articles_Queries[article_Id].queries
+     #      #  for article_Query_Id in article_Queries.keys()
+     #          #filter.results.add article_Queries[article_Query_Id]
 
-            query_Tree.filters.add(filter)
-            next()
+     #        #for query in articles_Queries[article_Id].queries
+     #        #  filter.results.add(query)
+     #        #if query
+     #        #  filter.results[query_Id] ?= { title: query.title , id:query_Id, size: 0}
+     #        #  filter.results[query_Id].size++
 
-        add_Mapping 'Category', =>
-          add_Mapping 'Technology', =>
-            add_Mapping 'Type', =>
-              add_Mapping 'Phase', =>
-                callback query_Tree
+     #      query_Tree.filters.add(filter)
+     #      next()
+
+     #  add_Mapping 'Category', =>
+     #    add_Mapping 'Technology', =>
+     #      add_Mapping 'Type', =>
+     #        add_Mapping 'Phase', =>
+     #          callback query_Tree
+
 
   get_Articles_Queries: (callback)=>
     @get_Queries_Mappings (queries_Mappings)=>
@@ -306,15 +316,31 @@ class ImportService
       for query_Id in queries_Mappings.keys()
         query = queries_Mappings[query_Id]
         for article_Id in  query.articles
-          articles_Queries[article_Id] ?= { queries: {}}
+          articles_Queries[article_Id] ?= []
           query = queries_Mappings[query_Id]
-          articles_Queries[article_Id].queries[query_Id] = { title: query.title , is: query.is }
+          articles_Queries[article_Id].add(query_Id) #[query_Id] = { title: query.title , is: query.is }
 
-      callback articles_Queries
+      callback articles_Queries, queries_Mappings
 
+  map_Article_Parent_Queries:  (article_Id, callback)=>
+    @get_Articles_Queries (articles_Queries,queries_Mappings)=>
+      parent_Queries = articles_Queries[article_Id]
+
+      result = { id: article_Id , parent_Queries: {}}
+      if parent_Queries
+        for parent_Query_Id in parent_Queries
+          query = queries_Mappings[parent_Query_Id]
+          result[query.id] ?= { count:0 , title: query.title, parents: query.parents}
+          result[query.id].count++
+      callback(result)
+
+
+
+
+
+  #######
 
   get_Subject_Data: (subject, callback)=>
-    #console.log subject
     if not subject
       callback {}   #
     else
@@ -339,10 +365,12 @@ class ImportService
       return
     if(typeof(subjects) == 'string')
       subjects = [subjects]
+
     map_Subject_data = (subject, next)=>
       @get_Subject_Data subject, (subjectData)=>
         result[subject] = subjectData
         next()
+
     async.each subjects, map_Subject_data, -> callback(result)
 
 

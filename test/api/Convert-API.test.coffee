@@ -1,8 +1,8 @@
 TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
-Content_API = require '../../src/api/Content-API'
+Convert_API = require '../../src/api/Convert-API'
 
-describe '| api | Content-API.test', ->
+describe '| api | Convert-API.test', ->
 
   describe '| via web api',->
 
@@ -12,14 +12,14 @@ describe '| api | Content-API.test', ->
       contentApi      = null
 
       before (done)->
-        contentApi = new Content_API()
+        contentApi = new Convert_API()
         tmServer  = new TM_Server({ port : 12345})
         options = { app: tmServer.app ,  port : tmServer.port}
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()
         #swaggerService.setup()
 
-        new Content_API({swaggerService: swaggerService}).add_Methods()
+        new Convert_API({swaggerService: swaggerService}).add_Methods()
         swaggerService.swagger_Setup()
         tmServer.start()
 
@@ -32,29 +32,23 @@ describe '| api | Content-API.test', ->
           done()
 
       it 'constructor', ->
-        Content_API.assert_Is_Function()
+        Convert_API.assert_Is_Function()
 
-      it 'check content section exists', (done)->
+      it 'check convert section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
           api_Paths = (api.path for api in docs.apis)
-          api_Paths.assert_Contains('/content')
+          api_Paths.assert_Contains('/convert')
 
-          swaggerService.url_Api_Docs.append("/content").GET_Json (data)->
+          swaggerService.url_Api_Docs.append("/convert").GET_Json (data)->
             data.apiVersion    .assert_Is('1.0.0')
             data.swaggerVersion.assert_Is('1.2')
-            data.resourcePath  .assert_Is('/content')
+            data.resourcePath  .assert_Is('/convert')
             clientApi.assert_Is_Object()
             done()
 
 
-      it 'load_Library_Data', (done)->
-        @.timeout(0)
-        clientApi.load_Library_Data (data)->
-          data.obj.assert_Is_String()
-          done()
-
-      it 'convert_Xml_To_Json', (done)->
-        @.timeout(20000)
-        clientApi.convert_Xml_To_Json (data)->
-          data.obj.assert_Size_Is_Bigger_Than(10)
-          done()
+      it 'to_query_ids (bad data)', (done)->
+        #clientApi.to_query_ids {values: 'abc'.add_5_Letters() }, (data)->
+        #  log data
+        console.log 'TO DO'
+        done()

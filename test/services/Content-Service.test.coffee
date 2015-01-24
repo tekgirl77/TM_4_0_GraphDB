@@ -1,7 +1,7 @@
 async           = require 'async'
 Content_Service = require '../../src/services/Content-Service'
 
-describe '| services | Content-Service.test', ->
+describe '| services | Content-Service.test |', ->
 
   contentService = null
 
@@ -61,14 +61,13 @@ describe '| services | Content-Service.test', ->
     @timeout 10000
     using contentService,->
       @library_Json_Folder (json_Folder, library_Folder)=>
-        json_Folder.folder_Delete_Recursive()
         @._json_Files = null
         @load_Data =>
           @json_Files (jsons)=>
             @xml_Files (xmls)=>
               xmls.assert_Size_Is(jsons.size())
-              @load_Data =>
-                done()
+
+              done()
 
   it 'article_Data', (done)->
     using contentService,->

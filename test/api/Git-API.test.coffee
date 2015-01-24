@@ -77,7 +77,7 @@ describe '| api | Git-API.test', ->
             #log data.obj
             done()
 
-      it 'pull', (done)->
+      xit 'pull', (done)->
         @timeout(5000)
         clientApi.pull (data)->
           #data.obj.data.assert_Contains('@')

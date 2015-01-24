@@ -36,7 +36,7 @@ describe '| api | GraphDB-API.test', ->
       it 'constructor', ->
         GraphDB_API.assert_Is_Function()
 
-      it 'reload', (done)->
+      xit 'reload', (done)->
         @timeout 10000
         clientApi.reload (data)->
           data.obj.assert_Is('data reloaded')

@@ -333,7 +333,10 @@ describe '| services | Import-Service.test', ->
               article_Data.assert_Is_Object()
               done()
 
-  describe '| search Library data',->
+
+
+  describe '| search Library data |',->
+
     importService = null
 
     before (done)->
@@ -400,11 +403,11 @@ describe '| services | Import-Service.test', ->
             query_Mappings.assert_Is_Object()
             done();
 
-    it.only 'get_Query_Tree', (done)->
+    it 'get_Query_Tree', (done)->
       using importService, ->
         @.find_Root_Queries (query_Ids)=>
           @.get_Query_Tree query_Ids.first(), (query_Tree)->
-            log query_Tree
+            #log query_Tree 
             done()
 
     it 'get_Article_Queries', (done)->
@@ -413,7 +416,13 @@ describe '| services | Import-Service.test', ->
           articles_Queries.keys().assert_Not_Empty()
           done();
 
-
+    xit 'map_Article_Parent_Queries', (done)->
+      using importService, ->
+        @find_Articles (articles)=>
+          article_Id = articles.first()
+          @.map_Article_Parent_Queries article_Id, (articleQueryTree)->
+            log articleQueryTree
+            done();
 
     #it.only 'map_Query_Tree', (done)->
     #  using importService, ->

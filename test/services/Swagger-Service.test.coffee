@@ -1,28 +1,39 @@
 TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
+supertest        = require 'supertest'
 
 describe 'swagger | Swagger-Service.test', ->
 
   url_server     = null
-  server         = null
   url_api_docs   = null
+  server         = null
   swaggerService = null
   swaggerApi     = null
 
   before (done)->
-    server  = new TM_Server({ port : 12345})
-    options = { app: server.app ,  port : 12345}
+    server  = new TM_Server({ port : 12346})
+    options = { app: server.app ,  port : 12346}
     swaggerService = new Swagger_Service options
     swaggerService.set_Defaults()
+    ping =
+          spec              : { path : "/say/ping/", nickname : "ping"}
+          action            : (req, res)-> res.send {'ping': 'pong'}
+    swaggerService.addGet ping
+    swaggerService.swagger_Setup()
     server.start()
-    #swaggerService.get_Client_Api 'git', (api)->
-    #  swaggerApi = api;
     done()
 
   after (done)->
     server.stop ->
-      url_api_docs.GET (html)->
-        assert_Is_Null(html)
+      done()
+
+  it 'get_Client_Api', (done)->
+    swaggerService.get_Client_Api 'say', (clientApi)->
+
+      clientApi.assert_Is_Object()
+      clientApi.operations.ping.assert_Is_Object()
+      clientApi.ping (response)->
+        response.obj.assert_Is { ping :'pong'}
         done()
 
   it 'check server', (done)->
@@ -39,6 +50,30 @@ describe 'swagger | Swagger-Service.test', ->
         apiDocs.apiVersion.assert_Is('1.0.0')
         apiDocs.swaggerVersion.assert_Is('1.2')
         #apiDocs.apis[0].path.assert_Is('/graphs')
+        done()
+
+  it '/docs' , (done)->
+    supertest(server.app)
+      .get('/docs')
+      .end (error, response)->
+        response.header.location.assert_Contains ['docs/?url','v1.0/api-docs']
+        done()
+
+  it '/docs' , (done)->
+    supertest(server.app)
+      .get('/docs/')
+      .end (error, response)->
+        response.text.assert_Contains [ 'swagger', 'api-docs' ]
+        done()
+
+  it '/v1.0/api-docs', (done)->
+    supertest(server.app)
+      .get('/v1.0/api-docs')
+      .end (error, response)->
+        #response.text.assert_Contains [ 'swagger', 'api-docs' ]
+        json = response.text.json_Parse()
+        json.apiVersion.assert_Is '1.0.0'
+        json.info.title.assert_Is 'TeamMentor GraphDB 4.0',
         done()
 
 #  it 'swagger-client', (done)->
