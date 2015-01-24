@@ -20,10 +20,24 @@ class Convert_API
         get_Command.spec.parameters.push(paramTypes.path(param, 'method parameter', 'string'))
       @.swaggerService.addGet(get_Command)
 
-    to_query_ids: (req,res)=>
-      res.send 'to-do'
+    _open_DB: (callback)=>
+      @.importService.graph.openDb =>
+        @.db = @.importService.graph.db
+        callback()
+
+    _close_DB_and_Send: (res, data)=>
+      @.importService.graph.closeDb =>
+        @.db = null
+        res.send data.json_pretty()
+
+    to_ids: (req,res)=>
+      values = req.params.values
+      @_open_DB =>
+        @.importService.convert_To_Ids values, (result)=>
+          @_close_DB_and_Send res, result
+
 
     add_Methods: ()=>
-      @add_Get_Method 'to_query_ids', ['values']
+      @add_Get_Method 'to_ids', ['values']
 
 module.exports = Convert_API

@@ -163,6 +163,7 @@ class ImportService
                               callback (item.id for item in data)
 
 
+  #Legacy: TO Remove
   find_Subject_Contains: (subject, callback)=>
       @graph.db.nav(subject).archOut('contains')
                .solutions (err,data) ->
@@ -267,7 +268,7 @@ class ImportService
         filters     : []
       if not query_Mappings
         callback query_Tree
-      else 
+      else
         for query in query_Mappings.queries
           container =
             id   : query.id
@@ -395,6 +396,42 @@ class ImportService
  #    #                       .archOut('title').as('title')
  #    #                       .bind('Canonicalization')
  #    #                        #.archOut('contains')
+
+
+  convert_To_Ids: (values,callback)->
+    result = {}
+
+    resolve_Id = (value,next)=>
+      @find_Using_Title value, (data)=>
+        next data.first()
+
+    resolve_Title = (query_Id,next)=>
+      @.graph.search query_Id, 'title', undefined, (data)=>
+        next data.first()?.object
+
+    map_Data = (target, id, title, next)=>
+      using target, ->
+        if id
+          @.id    = id
+          @.title = title
+        next()
+
+    convert_Value = (value,next)=>
+
+      value  = value.trim()
+      target = result[value] = {}
+      resolve_Title value , (title)=>
+        if title
+          map_Data target, value, title, next
+        else
+          resolve_Id value, (id)=>
+            resolve_Title id, (title)=>
+              map_Data target, id, title, next
+
+    if values
+      async.each values.split(','), convert_Value, ->
+        callback result
+
 
 
 

@@ -4,7 +4,7 @@ Convert_API = require '../../src/api/Convert-API'
 
 describe '| api | Convert-API.test', ->
 
-  describe '| via web api',->
+  describe.only '| via web api',->
 
       tmServer       = null
       swaggerService = null
@@ -23,7 +23,7 @@ describe '| api | Convert-API.test', ->
         swaggerService.swagger_Setup()
         tmServer.start()
 
-        swaggerService.get_Client_Api 'content', (swaggerApi)->
+        swaggerService.get_Client_Api 'convert', (swaggerApi)->
             clientApi = swaggerApi
             done()
 
@@ -41,14 +41,44 @@ describe '| api | Convert-API.test', ->
 
           swaggerService.url_Api_Docs.append("/convert").GET_Json (data)->
             data.apiVersion    .assert_Is('1.0.0')
-            data.swaggerVersion.assert_Is('1.2')
+            data.swaggerVersion.assert_Is('1.2')      # ERROR IS HERE
             data.resourcePath  .assert_Is('/convert')
             clientApi.assert_Is_Object()
             done()
 
 
-      it 'to_query_ids (bad data)', (done)->
-        #clientApi.to_query_ids {values: 'abc'.add_5_Letters() }, (data)->
-        #  log data
-        console.log 'TO DO'
-        done()
+      it 'to_ids (bad data)', (done)->
+
+        check = (send, expect, next)->
+          clientApi.to_ids {values: send }, (data)->
+            data.obj.assert_Is expect
+            next()
+
+        check 'abcdefg' , { abcdefg : { } }, ->
+          check 'abcdefg , 123456 ' , { abcdefg: {} , 123456: {} }, ->
+            done()
+
+
+      it 'to_Ids (one value)', (done)->
+        values = 'Technology'
+        clientApi.to_ids {values: values }, (data)->
+          using data.obj[values], ->
+            @.id.assert_Is_String()
+            @.title.assert_Is values
+            query_Id = @.id
+            clientApi.to_ids {values: query_Id }, (data)->
+              using data.obj[query_Id], ->
+                @.id.assert_Is query_Id
+                @.title.assert_Is values
+                done()
+
+      it 'to_Ids (multiple values data)', (done)->
+        values = 'aaa, Technology, Type, Category, Phase, bbb'
+        clientApi.to_ids {values: values }, (data)->
+          result = data.obj
+          result.keys().assert_Size_Is values.split(',').size()
+          result['aaa'].assert_Is {}
+          result['bbb'].assert_Is {}
+          result['Technology'].title.assert_Is    ('Technology')
+          result['Phase'     ].title.assert_Is_Not('Technology')
+          done()
