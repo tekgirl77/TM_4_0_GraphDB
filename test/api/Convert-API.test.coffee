@@ -4,7 +4,7 @@ Convert_API = require '../../src/api/Convert-API'
 
 describe '| api | Convert-API.test', ->
 
-  describe.only '| via web api',->
+  describe '| via web api',->
 
       tmServer       = null
       swaggerService = null
