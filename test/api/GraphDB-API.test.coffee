@@ -94,26 +94,26 @@ describe '| api | GraphDB-API.test', ->
                   .first().subject.assert_Contains 'article-'
           done()
 
-      it 'query', (done)->
-        clientApi.predicate { value: 'contains-query'}, (data)->
-          value = data.obj.first().subject
-          clientApi.query { value: value}, (data)->
-            data.obj.assert_Is_Object()
-            data.obj.nodes.assert_Not_Empty()
-            #log data.obj
-            done()
-
-      it 'queries', (done)->
-        clientApi.queries {}, (data)->
-          data.obj.assert_Is_Object()
-          data.obj.nodes.assert_Not_Empty()
-          #log data.obj
-          done()
-
-      it 'filter', (done)->
-        clientApi.predicate { value: 'contains-query'}, (data)->
-          value = data.obj.first().subject
-          clientApi.filter { value: value}, (data)->
-            data.obj.assert_Is_Object()
-            data.obj.results.assert_Not_Empty()
-            done()
+      #it 'query', (done)->
+      #  clientApi.predicate { value: 'contains-query'}, (data)->
+      #    value = data.obj.first().subject
+      #    clientApi.query { value: value}, (data)->
+      #      data.obj.assert_Is_Object()
+      #      data.obj.nodes.assert_Not_Empty()
+      #      #log data.obj
+      #      done()
+#
+      #it 'queries', (done)->
+      #  clientApi.queries {}, (data)->
+      #    data.obj.assert_Is_Object()
+      #    data.obj.nodes.assert_Not_Empty()
+      #    #log data.obj
+      #    done()
+#
+      #it 'filter', (done)->
+      #  clientApi.predicate { value: 'contains-query'}, (data)->
+      #    value = data.obj.first().subject
+      #    clientApi.filter { value: value}, (data)->
+      #      data.obj.assert_Is_Object()
+      #      data.obj.results.assert_Not_Empty()
+      #      done()

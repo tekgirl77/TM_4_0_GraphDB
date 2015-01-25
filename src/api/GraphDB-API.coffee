@@ -78,15 +78,15 @@ class GraphDB_API
       @call_Graph_Method_With_Param 'get_Object', value, (data)->
         res.send data.json_pretty()
 
-    query: (req,res)=>
-      queryName = 'query'
-      params    = req.params
-
-      @.importService.graph.openDb =>
-        @.importService.run_Query queryName, params, (data)=>
-          @.importService.graph.closeDb ->
-            #callback data
-            res.send data.json_pretty()
+    #query: (req,res)=>
+    #  queryName = 'query'
+    #  params    = req.params
+#
+    #  @.importService.graph.openDb =>
+    #    @.importService.run_Query queryName, params, (data)=>
+    #      @.importService.graph.closeDb ->
+    #        #callback data
+    #        res.send data.json_pretty()
 
     sub_pre: (req,res)=>
       subject   = req.params.subject
@@ -98,28 +98,28 @@ class GraphDB_API
       object    = req.params.object
       @.send_Search undefined, predicate, object, res
 
-    queries: (req,res)=>
-      queryName = 'queries'
-      params    = {}
+   #queries: (req,res)=>
+   #  queryName = 'queries'
+   #  params    = {}
 
-      @.importService.graph.openDb =>
-        @.importService.run_Query queryName, params, (data)=>
-          @.importService.graph.closeDb ->
-            #log data
-            res.send data.json_pretty()
+   #  @.importService.graph.openDb =>
+   #    @.importService.run_Query queryName, params, (data)=>
+   #      @.importService.graph.closeDb ->
+   #        #log data
+   #        res.send data.json_pretty()
 
-    filter: (req,res)=>
-      query_Id = 'query'
-      filter_Id = 'tm-search' #'totals' #'tm-search'       #totals'
-      params   =
-        show : req.params.value
-      options = { importService : new Import_Service('tm-uno') }
-      tmGuidance  = new TM_Guidance options
-      options.importService.graph.openDb ->
-        options.importService.run_Query query_Id, params, (graph)->
-          options.importService.run_Filter filter_Id, graph, (data)->
-            options.importService.graph.closeDb ->
-              res.send data.json_pretty()
+   #filter: (req,res)=>
+   #  query_Id = 'query'
+   #  filter_Id = 'tm-search' #'totals' #'tm-search'       #totals'
+   #  params   =
+   #    show : req.params.value
+   #  options = { importService : new Import_Service('tm-uno') }
+   #  tmGuidance  = new TM_Guidance options
+   #  options.importService.graph.openDb ->
+   #    options.importService.run_Query query_Id, params, (graph)->
+   #      options.importService.run_Filter filter_Id, graph, (data)->
+   #        options.importService.graph.closeDb ->
+   #          res.send data.json_pretty()
 
 
     add_Methods: ()=>
@@ -131,11 +131,11 @@ class GraphDB_API
       @add_Get_Method 'subject'    , ['value']
       @add_Get_Method 'predicate'  , ['value']
       @add_Get_Method 'object'     , ['value']
-      @add_Get_Method 'query'      , ['value']
+      #@add_Get_Method 'query'      , ['value']
       @add_Get_Method 'sub_pre'    , ['subject', 'predicate']
       @add_Get_Method 'pre_obj'    , ['predicate','object']
-      @add_Get_Method 'queries'    , []
-      @add_Get_Method 'filter'     , ['value']
+      #@add_Get_Method 'queries'    , []
+     # @add_Get_Method 'filter'     , ['value']
       @add_Get_Method 'reload'     , []
 
 
