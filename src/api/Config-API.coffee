@@ -22,7 +22,8 @@ class Config_API
       res.send @configService.config_File_Path().json_pretty()
 
     contents: (req,res)=>
-      res.send @configService.config_File_Path().file_Contents().json_pretty()
+      @configService.get_Config (config)=>
+        res.send config.json_pretty()
 
     load_Library_Data: (req,res) =>
       @.contentService.load_Library_Data (data)->

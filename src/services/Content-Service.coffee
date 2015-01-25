@@ -47,7 +47,7 @@ class Content_Service
             execMethod = new Git_API().git_Exec_Method(git_Command)
             res =
               send: (result)->
-                log "Clone completer".info()
+                log "Clone completed"
                 log result
                 callback(result)
             execMethod(null, res)
