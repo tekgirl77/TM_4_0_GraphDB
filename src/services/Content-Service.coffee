@@ -33,8 +33,13 @@ class Content_Service
       else
         @.configService.get_Config (config)=>
           @.library_Folder (folder)->
+
             source_Repo = config.default_Repo
             target_Folder = folder
+
+            log " >>>>>> Source REPO: " + source_Repo
+            log " >>>>>> Library Folder: " + folder
+
             target_Folder.folder_Delete_Recursive()
             git_Command =
               name  : 'clone'
@@ -42,6 +47,8 @@ class Content_Service
             execMethod = new Git_API().git_Exec_Method(git_Command)
             res =
               send: (result)->
+                log "Clone completer".info()
+                log result
                 callback(result)
             execMethod(null, res)
 
