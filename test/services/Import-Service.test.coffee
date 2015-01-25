@@ -396,13 +396,6 @@ describe '| services | Import-Service.test', ->
           query.assert_Is_Object()
           done();
 
-    it 'get_Query_Mappings', (done)->
-      using importService, ->
-        @.find_Queries (queries_Ids)=>
-          @.get_Query_Mappings queries_Ids.first(), (query_Mappings)=>
-            query_Mappings.assert_Is_Object()
-            done();
-
     it 'get_Query_Tree', (done)->
       using importService, ->
         @.find_Root_Queries (query_Ids)=>
@@ -415,6 +408,16 @@ describe '| services | Import-Service.test', ->
         @.get_Articles_Queries (articles_Queries)->
           articles_Queries.keys().assert_Not_Empty()
           done();
+
+    it 'get_Query_Mappings', (done)->
+      using importService, ->
+        @.get_Queries_Mappings (mappings)=>
+          mappings.keys().assert_Not_Empty()
+          query_Id = mappings.keys().first()
+          @.get_Query_Mappings query_Id, (query_Mappings)=>
+            query_Mappings.assert_Is_Object()
+            query_Mappings.assert_Is(mappings[query_Id])
+            done();
 
     xit 'map_Article_Parent_Queries', (done)->
       using importService, ->

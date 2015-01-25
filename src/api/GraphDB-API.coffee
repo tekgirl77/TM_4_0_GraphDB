@@ -121,14 +121,6 @@ class GraphDB_API
             options.importService.graph.closeDb ->
               res.send data.json_pretty()
 
-    reload: (req,res)=>
-      options = { importService : new Import_Service('tm-uno') }
-      tmGuidance  = new TM_Guidance options
-      tmGuidance.load_Data ()=>
-        data = "data reloaded"
-        options.importService.graph.closeDb ->
-          res.send data.json_pretty()
-
 
     add_Methods: ()=>
 

@@ -36,12 +36,6 @@ describe '| api | GraphDB-API.test', ->
       it 'constructor', ->
         GraphDB_API.assert_Is_Function()
 
-      xit 'reload', (done)->
-        @timeout 10000
-        clientApi.reload (data)->
-          data.obj.assert_Is('data reloaded')
-          done()
-
       it 'check config section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
           api_Paths = (api.path for api in docs.apis)

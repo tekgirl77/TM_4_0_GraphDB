@@ -51,10 +51,28 @@ describe '| api | Config-API.test', ->
 
       it 'file', (done)->
         clientApi.file (data)->
-          data.obj.assert_Is(configApi.file())
+          data.obj.assert_Is configApi.configService.config_File_Path()
           done()
 
       it 'contents', (done)->
         clientApi.contents (data)->
-          data.obj.assert_Is(configApi.contents())
+          data.obj.assert_Is configApi.configService.config_File_Path().file_Contents()
+          done()
+
+      it 'load_Library_Data', (done)->
+        @.timeout(0)
+        clientApi.load_Library_Data (data)->
+          data.obj.assert_Is_String()
+          done()
+
+      it 'convert_Xml_To_Json', (done)->
+        @.timeout(20000)
+        clientApi.convert_Xml_To_Json (data)->
+          data.obj.assert_Size_Is_Bigger_Than(10)
+          done()
+
+      it 'reload', (done)->
+        @timeout 10000
+        clientApi.reload (data)->
+          data.obj.assert_Is('data reloaded')
           done()

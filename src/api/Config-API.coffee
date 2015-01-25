@@ -1,28 +1,52 @@
 require 'fluentnode'
-Config_Service = require '../services/Config-Service'
+Config_Service  = require '../services/Config-Service'
+Content_Service = require '../services/Content-Service'
+Import_Service  = require '../services/Import-Service'
+TM_Guidance     = require '../graph/tm-uno/data/tm-uno'
 
 class Config_API
     constructor: (options)->
       @.options        = options || {}
       @.swaggerService = @options.swaggerService
-      @configService   = new Config_Service()
+      @.configService   = new Config_Service()
+      @.contentService = new Content_Service()
 
     add_Get_Method: (name)=>
       get_Command =
             spec   : { path : "/config/#{name}/", nickname : name}
-            action : (req,res)=> res.send @[name]().json_pretty()
+            action : (req,res)=> @[name](req, res)
 
       @.swaggerService.addGet(get_Command)
 
-    file: =>
-      @configService.config_File_Path()
+    file: (req,res)=>
+      res.send @configService.config_File_Path().json_pretty()
 
-    contents: =>
-      @configService.get_Defaults()
+    contents: (req,res)=>
+      res.send @configService.config_File_Path().file_Contents().json_pretty()
+
+    load_Library_Data: (req,res) =>
+      @.contentService.load_Library_Data (data)->
+        res.send data.json_pretty()
+
+    convert_Xml_To_Json: (req, res) =>
+      @.contentService.convert_Xml_To_Json ()=>
+        @.contentService.json_Files (data)->
+          res.send data.json_pretty()
+
+
+    reload: (req,res)=>
+      options = { importService : new Import_Service('tm-uno') }
+      tmGuidance  = new TM_Guidance options
+      tmGuidance.load_Data ()=>
+        data = "data reloaded"
+        options.importService.graph.closeDb ->
+          res.send data.json_pretty()
 
     add_Methods: ()=>
       @add_Get_Method 'file'
       @add_Get_Method 'contents'
-
+      @add_Get_Method 'load_Library_Data'
+      @add_Get_Method 'convert_Xml_To_Json'
+      @add_Get_Method 'reload'
 
 module.exports = Config_API

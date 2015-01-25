@@ -213,7 +213,7 @@ class ImportService
 
 
   get_Queries_Mappings: (callback)=>
-    ( callback(Local_Cache.Queries_Mappings);return) if (Local_Cache.Queries_Mappings)
+    (callback(Local_Cache.Queries_Mappings);return) if (Local_Cache.Queries_Mappings)
 
     @find_Queries (query_Ids)=>
       @get_Subjects_Data query_Ids, (queries)=>
