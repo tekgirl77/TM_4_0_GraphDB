@@ -10,9 +10,8 @@ describe '| services | Import-Service.test', ->
       importService = new Import_Service('Import-Service.test')
 
     after (done)->
-      #add importService cache removals
       importService.graph.deleteDb ->
-
+        importService.cache.cacheFolder().folder_Delete_Recursive()
         done()
 
     it 'check ctor()', ->
@@ -27,22 +26,22 @@ describe '| services | Import-Service.test', ->
       importService.path_Queries.assert_Is_String()
 
       importService.name        .assert_Is 'Import-Service.test'
-   #   importService.name        .assert_Is importService.cache.area
-   #   importService.name        .assert_Is importService.graph.dbName
-      importService.path_Root   .assert_Is('db')
-      importService.path_Name   .assert_Is('db/Import-Service.test')
-      importService.path_Data   .assert_Is('db/Import-Service.test/data')
-      importService.path_Queries.assert_Is('db/Import-Service.test/queries')
+      importService.path_Root   .assert_Is('.tmCache')
+      importService.path_Name   .assert_Is('.tmCache/Import-Service.test')
+      importService.path_Data   .assert_Is('.tmCache/Import-Service.test/data')
+      importService.path_Queries.assert_Is('.tmCache/Import-Service.test/queries')
       importService.path_Name.folder_Delete_Recursive().assert_Is_True()
 
-    it 'check ctor (name)', ->
+    it 'check ctor (name)', (done)->
       aaaa_ImportService  = new Import_Service('aaaa')
       aaaa_ImportService.name         .assert_Is 'aaaa'
-      aaaa_ImportService.path_Name    .assert_Is 'db/aaaa'
-      aaaa_ImportService.path_Data    .assert_Is 'db/aaaa/data'
-      aaaa_ImportService.path_Queries .assert_Is 'db/aaaa/queries'
+      aaaa_ImportService.path_Name    .assert_Is '.tmCache/aaaa'
+      aaaa_ImportService.path_Data    .assert_Is '.tmCache/aaaa/data'
+      aaaa_ImportService.path_Queries .assert_Is '.tmCache/aaaa/queries'
       aaaa_ImportService.graph.dbName .assert_Is 'aaaa'
-      aaaa_ImportService.path_Name.folder_Delete_Recursive().assert_Is_True()
+      aaaa_ImportService.graph.deleteDb ->
+        aaaa_ImportService.cache.cacheFolder().folder_Delete_Recursive()
+        done()
 
     it 'setup', (done)->
       importService.setup.assert_Is_Function()
@@ -187,7 +186,7 @@ describe '| services | Import-Service.test', ->
       importService.get_Subject_Data null, ->
         done()
 
-  describe '| load data', ->
+  describe '| load data |', ->
     importService = null
     path_Data     = null
     json_File_1   = null
@@ -217,7 +216,6 @@ describe '| services | Import-Service.test', ->
       importService = new Import_Service('temp_load')
       importService.setup ->
         path_Data     = importService.path_Data
-
         json_File_1   = path_Data.path_Combine("testData_1.json"  )
         json_File_2   = path_Data.path_Combine("testData_2.json"  )
         coffee_File_1 = path_Data.path_Combine("testData_1.coffee")
@@ -226,10 +224,14 @@ describe '| services | Import-Service.test', ->
         dot_File_2    = path_Data.path_Combine("testData_2.dot"   )
         done()
 
+    beforeEach ->
+      importService.path_Data.folder_Create()
+
     afterEach (done)->
       file.file_Delete() for file in  path_Data.files()
       path_Data.files().assert_Empty()
       importService.graph.deleteDb ->
+        importService.cache.cacheFolder().folder_Delete_Recursive()
         done()
 
     after ->
@@ -290,14 +292,17 @@ describe '| services | Import-Service.test', ->
                   done()
 
 
-  describe '| load Library data',->
+  describe '| load Library data |',->
     importService = null
 
     before (done)->
-      using new Import_Service(), ->
+      using new Import_Service('_load_library_data'), ->
         importService = @
         @.content.load_Data ->
           done()
+
+    after ->
+      importService.cache.cacheFolder().folder_Delete_Recursive()
 
     it 'library_Json', (done)->
       importService.library (library)->
@@ -340,7 +345,7 @@ describe '| services | Import-Service.test', ->
     importService = null
 
     before (done)->
-      using new Import_Service(), ->
+      using new Import_Service('tm-uno'), ->
         importService = @
         @.content.load_Data =>
           importService.graph.openDb ->
@@ -419,13 +424,13 @@ describe '| services | Import-Service.test', ->
             query_Mappings.assert_Is(mappings[query_Id])
             done();
 
-    xit 'map_Article_Parent_Queries', (done)->
-      using importService, ->
-        @find_Articles (articles)=>
-          article_Id = articles.first()
-          @.map_Article_Parent_Queries article_Id, (articleQueryTree)->
-            log articleQueryTree
-            done();
+    #xit 'map_Article_Parent_Queries', (done)->
+    #  using importService, ->
+    #    @find_Articles (articles)=>
+    #      article_Id = articles.first()
+    #      @.map_Article_Parent_Queries article_Id, (articleQueryTree)->
+    #        log articleQueryTree
+    #        done();
 
     #it.only 'map_Query_Tree', (done)->
     #  using importService, ->

@@ -21,8 +21,8 @@ class ImportService
     @graph         = new Graph_Service("#{@name}")
     @content       = new Content_Service()
     #@teamMentor    = new TeamMentor_Service({tmConfig_File: '.tm-Config.json'});
-    @path_Root     = "db"
-    @path_Name     = "db/#{@name}"
+    @path_Root     = ".tmCache"
+    @path_Name     = ".tmCache/#{@name}"
     @path_Data     = "#{@path_Name}/data"
     @path_Filters  = "#{@path_Name}/filters"
     @path_Queries  = "#{@path_Name}/queries"

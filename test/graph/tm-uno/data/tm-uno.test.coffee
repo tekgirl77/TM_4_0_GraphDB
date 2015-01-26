@@ -6,12 +6,13 @@ describe '| graph | tm-uno | data', ->
   tmGuidance = null
 
   beforeEach ->
-    options = { importService : new Import_Service() }
+    options = { importService : new Import_Service('_tm_uno_test') }
     tmGuidance  = new TM_Guidance options
 
   afterEach (done)->
-    tmGuidance.importService.graph.closeDb ->
-      done()
+    tmGuidance.importService.graph.deleteDb ->
+        tmGuidance.importService.cache.cacheFolder().folder_Delete_Recursive()
+        done()
 
   it 'constructor',->
     TM_Guidance.assert_Is_Function()
