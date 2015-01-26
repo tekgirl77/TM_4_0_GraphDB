@@ -292,13 +292,45 @@ class ImportService
             size : query.articles.size()
           query_Tree.containers.add container
 
-        @get_Subjects_Data query_Mappings.articles, (data)=>
-          for article_Id in query_Mappings.articles
-            query_Tree.results.add data[article_Id]
+        @get_Query_Tree_Filters query_Mappings.articles, (filters)=>
+          query_Tree.filters = filters
+          @get_Subjects_Data query_Mappings.articles, (data)=>
+            for article_Id in query_Mappings.articles
+              query_Tree.results.add data[article_Id]
 
-          callback query_Tree
+            #query_Tree.containers = []
+            #query_Tree.results = []
+            callback query_Tree
 
 
+  get_Query_Tree_Filters: (articles_Ids, callback)=>
+    @map_Articles_Parent_Queries articles_Ids , (articles_Parent_Queries)=>
+      filters = []
+      map_Filter = (filter_Title)=>
+        filter =
+          title  : filter_Title
+          results: []
+
+        for query_Id in articles_Parent_Queries.queries.keys()
+          query = articles_Parent_Queries.queries[query_Id]
+          if query.title is filter_Title
+            for child_Query_Id in query.child_Queries
+              child_Query = articles_Parent_Queries.queries[child_Query_Id]
+              result =
+                title: child_Query.title
+                size : child_Query.articles.size()
+
+              filter.results.add result
+
+        filters.add filter
+
+      map_Filter 'Category'
+      map_Filter 'Technology'
+      map_Filter 'Phase'
+      map_Filter 'Type'
+
+       #
+      callback filters
 
   get_Articles_Queries: (callback)=>
     @get_Queries_Mappings (queries_Mappings)=>
@@ -313,16 +345,60 @@ class ImportService
 
       callback articles_Queries, queries_Mappings
 
-  map_Article_Parent_Queries:  (article_Id, callback)=>
-    @get_Articles_Queries (articles_Queries,queries_Mappings)=>
-      parent_Queries = articles_Queries[article_Id]
+  map_Articles_Parent_Queries:  (article_Ids, callback)=>
 
-      result = { id: article_Id , parent_Queries: {}}
-      if parent_Queries
-        for parent_Query_Id in parent_Queries
-          query = queries_Mappings[parent_Query_Id]
-          result[query.id] ?= { count:0 , title: query.title, parents: query.parents}
-          result[query.id].count++
+    result = { articles:{} , queries: {} }
+
+    map_Article = (article_Id,next)=>
+      @map_Article_Parent_Queries result, article_Id, ()->
+        next()
+
+    async.eachSeries article_Ids, map_Article, ->
+      callback result
+
+  map_Article_Parent_Queries:  (result, article_Id, callback)=>
+
+    result = result || { articles:{} , queries: {} }
+
+    @get_Articles_Queries (articles_Queries,queries_Mappings)=>
+
+      get_Query_Node = (query_Id)=>
+        if result.queries[query_Id]
+          result.queries[query_Id]
+        else
+          query = queries_Mappings[query_Id]
+          result.queries[query_Id] = { title: query.title, articles:[] , parent_Queries: [], child_Queries: []}
+
+
+      map_Query_Ids = (article_Id, query_Ids ,source) =>
+        if query_Ids
+          for query_Id in query_Ids
+            map_Query_Id article_Id, query_Id, source
+
+      map_Query_Id = (article_Id, query_Id, source) =>
+        target_Node = get_Query_Node query_Id
+        parents = queries_Mappings[query_Id].parents
+        #log "[#{source}] : #{query_Id}: #{target_Node.title} = #{queries_Mappings[query_Id].parents}";
+        if source
+          child_Node = get_Query_Node source
+          child_Node.parent_Queries.add query_Id
+          child_Node.articles.add article_Id
+          target_Node.child_Queries.add source
+
+        target_Node.articles.add article_Id
+        map_Query_Ids article_Id, parents, query_Id
+
+
+      parent_Queries              = articles_Queries[article_Id]
+      result.articles[article_Id] = { parent_Queries: parent_Queries}
+
+      map_Query_Ids article_Id, parent_Queries, null
+      for key in result.queries.keys()
+        using result.queries[key],->
+          @.articles       = @.articles      .unique()
+          @.parent_Queries = @.parent_Queries.unique()
+          @.child_Queries  = @.child_Queries .unique()
+
       callback(result)
 
 

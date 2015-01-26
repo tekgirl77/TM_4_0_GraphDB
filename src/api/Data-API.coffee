@@ -19,7 +19,7 @@ class Data_API
       if ['id', 'query_queries', 'query_articles', 'query_queries',
           'query_parent_queries',
           'query_mappings', 'query_tree',
-          'article_parent_queries'].contains(name)
+          'articles_parent_queries'].contains(name)
         get_Command.spec.path += '{id}'
         get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string') ]
 
@@ -33,7 +33,7 @@ class Data_API
     _close_DB_and_Send: (res, data)=>
       @.importService.graph.closeDb =>
         @.db = null
-        res.send data.json_pretty()
+        res.send data?.json_pretty()
 
     _send_Search: (searchTerms, res)=>
       @._open_DB =>
@@ -103,10 +103,10 @@ class Data_API
         @.importService.get_Articles_Queries (queries)=>
           @._close_DB_and_Send res, queries
 
-    article_parent_queries: (req,res)=>
-      query_Id = req.params.id
+    articles_parent_queries: (req,res)=>
+      query_Id = req.params.id.split(',')
       @._open_DB =>
-        @.importService.map_Article_Parent_Queries query_Id, (articleParentQueries)=>
+        @.importService.map_Articles_Parent_Queries query_Id, (articleParentQueries)=>
           @._close_DB_and_Send res, articleParentQueries
 
     library: (req,res)=>
@@ -127,7 +127,7 @@ class Data_API
       @add_Get_Method 'root_queries'
       @add_Get_Method 'query_tree'
       @add_Get_Method 'articles_queries'
-      @add_Get_Method 'article_parent_queries'
+      @add_Get_Method 'articles_parent_queries'
 
 
 module.exports = Data_API

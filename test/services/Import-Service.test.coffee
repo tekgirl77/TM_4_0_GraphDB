@@ -408,10 +408,18 @@ describe '| services | Import-Service.test', ->
           query_Id = root_Queries.queries.first().id
           @.get_Query_Tree query_Id, (query_Tree)->
             query_Tree.id.assert_Is query_Id
-            #log query_Tree
+            log query_Tree
             done()
 
-    it 'get_Article_Queries', (done)->
+    it 'get_Query_Tree_Filters', (done)->
+      using importService, ->
+        @find_Articles (articles)=>
+          article_Ids = [articles.first(), articles.second()]
+          @.get_Query_Tree_Filters article_Ids, (filters)->
+            log filters
+            done()
+
+    it 'get_Articles_Queries', (done)->
       using importService, ->
         @.get_Articles_Queries (articles_Queries)->
           articles_Queries.keys().assert_Not_Empty()
@@ -427,13 +435,27 @@ describe '| services | Import-Service.test', ->
             query_Mappings.assert_Is(mappings[query_Id])
             done();
 
-    #xit 'map_Article_Parent_Queries', (done)->
-    #  using importService, ->
-    #    @find_Articles (articles)=>
-    #      article_Id = articles.first()
-    #      @.map_Article_Parent_Queries article_Id, (articleQueryTree)->
-    #        log articleQueryTree
-    #        done();
+    it 'map_Article_Parent_Queries', (done)->
+      using importService, ->
+        @find_Articles (articles)=>
+          article_Id = articles.first()
+          @.map_Article_Parent_Queries null, article_Id, (article_Parent_Queries)->
+            using article_Parent_Queries, ->
+              @.articles.keys().assert_Size_Is(1)
+              @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(10)
+              @.queries.keys().assert_Size_Is_Bigger_Than(10)
+              done();
+
+    it 'map_Articles_Parent_Queries', (done)->
+      using importService, ->
+        @find_Articles (articles)=>
+          article_Ids = [articles.first(), articles.second()]
+          @.map_Articles_Parent_Queries article_Ids, (articles_Parent_Queries)->
+            using articles_Parent_Queries, ->
+              @.articles.keys().assert_Size_Is(2)
+              @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(10)
+              @.queries.keys().assert_Size_Is_Bigger_Than(13)
+              done()
 
     #it.only 'map_Query_Tree', (done)->
     #  using importService, ->
