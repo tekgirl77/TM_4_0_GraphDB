@@ -53,7 +53,7 @@ describe '| api | GraphDB-API.test', ->
 
       it 'contents', (done)->
         clientApi.contents { value: 'iOs'}, (data)->
-          data.obj.assert_Size_Is_Bigger_Than(1940)
+          data.obj.assert_Size_Is_Bigger_Than(1700)
           done()
 
       it 'subjects', (done)->

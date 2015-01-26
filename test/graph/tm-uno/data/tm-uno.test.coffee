@@ -62,5 +62,5 @@ describe '| graph | tm-uno | data', ->
     using tmGuidance, ()->
       @.load_Data ()=>
         @.importService.graph.allData (data)->
-          data.assert_Size_Is_Bigger_Than(1941)
+          data.assert_Size_Is_Bigger_Than(1700)
           done()
