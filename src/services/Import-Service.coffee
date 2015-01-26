@@ -212,7 +212,8 @@ class ImportService
           if parentQueries.empty()
             query_Mappings = queries_Mappings[query_Id]
             root_Queries.queries.add query_Mappings #/ [query_Id]= query_Mappings
-            root_Queries.articles = root_Queries.articles.concat query_Mappings.articles
+            #for now don't include these since this needs to be normalize (and was taking too long to map (due to too many articles)
+            #root_Queries.articles = root_Queries.articles.concat query_Mappings.articles
             next()
           else
             next()
@@ -238,7 +239,7 @@ class ImportService
               if typeof article_Ids is 'string'
                 article_Ids = [article_Ids]
               for article_Id in article_Ids || []
-                target.add(new String(article_Id))
+                target.push(article_Id + '')          #note: the weird concat at the end is needed so that (somehow) this string is now seen as an array (in some cases)
 
         for query_Id in query_Ids
           query = queries[query_Id]
@@ -287,9 +288,9 @@ class ImportService
       else
         for query in query_Mappings.queries
           container =
-            id   : query.id
-            title: query.title
-            size : query.articles.size()
+            id   : query?.id
+            title: query?.title
+            size : query?.articles.size()
           query_Tree.containers.add container
 
         @get_Query_Tree_Filters query_Mappings.articles, (filters)=>
@@ -298,10 +299,7 @@ class ImportService
             for article_Id in query_Mappings.articles
               query_Tree.results.add data[article_Id]
 
-            #query_Tree.containers = []
-            #query_Tree.results = []
             callback query_Tree
-
 
   get_Query_Tree_Filters: (articles_Ids, callback)=>
     @map_Articles_Parent_Queries articles_Ids , (articles_Parent_Queries)=>
@@ -319,6 +317,7 @@ class ImportService
               result =
                 title: child_Query.title
                 size : child_Query.articles.size()
+                id   : child_Query_Id
 
               filter.results.add result
 
@@ -329,8 +328,20 @@ class ImportService
       map_Filter 'Phase'
       map_Filter 'Type'
 
-       #
       callback filters
+
+  apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Id, callback)=>
+    @get_Queries_Mappings (queries_Mappings)=>
+      filter_Query     = queries_Mappings[query_Id]
+      filter_Articles  = filter_Query.articles
+      filtered_Results = []
+
+      for result in query_Tree.results
+        if filter_Articles.contains(result.id)
+          filtered_Results.add result
+
+      query_Tree.results = filtered_Results
+      callback query_Tree;
 
   get_Articles_Queries: (callback)=>
     @get_Queries_Mappings (queries_Mappings)=>
@@ -382,10 +393,10 @@ class ImportService
         if source
           child_Node = get_Query_Node source
           child_Node.parent_Queries.add query_Id
-          child_Node.articles.add article_Id
+          child_Node.articles.push article_Id
           target_Node.child_Queries.add source
 
-        target_Node.articles.add article_Id
+        target_Node.articles.push article_Id
         map_Query_Ids article_Id, parents, query_Id
 
 
@@ -423,6 +434,8 @@ class ImportService
             result[key].push(value)
           else
             result[key] = value
+        if not result['id']
+          result['id'] = subject.valueOf()
         callback(result)
 
   get_Subjects_Data:(subjects, callback)=>

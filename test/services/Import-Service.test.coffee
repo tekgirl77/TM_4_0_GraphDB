@@ -281,14 +281,14 @@ describe '| services | Import-Service.test', ->
           data.assert_Is_Array().assert_Size_Is(11)
           #log data
           importService.get_Subject_Data "a", (data)->
-            data.assert_Is({ b: [ 'c', 'f' ] })
+            data.assert_Is({ b: [ 'c', 'f' ] , id: 'a'})
             importService.get_Subject_Data "g", (data)->
-              data.assert_Is({ b: 'c', d:'f'})
+              data.assert_Is({ b: 'c', d:'f', id: 'g'})
 
               importService.get_Subjects_Data null, (data)->
                 data.assert_Is({})
                 importService.get_Subjects_Data 'aaaa', (data)->
-                  data.assert_Is({'aaaa':{}})
+                  data.assert_Is({'aaaa':{ id: 'aaaa'} } )
                   done()
 
 
@@ -390,7 +390,7 @@ describe '| services | Import-Service.test', ->
           root_Queries.id      .assert_Is 'Root-Queries'
           root_Queries.title   .assert_Is 'Root Queries'
           root_Queries.queries .assert_Size_Is_Bigger_Than 4
-          root_Queries.articles.assert_Size_Is_Bigger_Than 100
+          root_Queries.articles.assert_Size_Is 0             # for now, no queries are returned in this top level list
           done()
 
     it 'get_Queries_Mappings', (done)->
@@ -408,7 +408,6 @@ describe '| services | Import-Service.test', ->
           query_Id = root_Queries.queries.first().id
           @.get_Query_Tree query_Id, (query_Tree)->
             query_Tree.id.assert_Is query_Id
-            log query_Tree
             done()
 
     it 'get_Query_Tree_Filters', (done)->
@@ -416,8 +415,26 @@ describe '| services | Import-Service.test', ->
         @find_Articles (articles)=>
           article_Ids = [articles.first(), articles.second()]
           @.get_Query_Tree_Filters article_Ids, (filters)->
-            log filters
+            filters.assert_Size_Is 4
+            using filters.first(),->
+              @.title.assert_Is 'Category'
+              @.results.assert_Not_Empty()
+              using @.results.first(), ->
+                @.id.assert_Is_String()
+                @.title.assert_Is_String()
+                @.size .assert_Is_Number()
+
             done()
+
+    it 'apply_Query_Tree_Query_Id_Filter', (done)->
+      using importService, ->
+        @.find_Root_Queries (root_Queries)=>
+          query_Id = root_Queries.queries.first().id
+          @.get_Query_Tree query_Id, (query_Tree)=>
+            filter = query_Tree.filters.first().results.first()
+            @.apply_Query_Tree_Query_Id_Filter query_Tree, filter.id, (filtered_Query_Tree)->
+              filtered_Query_Tree.results.size().assert_Is(filter.size)
+              done();
 
     it 'get_Articles_Queries', (done)->
       using importService, ->

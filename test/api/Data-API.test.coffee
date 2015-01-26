@@ -100,6 +100,22 @@ describe '| api | Data-API.test', ->
             query_Tree.id.assert_Is(query_Id )
             done()
 
+      it 'query_tree_filtered', (done)=>
+        clientApi.root_queries (data)=>
+          root_Queries = data.obj
+          query_Id = root_Queries.queries.first().id
+          filters  = ''
+          clientApi.query_tree {id: query_Id, filters: filters }, (data)=>
+            size_No_Filters = data.obj.results.size()
+            result_Filter   = data.obj.filters.first().results.first()
+            filter_Query_Id = result_Filter.id
+            filters         = filter_Query_Id
+            clientApi.query_tree_filtered {id: query_Id, filters: filters }, (data)=>
+              data.obj.results.assert_Size_Is result_Filter.size
+              done()
+
+
+
       it 'articles_queries', (done)=>
         clientApi.articles_queries (articles_Queries)=>
           articles_Queries.keys().assert_Not_Empty()

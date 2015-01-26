@@ -23,6 +23,11 @@ class Data_API
         get_Command.spec.path += '{id}'
         get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string') ]
 
+      if ['query_tree_filtered'].contains(name)
+        get_Command.spec.path += '{id}/{filters}'
+        get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string'),
+                                        paramTypes.path('filters', 'filter value', 'string') ]
+
       @.swaggerService.addGet(get_Command)
 
     _open_DB: (callback)=>
@@ -95,8 +100,16 @@ class Data_API
     query_tree: (req,res)=>
       query_Id = req.params.id
       @._open_DB =>
-        @.importService.get_Query_Tree query_Id, (queries)=>
-          @._close_DB_and_Send res, queries
+        @.importService.get_Query_Tree query_Id, (query_Tree)=>
+          @._close_DB_and_Send res, query_Tree
+
+    query_tree_filtered: (req,res)=>
+      query_Id = req.params.id
+      filters  = req.params.filters
+      @._open_DB =>
+        @.importService.get_Query_Tree query_Id, (query_Tree)=>
+          @.importService.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (query_Tree_Filtered)=>
+            @._close_DB_and_Send res, query_Tree_Filtered
 
     articles_queries: (req,res)=>
       @._open_DB =>
@@ -126,6 +139,7 @@ class Data_API
       @add_Get_Method 'query_mappings'
       @add_Get_Method 'root_queries'
       @add_Get_Method 'query_tree'
+      @add_Get_Method 'query_tree_filtered'
       @add_Get_Method 'articles_queries'
       @add_Get_Method 'articles_parent_queries'
 
