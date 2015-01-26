@@ -200,16 +200,31 @@ class ImportService
                               callback (item.query for item in data)
 
   find_Root_Queries: (callback)=>
-    rootQueries = []
+    @get_Queries_Mappings (queries_Mappings)=>
+      root_Queries =
+        id      : 'Root-Queries'
+        title   : 'Root Queries'
+        queries : []
+        articles: []
 
-    check_Query = (queryId, next)=>
-      @find_Query_Parent_Queries queryId, (parentQueries)->
-        rootQueries.add(queryId) if parentQueries.empty()
-        next()
+      check_Query = (query_Id, next)=>
+        @find_Query_Parent_Queries query_Id, (parentQueries)=>
+          if parentQueries.empty()
+            query_Mappings = queries_Mappings[query_Id]
+            root_Queries.queries.add query_Mappings #/ [query_Id]= query_Mappings
+            root_Queries.articles = root_Queries.articles.concat query_Mappings.articles
+            next()
+          else
+            next()
 
-    @.find_Queries (queries)->
-      async.each queries, check_Query, ->
-        callback rootQueries
+      add_Root_Queries_To_Queries_Mappings =  ()=>
+        queries_Mappings[root_Queries.id] = root_Queries
+        callback root_Queries
+
+      @.find_Queries (queries)->
+        async.each queries, check_Query, ->
+          add_Root_Queries_To_Queries_Mappings()
+
 
 
   get_Queries_Mappings: (callback)=>
@@ -227,7 +242,8 @@ class ImportService
 
         for query_Id in query_Ids
           query = queries[query_Id]
-          query.queries ?= []
+          query.id       ?= query_Id
+          query.queries  ?= []
           query.articles ?= []
 
           child_Query_Ids = query['contains-query']
@@ -237,7 +253,7 @@ class ImportService
 
           for child_Query_Id in child_Query_Ids || []
             child_Query = queries[child_Query_Id]
-            child_Query.id = child_Query_Id
+            #child_Query.id = child_Query_Id
             query.queries.add(child_Query)
             child_Query.parents ?= []
             child_Query.parents.add(query_Id)
@@ -282,32 +298,6 @@ class ImportService
 
           callback query_Tree
 
-     #@get_Articles_Queries (articles_Queries)=>
-     #  add_Mapping =  (title, next)=>
-     #    @find_Using_Title (title), (data)=>
-     #      query_Id = data.first()
-     #      filter =
-     #        title: title
-     #        results: []
-     #      #for article_Id in query_Mappings.articles
-     #      #  article_Queries = articles_Queries[article_Id].queries
-     #      #  for article_Query_Id in article_Queries.keys()
-     #          #filter.results.add article_Queries[article_Query_Id]
-
-     #        #for query in articles_Queries[article_Id].queries
-     #        #  filter.results.add(query)
-     #        #if query
-     #        #  filter.results[query_Id] ?= { title: query.title , id:query_Id, size: 0}
-     #        #  filter.results[query_Id].size++
-
-     #      query_Tree.filters.add(filter)
-     #      next()
-
-     #  add_Mapping 'Category', =>
-     #    add_Mapping 'Technology', =>
-     #      add_Mapping 'Type', =>
-     #        add_Mapping 'Phase', =>
-     #          callback query_Tree
 
 
   get_Articles_Queries: (callback)=>

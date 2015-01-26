@@ -385,12 +385,13 @@ describe '| services | Import-Service.test', ->
 
     it 'find_Root_Queries', (done)->
       using importService, ->
-        @.find_Root_Queries (queries)=>
-          queries.assert_Size_Is 5
-          @.get_Subjects_Data queries, (data)=>
-            titles = (data[key].title for key in data.keys())
-            titles.assert_Contains ['Phase', 'Type', 'Technology', 'Category']
-            done()
+        @.find_Root_Queries (root_Queries)=>
+          #log root_Queries
+          root_Queries.id      .assert_Is 'Root-Queries'
+          root_Queries.title   .assert_Is 'Root Queries'
+          root_Queries.queries .assert_Size_Is_Bigger_Than 4
+          root_Queries.articles.assert_Size_Is_Bigger_Than 100
+          done()
 
     it 'get_Queries_Mappings', (done)->
       using importService, ->
@@ -403,9 +404,11 @@ describe '| services | Import-Service.test', ->
 
     it 'get_Query_Tree', (done)->
       using importService, ->
-        @.find_Root_Queries (query_Ids)=>
-          @.get_Query_Tree query_Ids.first(), (query_Tree)->
-            #log query_Tree 
+        @.find_Root_Queries (root_Queries)=>
+          query_Id = root_Queries.queries.first().id
+          @.get_Query_Tree query_Id, (query_Tree)->
+            query_Tree.id.assert_Is query_Id
+            #log query_Tree
             done()
 
     it 'get_Article_Queries', (done)->

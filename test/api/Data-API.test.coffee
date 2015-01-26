@@ -93,10 +93,11 @@ describe '| api | Data-API.test', ->
 
       it 'root_queries, query_tree', (done)=>
         clientApi.root_queries (data)=>
-          query_Ids = data.obj
-          clientApi.query_tree {id: query_Ids.first() }, (data)=>
+          root_Queries = data.obj
+          query_Id = root_Queries.queries.first().id
+          clientApi.query_tree {id: query_Id }, (data)=>
             query_Tree = data.obj
-            query_Tree.id.assert_Is(query_Ids.first() )
+            query_Tree.id.assert_Is(query_Id )
             done()
 
       it 'articles_queries', (done)=>
