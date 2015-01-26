@@ -230,7 +230,6 @@ class ImportService
 
   get_Queries_Mappings: (callback)=>
     (callback(Local_Cache.Queries_Mappings);return) if (Local_Cache.Queries_Mappings)
-
     @find_Queries (query_Ids)=>
       @get_Subjects_Data query_Ids, (queries)=>
 
@@ -262,10 +261,20 @@ class ImportService
 
           map_Contains_Article query['contains-article'],query.articles
 
+        # remote 'contains-query' and 'contains-article'
+        # add childs to parent
         for query_Id in query_Ids
           query = queries[query_Id]
           delete query['contains-query']
           delete query['contains-article']
+          if query.parents
+            for parent_Id in query.parents
+              queries[parent_Id].articles = queries[parent_Id].articles.concat query.articles
+
+        #ensure article lists is unique
+        for query_Id in query_Ids
+          query = queries[query_Id]
+          query.articles = query.articles.unique()
 
         Local_Cache.Queries_Mappings = queries
         callback(queries)
@@ -360,61 +369,54 @@ class ImportService
 
     result = { articles:{} , queries: {} }
 
-    map_Article = (article_Id,next)=>
-      @map_Article_Parent_Queries result, article_Id, ()->
-        next()
+    @get_Articles_Queries (articles_Queries,queries_Mappings)=>
+      for article_Id in article_Ids
+        @map_Article_Parent_Queries articles_Queries,queries_Mappings , result, article_Id
 
-    async.eachSeries article_Ids, map_Article, ->
-      callback result
+    callback result
 
-  map_Article_Parent_Queries:  (result, article_Id, callback)=>
+
+  map_Article_Parent_Queries:  (articles_Queries,queries_Mappings, result, article_Id)=> # making this run async had massive performance issues
 
     result = result || { articles:{} , queries: {} }
-
-    @get_Articles_Queries (articles_Queries,queries_Mappings)=>
-
-      get_Query_Node = (query_Id)=>
-        if result.queries[query_Id]
-          result.queries[query_Id]
-        else
-          query = queries_Mappings[query_Id]
-          result.queries[query_Id] = { title: query.title, articles:[] , parent_Queries: [], child_Queries: []}
+    get_Query_Node = (query_Id)=>
+      if result.queries[query_Id]
+        result.queries[query_Id]
+      else
+        query = queries_Mappings[query_Id]
+        result.queries[query_Id] = { title: query.title, articles:[] , parent_Queries: [], child_Queries: []}
 
 
-      map_Query_Ids = (article_Id, query_Ids ,source) =>
-        if query_Ids
-          for query_Id in query_Ids
-            map_Query_Id article_Id, query_Id, source
+    map_Query_Ids = (article_Id, query_Ids ,source) =>
+      if query_Ids
+        for query_Id in query_Ids
+          map_Query_Id article_Id, query_Id, source
 
-      map_Query_Id = (article_Id, query_Id, source) =>
-        target_Node = get_Query_Node query_Id
-        parents = queries_Mappings[query_Id].parents
-        #log "[#{source}] : #{query_Id}: #{target_Node.title} = #{queries_Mappings[query_Id].parents}";
-        if source
-          child_Node = get_Query_Node source
-          child_Node.parent_Queries.add query_Id
-          child_Node.articles.push article_Id
-          target_Node.child_Queries.add source
+    map_Query_Id = (article_Id, query_Id, source) =>
+      target_Node = get_Query_Node query_Id
+      parents = queries_Mappings[query_Id].parents
+      #log "[#{source}] : #{query_Id}: #{target_Node.title} = #{queries_Mappings[query_Id].parents}";
+      if source
+        child_Node = get_Query_Node source
+        child_Node.parent_Queries.add query_Id
+        child_Node.articles.push article_Id
+        target_Node.child_Queries.add source
 
-        target_Node.articles.push article_Id
-        map_Query_Ids article_Id, parents, query_Id
-
-
-      parent_Queries              = articles_Queries[article_Id]
-      result.articles[article_Id] = { parent_Queries: parent_Queries}
-
-      map_Query_Ids article_Id, parent_Queries, null
-      for key in result.queries.keys()
-        using result.queries[key],->
-          @.articles       = @.articles      .unique()
-          @.parent_Queries = @.parent_Queries.unique()
-          @.child_Queries  = @.child_Queries .unique()
-
-      callback(result)
+      target_Node.articles.push article_Id
+      map_Query_Ids article_Id, parents, query_Id
 
 
+    parent_Queries              = articles_Queries[article_Id]
+    result.articles[article_Id] = { parent_Queries: parent_Queries}
 
+    map_Query_Ids article_Id, parent_Queries, null
+    for key in result.queries.keys()
+      using result.queries[key],->
+        @.articles       = @.articles      .unique()
+        @.parent_Queries = @.parent_Queries.unique()
+        @.child_Queries  = @.child_Queries .unique()
 
+    result
 
   #######
 

@@ -114,7 +114,7 @@ class TM_Guidance
       @.importService.library (library)=>
         @.create_Metadata_Global_Nodes =>
           @.importService.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
-            @.import_Articles library_Id, library.articles, =>
+            #@.import_Articles library_Id, library.articles, =>
               @.import_Folders library_Id, library.folders, =>
                 @.import_Views library_Id, library.views, =>
                   @.importService.graph.closeDb =>

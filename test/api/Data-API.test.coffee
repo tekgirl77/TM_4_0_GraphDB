@@ -91,7 +91,8 @@ describe '| api | Data-API.test', ->
             query_Mappings.assert_Is(queries_Mappings[queriesIds.first()])
             done()
 
-      it 'root_queries, query_tree', (done)=>
+      it 'root_queries, query_tree', (done)->
+        @timeout 7500
         clientApi.root_queries (data)=>
           root_Queries = data.obj
           query_Id = root_Queries.queries.first().id
@@ -100,7 +101,8 @@ describe '| api | Data-API.test', ->
             query_Tree.id.assert_Is(query_Id )
             done()
 
-      it 'query_tree_filtered', (done)=>
+      it 'query_tree_filtered', (done)->
+        @timeout 10000
         clientApi.root_queries (data)=>
           root_Queries = data.obj
           query_Id = root_Queries.queries.first().id
@@ -116,7 +118,7 @@ describe '| api | Data-API.test', ->
 
 
 
-      it 'articles_queries', (done)=>
+      it 'articles_queries', (done)->
         clientApi.articles_queries (articles_Queries)=>
           articles_Queries.keys().assert_Not_Empty()
           done();

@@ -136,7 +136,7 @@ class GraphDB_API
       @add_Get_Method 'pre_obj'    , ['predicate','object']
       #@add_Get_Method 'queries'    , []
      # @add_Get_Method 'filter'     , ['value']
-      @add_Get_Method 'reload'     , []
+      #@add_Get_Method 'reload'     , []
 
 
 

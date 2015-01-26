@@ -403,10 +403,12 @@ describe '| services | Import-Service.test', ->
           done();
 
     it 'get_Query_Tree', (done)->
+      @timeout 5000
       using importService, ->
         @.find_Root_Queries (root_Queries)=>
           query_Id = root_Queries.queries.first().id
           @.get_Query_Tree query_Id, (query_Tree)->
+            query_Tree.results.assert_Size_Is_Bigger_Than 40
             query_Tree.id.assert_Is query_Id
             done()
 
@@ -427,6 +429,7 @@ describe '| services | Import-Service.test', ->
             done()
 
     it 'apply_Query_Tree_Query_Id_Filter', (done)->
+      @timeout 5000
       using importService, ->
         @.find_Root_Queries (root_Queries)=>
           query_Id = root_Queries.queries.first().id
@@ -456,11 +459,12 @@ describe '| services | Import-Service.test', ->
       using importService, ->
         @find_Articles (articles)=>
           article_Id = articles.first()
-          @.map_Article_Parent_Queries null, article_Id, (article_Parent_Queries)->
+          @get_Articles_Queries (articles_Queries,queries_Mappings)=>
+            article_Parent_Queries = @.map_Article_Parent_Queries articles_Queries,queries_Mappings, null, article_Id
             using article_Parent_Queries, ->
               @.articles.keys().assert_Size_Is(1)
-              @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(10)
-              @.queries.keys().assert_Size_Is_Bigger_Than(10)
+              @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(9)
+              @.queries.keys().assert_Size_Is_Bigger_Than(9)
               done();
 
     it 'map_Articles_Parent_Queries', (done)->
@@ -470,7 +474,7 @@ describe '| services | Import-Service.test', ->
           @.map_Articles_Parent_Queries article_Ids, (articles_Parent_Queries)->
             using articles_Parent_Queries, ->
               @.articles.keys().assert_Size_Is(2)
-              @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(10)
+              @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(9)
               @.queries.keys().assert_Size_Is_Bigger_Than(13)
               done()
 
