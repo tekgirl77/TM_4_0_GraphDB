@@ -347,6 +347,7 @@ class ImportService
       filter_Query     = queries_Mappings[query_Id]
       if not filter_Query
         callback query_Tree;
+        return
 
       filtered_Tree =
         id         : query_Tree.id
