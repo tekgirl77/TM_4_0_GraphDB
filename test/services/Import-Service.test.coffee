@@ -408,7 +408,7 @@ describe '| services | Import-Service.test', ->
         @.find_Root_Queries (root_Queries)=>
           query_Id = root_Queries.queries.first().id
           @.get_Query_Tree query_Id, (query_Tree)->
-            query_Tree.results.assert_Size_Is_Bigger_Than 40
+            query_Tree.results.assert_Size_Is_Bigger_Than 10
             query_Tree.id.assert_Is query_Id
             done()
 
