@@ -345,16 +345,22 @@ class ImportService
   apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Id, callback)=>
     @get_Queries_Mappings (queries_Mappings)=>
       filter_Query     = queries_Mappings[query_Id]
-      if filter_Query
-        filter_Articles  = filter_Query.articles
-        filtered_Results = []
+      if not filter_Query
+        callback query_Tree;
 
-        for result in query_Tree.results
-          if filter_Articles.contains(result.id)
-            filtered_Results.add result
+      filtered_Tree =
+        id         : query_Tree.id
+        containers : query_Tree.containers
+        results    : []
+        filters    : query_Tree.filters
 
-        query_Tree.results = filtered_Results
-      callback query_Tree;
+      filter_Articles  = filter_Query.articles
+
+      for result in query_Tree.results
+        if filter_Articles.contains(result.id)
+          filtered_Tree.results.add result
+
+      callback filtered_Tree
 
   get_Articles_Queries: (callback)=>
     @get_Queries_Mappings (queries_Mappings)=>
