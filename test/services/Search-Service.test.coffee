@@ -68,7 +68,7 @@ describe '| services | Search-Service.test', ->
 
 
   it 'search_Using_Text', (done)->
-    text = 'Encode'
+    text = 'access'
     searchService.search_Using_Text text, (results)->
       results.assert_Not_Empty()
       done()

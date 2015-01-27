@@ -63,7 +63,7 @@ describe '| api | Search-API.test', ->
           done()
 
       it 'search_using_text', (done)->
-        text = 'Encode'
+        text = 'access'
         clientApi.search_using_text { text: text}, (data)->
           data.obj.assert_Not_Empty()
           done()
