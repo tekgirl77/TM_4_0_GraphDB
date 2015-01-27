@@ -11,7 +11,7 @@ Data_Import_Util   = require('../utils/Data-Import-Util')
 Vis_Graph          = require('teammentor').Vis_Graph
 Content_Service    = require('./Content-Service')
 
-Local_Cache        = { Queries_Mappings : null , }
+Local_Cache        = { Queries_Mappings : null , Query_Tree: {}}
 
 class ImportService
 
@@ -284,6 +284,9 @@ class ImportService
       callback queries_Mappings[query_Id]
 
   get_Query_Tree: (query_Id,callback)=>
+    if Local_Cache.Query_Tree[query_Id]
+      callback Local_Cache.Query_Tree[query_Id]
+      return
     @get_Query_Mappings query_Id, (query_Mappings)=>
       query_Tree =
         id          : query_Id
@@ -308,7 +311,7 @@ class ImportService
             for article_Id in query_Mappings.articles
               query_Tree.results.add data[article_Id]
 
-            callback query_Tree
+            callback Local_Cache.Query_Tree[query_Id] = query_Tree
 
   get_Query_Tree_Filters: (articles_Ids, callback)=>
     @map_Articles_Parent_Queries articles_Ids , (articles_Parent_Queries)=>
@@ -342,14 +345,15 @@ class ImportService
   apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Id, callback)=>
     @get_Queries_Mappings (queries_Mappings)=>
       filter_Query     = queries_Mappings[query_Id]
-      filter_Articles  = filter_Query.articles
-      filtered_Results = []
+      if filter_Query
+        filter_Articles  = filter_Query.articles
+        filtered_Results = []
 
-      for result in query_Tree.results
-        if filter_Articles.contains(result.id)
-          filtered_Results.add result
+        for result in query_Tree.results
+          if filter_Articles.contains(result.id)
+            filtered_Results.add result
 
-      query_Tree.results = filtered_Results
+        query_Tree.results = filtered_Results
       callback query_Tree;
 
   get_Articles_Queries: (callback)=>
