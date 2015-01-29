@@ -230,7 +230,6 @@ class ImportService
   update_Query_Mappings_With_Search_Id: (query_Id, callback)=>
     @get_Queries_Mappings (queries_Mappings)=>
       @get_Subject_Data query_Id, (query_Data)=>
-        log query_Data
         query_Data.articles = query_Data['contains-article']
         query_Data.queries  = query_Data.queries || []
         delete query_Data['contains-article']

@@ -68,7 +68,7 @@ class Search_Service
       if data.is
         callback data.id
         return
-      "[search] calculating search for: #{text}".log()
+      #"[search] calculating search for: #{text}".log()
       # add check if search query already exists
       @search_Using_Text text, (results)=>
         if results.empty()
