@@ -71,6 +71,10 @@ class Search_Service
       "[search] calculating search for: #{text}".log()
       # add check if search query already exists
       @search_Using_Text text, (results)=>
+        if results.empty()
+          callback null
+          return
+
         article_Ids = (result.id for result in results)
 
         articles_Nodes = [{ subject:query_Id , predicate:'is'   , object:'Query' }
