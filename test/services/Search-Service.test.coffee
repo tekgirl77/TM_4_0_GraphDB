@@ -1,6 +1,6 @@
 Search_Service = require '../../src/services/Search-Service'
 
-describe '| services | Search-Service.test', ->
+describe '| services | Search-Service.test |', ->
 
   options       = null
   searchService = null
@@ -89,9 +89,9 @@ describe '| services | Search-Service.test', ->
       @('X$s*s').assert_Is('search-x-s-s')
 
   it 'query_From_Text_Search', (done)->
-    text = 'XSS'
+    text = 'Security'
     searchService.query_From_Text_Search text, (query_Id)->
-      query_Id.assert_Is 'search-xss'
+      query_Id.assert_Is 'search-security'
       importService.get_Subject_Data query_Id, (data)->
         data.title.assert_Is text
         done();
