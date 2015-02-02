@@ -99,7 +99,8 @@ class Swagger_Service
         callback(swaggerApi[apiName])
 
     options    = { url: api_Url, success:onSuccess }
-    swaggerApi = new Swagger_Client.SwaggerApi(options)
+    log Swagger_Client
+    swaggerApi = new Swagger_Client.SwaggerClient(options)
 
   #add_Get_Method: (area, name, action)=>
   #   action_spec =

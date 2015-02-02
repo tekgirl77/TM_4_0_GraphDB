@@ -46,7 +46,7 @@
     "levelgraph": "latest",
     "node-uuid": "latest",
     "request": "latest",
-    "swagger-client": "^2.0.48",
+    "swagger-client": "latest",
     "swagger-node-express": "latest",
     "teammentor": "latest",
     "vis": "latest",
