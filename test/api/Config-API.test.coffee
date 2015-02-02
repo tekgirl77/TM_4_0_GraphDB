@@ -2,7 +2,7 @@ TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
 Config_API = require '../../src/api/Config-API'
 
-describe.only '| api | Config-API.test', ->
+describe '| api | Config-API.test', ->
 
   describe '| via web api',->
 
