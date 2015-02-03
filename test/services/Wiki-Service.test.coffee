@@ -1,8 +1,11 @@
-jscreole = require 'jscreole'
-jsdom    = require('jsdom').jsdom()
+Wiki_Service = require '../../src/services/Wiki-Service'
 
-describe '| Services | Wiki-Parsing',->
-  it 'confirm wiki to html parsing',->
+describe '| Services | Wiki-Service.test',->
+  it 'constructor', ->
+    using new Wiki_Service(), ->
+      @.jsdom.assert_Is_Object()
+
+  it 'to_Html', (done)->
     wiki_Text       = "== A title\n
                       \n
                       some text\n
@@ -10,10 +13,9 @@ describe '| Services | Wiki-Parsing',->
                       * a point"
     expected_Html   = "<h2>A title</h2><p> some text\n</p> <ul>\n<li> a point</li></ul>"
 
-    window          = jsdom.parentWindow
-    div             = window.document.createElement('div')
-    global.document = window.document
-    new jscreole().parse(div, wiki_Text)
-    delete global.document
-    div.innerHTML.assert_Is expected_Html
+    using new Wiki_Service(), ->
+      @.to_Html wiki_Text, (html)->
+        html.assert_Is expected_Html
+        done()
+
 

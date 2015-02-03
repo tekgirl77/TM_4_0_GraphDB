@@ -1,5 +1,7 @@
 require 'fluentnode'
 Import_Service        = require '../services/Import-Service'
+Wiki_Service          = require '../services/Wiki-Service'
+Markdown_Service      = require '../services/Markdown-Service'
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes
 errors                = swagger_node_express.errors
@@ -36,8 +38,19 @@ class Convert_API
         @.importService.convert_To_Ids values, (result)=>
           @_close_DB_and_Send res, result
 
+    wikitext_to_html:(req,res)=>
+      wikitext = req.params.wikitext
+      new Wiki_Service().to_Html wikitext, (html)->
+        res.send { wikitext: wikitext, html : html}
+
+    markdown_to_html:(req,res)=>
+      markdown = req.params.markdown
+      new Markdown_Service().to_Html markdown, (html,tokens)->
+        res.send { markdown: markdown, html : html, tokens:tokens}
 
     add_Methods: ()=>
-      @add_Get_Method 'to_ids', ['values']
+      @add_Get_Method 'to_ids'          , ['values']
+      @add_Get_Method 'wikitext_to_html', ['wikitext']
+      @add_Get_Method 'markdown_to_html', ['markdown']
 
 module.exports = Convert_API

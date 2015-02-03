@@ -9,7 +9,7 @@ describe '| api | Convert-API.test', ->
       tmServer       = null
       swaggerService = null
       clientApi      = null
-      contentApi      = null
+      contentApi     = null
 
       before (done)->
         contentApi = new Convert_API()
@@ -82,3 +82,19 @@ describe '| api | Convert-API.test', ->
           result['Technology'].title.assert_Is    ('Technology')
           result['Phase'     ].title.assert_Is_Not('Technology')
           done()
+
+      it 'wikitext_to_html', (done)->
+        clientApi.wikitext_to_html { wikitext:'==h2 heading'}, (data)->
+          data.obj.wikitext.assert_Is '==h2 heading'
+          data.obj.html.assert_Is '<h2>h2 heading</h2>'
+          done()
+
+      it 'markdown_to_html', (done)->
+        clientApi.markdown_to_html { markdown:'## h2 heading'}, (data)->
+          using data.obj,->
+            @.markdown.assert_Is '## h2 heading'
+            @.html.assert_Is '<h2>h2 heading</h2>\n'
+            @.tokens.assert_Is [  { type: 'heading_open', hLevel: 2, lines: [ 0, 1 ], level: 0 },
+                                  { type: 'inline',content: 'h2 heading', level: 1, lines: [ 0, 1 ], children: [{"type": "text","content": "h2 heading","level": 0}] },
+                                  { type: 'heading_close', hLevel: 2, level: 0 } ]
+            done()
