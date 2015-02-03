@@ -1,6 +1,7 @@
 require 'fluentnode'
 GraphDB_API           = require '../../src/api/GraphDB-API'
 Import_Service        = require '../services/Import-Service'
+Article               = require '../graph/Article'
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes
 
@@ -16,7 +17,7 @@ class Data_API
             spec   : { path : "/data/#{name}/", nickname : name}
             action : @[name]
 
-      if ['id', 'query_queries', 'query_articles', 'query_queries',
+      if ['id', 'article_Html', 'query_queries', 'query_articles', 'query_queries',
           'query_parent_queries',
           'query_mappings', 'query_tree',
           'articles_parent_queries'].contains(name)
@@ -50,6 +51,12 @@ class Data_API
         @.importService.find_Using_Is 'Article', (articles_Ids)=>
           @.importService.get_Subjects_Data articles_Ids, (data)=>
             @._close_DB_and_Send res, data
+
+    article_Html: (req,res)=>
+      id = req.params.id
+      @._open_DB =>
+        new Article(@.importService).html id, (html)=>
+            @._close_DB_and_Send res, html
 
     id: (req,res)=>
       id = req.params.id
@@ -130,6 +137,7 @@ class Data_API
     add_Methods: ()=>
       @add_Get_Method 'id'
       @add_Get_Method 'articles'
+      @add_Get_Method 'article_Html'
       @add_Get_Method 'library'
       @add_Get_Method 'queries'
       @add_Get_Method 'query_articles'

@@ -60,6 +60,13 @@ describe '| api | Data-API.test', ->
           data.obj.keys().assert_Size_Is_Bigger_Than(50)
           done()
 
+      it 'article_Html', (done)->
+          clientApi.articles (article_Ids)->
+            article_Id = article_Ids.obj.keys().first()
+            clientApi.article_Html {id: article_Id}, (data)->
+              data.obj.assert_Contains('<p>')
+              done()
+
       it 'library', (done)->
         clientApi.library (data)->
           library = data.obj
@@ -115,8 +122,6 @@ describe '| api | Data-API.test', ->
             clientApi.query_tree_filtered {id: query_Id, filters: filters }, (data)=>
               data.obj.results.assert_Size_Is result_Filter.size
               done()
-
-
 
       it 'articles_queries', (done)->
         clientApi.articles_queries (articles_Queries)=>

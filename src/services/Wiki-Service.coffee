@@ -13,7 +13,7 @@ class Wiki_Service
     @jscreole.parse(div, wiki_Text)
     delete global.document
     html = div.innerHTML
-    callback(html)
+    callback(html) if callback
     html
 
 module.exports = Wiki_Service

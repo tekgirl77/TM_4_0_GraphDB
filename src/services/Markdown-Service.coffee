@@ -1,14 +1,16 @@
 Markdown_It = require('markdown-it')
 
-class Wiki_Service
+class Markdown_Service
   constructor: (options)->
     @markdownIt = Markdown_It()
 
   to_Html: (markdown, callback)=>
     html   = @markdownIt.render(markdown);
-    tokens = @markdownIt.parse(markdown)
-
-    callback html, tokens
+    try
+      tokens = @markdownIt.parse(markdown)          #markdownIt.parse was throwing an exception when parsing wiki text
+      callback(html, tokens) if callback
+    catch
+      callback(html) if callback
     html
 
-module.exports = Wiki_Service
+module.exports = Markdown_Service
