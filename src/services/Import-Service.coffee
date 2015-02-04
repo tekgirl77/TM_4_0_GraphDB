@@ -343,7 +343,7 @@ class ImportService
 
         filters.add filter
 
-      map_Filter 'Category'
+      #map_Filter 'Category'
       map_Filter 'Technology'
       map_Filter 'Phase'
       map_Filter 'Type'

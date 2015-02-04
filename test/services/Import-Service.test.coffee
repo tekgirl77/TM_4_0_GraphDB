@@ -417,9 +417,9 @@ describe '| services | Import-Service.test', ->
         @find_Articles (articles)=>
           article_Ids = [articles.first(), articles.second()]
           @.get_Query_Tree_Filters article_Ids, (filters)->
-            filters.assert_Size_Is 4
+            filters.assert_Size_Is 3
             using filters.first(),->
-              @.title.assert_Is 'Category'
+              @.title.assert_Is 'Technology'
               @.results.assert_Not_Empty()
               using @.results.first(), ->
                 @.id.assert_Is_String()
