@@ -59,7 +59,7 @@ describe '| services | Import-Service.test', ->
       importService.data_Files() .assert_Is_Array()
       test_Data = "{ test: 'data'}"
       test_File = importService.path_Data.path_Combine("testData.json")
-      test_Data.saveAs(test_File).assert_Is_True()
+      test_Data.saveAs(test_File).assert_File_Exists()
       importService.data_Files() .assert_Not_Empty()
       importService.data_Files() .assert_Contains(test_File.realPath())
       test_File.file_Delete()    .assert_Is_True()
@@ -70,7 +70,7 @@ describe '| services | Import-Service.test', ->
       importService.query_Files().assert_Is_Array()
       test_Data = "{ test: 'query'}"
       test_File = importService.path_Queries.path_Combine("testQuery.json")
-      test_Data.saveAs(test_File).assert_Is_True()
+      test_Data.saveAs(test_File).assert_File_Exists()
       importService.query_Files().assert_Not_Empty()
       importService.query_Files().assert_Contains(test_File.realPath())
       test_File.file_Delete()    .assert_Is_True()
@@ -86,7 +86,7 @@ describe '| services | Import-Service.test', ->
                           callback(graph)
                         module.exports = get_Graph '''
       coffee_File = importService.path_Queries.path_Combine("#{query_Name}.coffee")
-      coffee_Query.saveAs(coffee_File).assert_Is_True()
+      coffee_Query.saveAs(coffee_File).assert_File_Exists()
 
       importService.run_Query query_Name, {}, (graph)->
         graph.assert_Is_Object()
@@ -113,7 +113,7 @@ describe '| services | Import-Service.test', ->
                             callback(data)
                           module.exports = get_Data '''
         coffee_File = importService.path_Filters.path_Combine("#{filter_Name}.coffee")
-        coffee_Query.saveAs(coffee_File).assert_Is_True()
+        coffee_Query.saveAs(coffee_File).assert_File_Exists()
         graph = { nodes: [{'a','b'}] , edges: [{from:'a' , to: 'b'}] }
         importService.run_Filter filter_Name, graph, (data)->
           data.assert_Is_Object()
