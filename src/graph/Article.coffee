@@ -17,36 +17,50 @@ class Article
   file_Path: (article_Id, callback)=>
     log article_Id
     @.graph_Data article_Id, (article_Data)=>
-      guid = article_Data.guid
-      @.importService.content.json_Files (jsonFiles)=>
-        path = jsonFile for jsonFile in jsonFiles when jsonFile.contains guid
-        callback path
+      if article_Data
+        guid = article_Data.guid
+        @.importService.content.json_Files (jsonFiles)=>
+          path = jsonFile for jsonFile in jsonFiles when jsonFile.contains guid
+          callback path
+      else
+        callback null
 
   raw_Data: (article_Id, callback)=>
     @.file_Path article_Id, (path)=>
-      callback path.load_Json()
+      if path
+        callback path.load_Json()
+      else
+        callback null
 
   raw_Content: (article_Id, callback)=>
     @.file_Path article_Id, (path)=>
-      data = path.load_Json()
-      callback data.TeamMentor_Article.Content.first().Data.first()
+      if path
+        data = path.load_Json()
+        callback data.TeamMentor_Article.Content.first().Data.first()
+      else
+        callback null
 
   content_Type: (article_Id, callback)=>
     @.raw_Data article_Id, (data)=>
-      callback data.TeamMentor_Article.Content.first()['$'].DataType
+      if data
+        callback data.TeamMentor_Article.Content.first()['$'].DataType
+      else
+        callback null
 
   html: (article_Id, callback)=>
     @.raw_Data article_Id, (data)=>
-      content = data.TeamMentor_Article.Content.first()
-      dataType    = content['$'].DataType
-      raw_Content = content.Data.first()
-      switch (dataType.lower())
-        when 'wikitext'
-          html = new Wiki_Service().to_Html raw_Content
-        when 'markdown'
-          html = new Markdown_Service().to_Html raw_Content
-        else
-          html = raw_Content
+      html = null
+      if data
+        content = data.TeamMentor_Article.Content.first()
+        dataType    = content['$'].DataType
+        raw_Content = content.Data.first()
+        switch (dataType.lower())
+          when 'wikitext'
+            html = new Wiki_Service().to_Html raw_Content
+          when 'markdown'
+            html = new Markdown_Service().to_Html raw_Content
+          else
+            html = raw_Content
 
       callback html
 
