@@ -368,7 +368,7 @@ class ImportService
       for result in query_Tree.results
         if filter_Articles.contains(result.id)
           filtered_Tree.results.add result
-
+      filtered_Tree.title = query_Tree.title
       callback filtered_Tree
 
   get_Articles_Queries: (callback)=>

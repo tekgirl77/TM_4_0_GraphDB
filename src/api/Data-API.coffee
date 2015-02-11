@@ -4,6 +4,7 @@ Import_Service        = require '../services/Import-Service'
 Article               = require '../graph/Article'
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes
+Cache_Service         = require('teammentor').Cache_Service
 
 class Data_API
     constructor: (options)->
@@ -11,6 +12,7 @@ class Data_API
       @.swaggerService = @options.swaggerService
       @.importService  = new Import_Service('tm-uno')
       @.db             = null
+      @.cache          = new Cache_Service("data_cache")
 
     add_Get_Method: (name)=>
       get_Command =
@@ -41,9 +43,13 @@ class Data_API
         @.db = null
         res.send data?.json_pretty()
 
-    _send_Search: (searchTerms, res)=>
+    _send_Search: (searchTerms, res,key)=>
       @._open_DB =>
         @.db.search searchTerms(@.db.v), (error, data)=>
+          if key
+            "Adding key: #{key}".log()
+            @.cache.put(key,data)
+            "Key path: #{@.cache.path_Key(key)}".log()
           @._close_DB_and_Send res, data
 
     articles: (req,res)=>
@@ -66,14 +72,23 @@ class Data_API
 
 
     queries: (req,res)=>
+      key = 'queries.json'
+      if (@.cache.has_Key(key))
+        res.send @.cache.get(key)
+        return
       searchTerms = (v)->[{ subject: v('id') , predicate: 'is'     , object: 'Query'   }
                           { subject: v('id') , predicate: 'title'  , object: v('title')}]
-      @._send_Search searchTerms, res
+      @._send_Search searchTerms, res,key
 
     query_articles: (req,res)=>
       query_Id = req.params.id
+      key = "query_articles_#{query_Id}.json"
+      if (@.cache.has_Key(key))
+        res.send @.cache.get(key)
+        return
       @._open_DB =>
         @.importService.find_Query_Articles query_Id, (articles)=>
+          @.cache.put key,articles
           @._close_DB_and_Send res, articles
 
     query_queries: (req,res)=>
@@ -106,16 +121,27 @@ class Data_API
 
     query_tree: (req,res)=>
       query_Id = req.params.id
+      key = "query_tree_#{query_Id}.json"
+      if (@.cache.has_Key(key))
+        res.send @.cache.get(key)
+        return
+      query_Id = req.params.id
       @._open_DB =>
         @.importService.get_Query_Tree query_Id, (query_Tree)=>
+          @.cache.put key, query_Tree
           @._close_DB_and_Send res, query_Tree
 
     query_tree_filtered: (req,res)=>
       query_Id = req.params.id
       filters  = req.params.filters
+      key = "query_tree_filtered_#{query_Id}_#{filters}.json"
+      if (@.cache.has_Key(key))
+        res.send @.cache.get(key)
+        return
       @._open_DB =>
         @.importService.get_Query_Tree query_Id, (query_Tree)=>
           @.importService.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (query_Tree_Filtered)=>
+            @.cache.put key, query_Tree_Filtered
             @._close_DB_and_Send res, query_Tree_Filtered
 
     articles_queries: (req,res)=>
