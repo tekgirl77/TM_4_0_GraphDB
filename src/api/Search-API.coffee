@@ -1,14 +1,17 @@
 require 'fluentnode'
 Search_Service        = require '../services/Search-Service'
+Cache_Service         = require('teammentor').Cache_Service
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes
 errors                = swagger_node_express.errors
+
 
 class Search_API
     constructor: (options)->
       @.options        = options || {}
       @.swaggerService = @options.swaggerService
       @.searchService  = new Search_Service(@.options)
+      @.cache          = new Cache_Service("data_cache")
 
     add_Get_Method: (name, params)=>
       get_Command =
@@ -31,9 +34,15 @@ class Search_API
         res.send data?.json_pretty()
 
     invoke_Service_Method: (req,res, method_Name, method_Params)=>
+      params = (req.params[method_Param] for method_Param in method_Params)
+      key = "search_#{method_Name}#{params}.json"
+      if (@.cache.has_Key(key))
+        res.send @.cache.get(key)
+        return
+
       @open_DB =>
-        params = (req.params[method_Param] for method_Param in method_Params)
         @.searchService[method_Name].apply @.searchService, params.add (data)=>
+          @.cache.put(key,data)
           @close_DB_and_Send res, data
 
 
