@@ -23,7 +23,7 @@ describe '| services | Content-Service.test |', ->
     using contentService,->
       @.library_Folder (folder)->
         folder.assert_Folder_Exists()
-              .assert_Contains('.tmCache/_TM_3_5_Content')
+              .assert_Contains(['.tmCache','_TM_3_5_Content'])
               .assert_Contains('Lib_')
               .assert_Contains(process.cwd())
         done()

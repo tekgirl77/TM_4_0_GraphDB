@@ -13,19 +13,9 @@ class TM_Server
     configure: =>
         @app.set('view engine', 'jade')
         @app.use(compress())
-        #@addRoutes()
-        #@addControlers()
-    
-    #addRoutes: =>
         @app.get '/'    , (req,res) -> res.redirect 'docs'
-        #@app.get '/'    , (req,res) -> res.send(new Jade_Service().enableCache().renderJadeFile('/views/index.jade'))
-        # @app.get '/test', (req,res)-> res.send('this is a test')
-
-    #addControlers: =>
-    #    new Data_Controller(  @) .add_Routes()
-    #    new Filter_Controller(@).add_Routes()
-    #    new Query_Controller( @ ).add_Routes()
-    #    new Graph_Controller( @ ).add_Routes()
+        @enabled_Logging()
+        @
 
     start: (callback)=>
         @_server = @app.listen @port, ->
@@ -47,6 +37,11 @@ class TM_Server
             if (item.route)
                 paths.push(item.route.path)               
         return paths
+
+    enabled_Logging: ->
+        @app.use (req, res, next)->
+          console.log('%s %s %s', req.method, req.url, req.path);
+          next();
         
 module.exports = TM_Server
 

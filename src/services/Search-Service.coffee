@@ -1,4 +1,3 @@
-require '../_extra_fluentnode'
 Import_Service        = require '../services/Import-Service'
 
 class Search_Service
