@@ -26,7 +26,6 @@ describe 'swagger | Swagger-Service.test', ->
   after (done)->
     server.stop ->
       done()
-
   it 'get_Client_Api', (done)->
     swaggerService.get_Client_Api 'say', (clientApi)->
 

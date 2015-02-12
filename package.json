@@ -43,13 +43,13 @@
     "fluentnode": "latest",
     "github": "latest",
     "jade": "latest",
-    "jscreole": "^0.9.0",
-    "jsdom": "^3.1.0",
+    "jscreole": "latest",
+    "jsdom": "latest",
     "levelgraph": "latest",
-    "markdown-it": "^3.0.4",
+    "markdown-it": "latest",
     "node-uuid": "latest",
     "request": "latest",
-    "swagger-client": "latest",
+    "swagger-client": "git+https://github.com/TeamMentor/swagger-js.git",
     "swagger-node-express": "latest",
     "teammentor": "latest",
     "vis": "latest",
@@ -63,7 +63,6 @@
     "mocha": "latest",
     "mocha-lcov-reporter": "latest",
     "supertest": "latest",
-    "supervisor": "latest",
-    "swagger-client": "^2.0.48"
+    "supervisor": "latest"
   }
 }

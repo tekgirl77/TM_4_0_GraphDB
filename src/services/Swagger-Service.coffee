@@ -71,16 +71,11 @@ class Swagger_Service
   get_Client_Api: (apiName, callback)=>
     api_Url = @.url_Api_Docs.append("/#{apiName}")
 
-    swaggerApi = null
+    onSuccess  = ()    -> callback(swaggerApi[apiName])
+    onFailure  = (data)-> log data
+    onProgress = (data)-> #log data
+    options    = { url: api_Url, success:onSuccess, failure: onFailure, progress: onProgress }
 
-    onSuccess = ()->                        # this will be called twitce
-      if swaggerApi.apis.keys().empty()        # means that we are on the first caol and the apis value is not loaded
-        return
-      if (swaggerApi.ready)
-        callback(swaggerApi[apiName])
-
-    options    = { url: api_Url, success:onSuccess }
-
-    swaggerApi = new Swagger_Client.SwaggerClient(options)
+    swaggerApi = new Swagger_Client.SwaggerClient(api_Url, options)
 
 module.exports = Swagger_Service

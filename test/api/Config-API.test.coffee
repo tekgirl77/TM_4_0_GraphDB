@@ -2,6 +2,8 @@ TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/Swagger-Service'
 Config_API = require '../../src/api/Config-API'
 
+require '../../src/_extra_fluentnode'
+
 describe '| api | Config-API.test', ->
 
   describe '| via web api',->
@@ -13,7 +15,7 @@ describe '| api | Config-API.test', ->
 
       before (done)->
         configApi = new Config_API()
-        tmServer  = new TM_Server({ port : 12345})
+        tmServer  = new TM_Server({ port : 12345 + 1000.random()})
         options = { app: tmServer.app ,  port : tmServer.port}
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()
@@ -24,8 +26,8 @@ describe '| api | Config-API.test', ->
         tmServer.start()
 
         swaggerService.get_Client_Api 'config', (swaggerApi)->
-            clientApi = swaggerApi
-            done()
+          clientApi = swaggerApi
+          done()
 
       after (done)->
         tmServer.stop ->
