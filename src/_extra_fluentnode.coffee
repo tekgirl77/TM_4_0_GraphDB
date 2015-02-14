@@ -1,1 +1,0 @@
-Number::random = -> ~~(Math.random()*@)

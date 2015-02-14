@@ -35,7 +35,7 @@ class Search_API
 
     invoke_Service_Method: (req,res, method_Name, method_Params)=>
       params = (req.params[method_Param] for method_Param in method_Params)
-      key = "search_#{method_Name}#{params}.json"
+      key = "search_#{method_Name}_#{params.str().url_Encode()}.json"
       if (@.cache.has_Key(key))
         res.send @.cache.get(key)
         return

@@ -40,7 +40,7 @@ class TM_Server
 
     enabled_Logging: ->
         @app.use (req, res, next)->
-          console.log('%s %s %s', req.method, req.url, req.path);
+          console.log('%s %s', req.method, req.url)#, req.path);
           next();
         
 module.exports = TM_Server
