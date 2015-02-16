@@ -99,7 +99,7 @@ describe '| api | Data-API.test', ->
             done()
 
       it 'root_queries, query_tree', (done)->
-        @timeout 7500
+        @timeout 15500
         clientApi.root_queries (data)=>
           root_Queries = data.obj
           query_Id = root_Queries.queries.first().id

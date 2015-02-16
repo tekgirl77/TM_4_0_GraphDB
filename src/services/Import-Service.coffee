@@ -554,12 +554,11 @@ class ImportService
       folders  : []
       views    : []
 
-    for view in  json_Folder.view
-      view_Articles = @add_Json_View folder.views, view
-      all_Articles = all_Articles.concat(view_Articles)
+    if json_Folder.view
+      for view in  json_Folder.view
+        view_Articles = @add_Json_View folder.views, view
+        all_Articles = all_Articles.concat(view_Articles)
 
-    #log json_Folder
-    #log folder
     target_Folders.push folder
     all_Articles
 
@@ -567,7 +566,7 @@ class ImportService
     view =
       id       : json_View['$'].id
       name     : json_View['$'].caption
-      articles : json_View.items.first().item || []
+      articles : json_View.items?.first().item || []
     target_Views.push view
     view.articles
 

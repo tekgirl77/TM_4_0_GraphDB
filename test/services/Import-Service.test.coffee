@@ -316,15 +316,15 @@ describe '| services | Import-Service.test', ->
     it 'parse_Library_Json', (done)->
       importService.library (library)->
         importService.library_Json (library_Json)->
-        importService.library_Json (json)->
-          importService.parse_Library_Json (json), (_library)->
-            using _library, ->
-              @.id      .assert_Is library.id
-              @.name    .assert_Is library.name
-              @.folders .assert_Size_Is_Bigger_Than(0)
-              @.articles.assert_Size_Is_Bigger_Than(50)
-              @.views   .assert_Empty()
-              done()
+          importService.library_Json (json)->
+            importService.parse_Library_Json (json), (_library)->
+              using _library, ->
+                @.id      .assert_Is library.id
+                @.name    .assert_Is library.name
+                @.folders .assert_Size_Is_Bigger_Than(0)
+                @.articles.assert_Size_Is_Bigger_Than(0)
+                @.views   .assert_Empty()
+                done()
 
     it 'library', (done)->
       importService.library (library)->
