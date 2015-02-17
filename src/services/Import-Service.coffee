@@ -295,7 +295,11 @@ class ImportService
     if Local_Cache.Query_Tree[query_Id]
       callback Local_Cache.Query_Tree[query_Id]
       return
+
     @get_Query_Mappings query_Id, (query_Mappings)=>
+      if typeof(query_Mappings?.articles) is 'string'         # handle the case when there is one article in query_Mappings.articles
+        query_Mappings.articles = [query_Mappings.articles]
+
       query_Tree =
         id          : query_Id
         title       : query_Mappings?.title
