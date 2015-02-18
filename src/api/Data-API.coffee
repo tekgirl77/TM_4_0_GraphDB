@@ -58,7 +58,7 @@ class Data_API
         res.send @.cache.get(key)
         return
       @._open_DB =>
-        @.importService.find_Using_Is 'Article', (articles_Ids)=>
+        @.importService.graph_Find.find_Using_Is 'Article', (articles_Ids)=>
           @.importService.get_Subjects_Data articles_Ids, (data)=>
             @.cache.put key,data
             @._close_DB_and_Send res, data
@@ -92,14 +92,14 @@ class Data_API
         res.send @.cache.get(key)
         return
       @._open_DB =>
-        @.importService.find_Query_Articles query_Id, (articles)=>
+        @.importService.graph_Find.find_Query_Articles query_Id, (articles)=>
           @.cache.put key,articles
           @._close_DB_and_Send res, articles
 
     query_queries: (req,res)=>
       query_Id = req.params.id
       @._open_DB =>
-        @.importService.find_Query_Queries query_Id, (articles)=>
+        @.importService.graph_Find.find_Query_Queries query_Id, (articles)=>
           @._close_DB_and_Send res, articles
 
     query_parent_queries: (req,res)=>

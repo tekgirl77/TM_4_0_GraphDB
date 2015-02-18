@@ -6,6 +6,7 @@ describe '| services | data | Queries.test', ->
   queries        = null
   graph_Find     = null
 
+  @timeout 5000
 
   before (done)->
     using new Import_Service('tm-uno'), ->
