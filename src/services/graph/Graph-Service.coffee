@@ -3,7 +3,8 @@ GitHub_Service  = require('teammentor').GitHub_Service
 
 class GraphService
 
-  @open_Dbs: {}
+  #@open_Dbs: {}
+  locked = false
 
   constructor: (dbName)->
     @dbName     = if  dbName then dbName else '_tmp_db'.add_Random_String(5)
@@ -13,22 +14,21 @@ class GraphService
   #Setup methods
 
   openDb : (callback)=>
-    if GraphService.open_Dbs[@dbPath]
-      #"[openDb]reusing".log()
-      @db = GraphService.open_Dbs[@dbPath]
+    if locked
+      "Error: [GraphDB] is in use".log()
+      callback false
     else
-      #"[openDb]creating".log()
+      locked = true
       @db = levelgraph(@dbPath)
-      GraphService.open_Dbs[@dbPath] = @db
-    process.nextTick ->
-      callback()
+      process.nextTick ->
+        callback true
 
   closeDb: (callback)=>
     if (@db)
       @db.close =>
         @db    = null
         @level = null
-        delete GraphService.open_Dbs[@dbPath]
+        locked = false
         callback()
     else
       callback()
