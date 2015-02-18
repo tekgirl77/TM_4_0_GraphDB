@@ -1,7 +1,7 @@
 async           = require 'async'
 Content_Service = require '../../../src/services/import/Content-Service'
 
-describe '| services | Content-Service.test |', ->
+describe '| services | import | Content-Service.test |', ->
 
   contentService = null
 

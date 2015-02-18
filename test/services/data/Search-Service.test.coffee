@@ -1,6 +1,6 @@
 Search_Service = require '../../../src/services/data/Search-Service'
 
-describe '| services | Search-Service.test |', ->
+describe '| services | data | Search-Service.test |', ->
 
   options       = null
   searchService = null

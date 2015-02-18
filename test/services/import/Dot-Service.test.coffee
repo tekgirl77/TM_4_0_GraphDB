@@ -2,7 +2,7 @@ expect         = require('chai'         ).expect
 
 Dot_Service   = require('./../../../src/services/import/Dot-Service')
 
-describe 'services | test-Dot-Service |', ->
+describe '| services | import | test-Dot-Service |', ->
 
   dotService  = new Dot_Service()
 

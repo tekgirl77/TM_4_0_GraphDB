@@ -1,7 +1,7 @@
 Import_Service = require('./../../../src/services/data/Import-Service')
 async          = require('async')
 
-describe '| services | Import-Service.test', ->
+describe '| services | data | Import-Service.test', ->
 
   describe 'core', ->
     importService = null

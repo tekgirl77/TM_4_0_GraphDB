@@ -1,6 +1,6 @@
 Wiki_Service = require '../../../src/services/render/Wiki-Service'
 
-describe '| Services | Wiki-Service.test',->
+describe '| services | render | Wiki-Service.test',->
   it 'constructor', ->
     using new Wiki_Service(), ->
       @.jsdom.assert_Is_Object()

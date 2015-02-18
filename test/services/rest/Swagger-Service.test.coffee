@@ -2,7 +2,7 @@ TM_Server        = require '../../../src/TM-Server'
 Swagger_Service  = require '../../../src/services/rest/Swagger-Service'
 supertest        = require 'supertest'
 
-describe 'swagger | Swagger-Service.test', ->
+describe '| services | rest | Swagger-Service.test', ->
 
   url_server     = null
   url_api_docs   = null

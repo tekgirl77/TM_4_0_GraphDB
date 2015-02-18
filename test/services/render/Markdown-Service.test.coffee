@@ -1,6 +1,6 @@
 Markdown_Service = require '../../../src/services/render/Markdown-Service'
 
-describe '| Services | Markdown-Service.test',->
+describe '| services | render | Markdown-Service.test',->
   it 'constructor', ->
     using new Markdown_Service(), ->
 

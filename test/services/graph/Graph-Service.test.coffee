@@ -1,7 +1,7 @@
 expect        = require('chai'         ).expect
 Graph_Service  = require('./../../../src/services/graph/Graph-Service')
 
-describe 'services | Graph-Service.test |', ->
+describe '| services | graph | Graph-Service.test |', ->
   describe 'core |', ->
     it 'check ctor', ->
       graphService  = new Graph_Service()

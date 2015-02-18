@@ -1,6 +1,6 @@
 Config_Service = require '../../../src/services/utils/Config-Service'
 
-describe '| services | Config-Service.test', ->
+describe '| services | utils | Config-Service.test', ->
 
   options       = null
   configService = null
