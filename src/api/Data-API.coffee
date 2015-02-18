@@ -59,7 +59,7 @@ class Data_API
         return
       @._open_DB =>
         @.importService.graph_Find.find_Using_Is 'Article', (articles_Ids)=>
-          @.importService.get_Subjects_Data articles_Ids, (data)=>
+          @.importService.graph_Find.get_Subjects_Data articles_Ids, (data)=>
             @.cache.put key,data
             @._close_DB_and_Send res, data
 
