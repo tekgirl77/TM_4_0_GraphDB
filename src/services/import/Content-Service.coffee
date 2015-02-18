@@ -15,7 +15,7 @@ class Content_Service
 
   library_Folder: (callback)=>
     @.configService.get_Config (config)->
-        folder = __dirname.path_Combine('../../')
+        folder = __dirname.path_Combine('../../../')
                           .path_Combine(config.content_Folder)
                           .path_Combine(config.current_Library)
                           .folder_Create()
@@ -36,7 +36,6 @@ class Content_Service
 
             source_Repo = config.default_Repo
             target_Folder = folder
-
             target_Folder.folder_Delete_Recursive()
             git_Command =
               name  : 'clone'

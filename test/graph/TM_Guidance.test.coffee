@@ -58,7 +58,7 @@ describe '| graph | TM-Guidance.test', ->
                   done()
 
   it 'load_Data', (done)->
-    @timeout 10000
+    @timeout 20000
     using tmGuidance, ()->
       @.load_Data ()=>
         @.importService.graph.allData (data)->

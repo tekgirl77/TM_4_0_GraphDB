@@ -5,7 +5,7 @@ class Config_Service
         @.config_File = @.options.config_File || '.tm.config.json'
 
     config_File_Path: =>
-      return __dirname.path_Combine('../../..').path_Combine(@.config_File)
+      __dirname.path_Combine('../../../..').path_Combine(@.config_File)
 
     get_Config: (callback)=>
       config_File = @config_File_Path()
