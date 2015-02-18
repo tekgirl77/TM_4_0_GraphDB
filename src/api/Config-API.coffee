@@ -1,8 +1,8 @@
 require 'fluentnode'
-Config_Service  = require '../services/Config-Service'
-Content_Service = require '../services/Content-Service'
-Import_Service  = require '../services/Import-Service'
-TM_Guidance     = require '../graph/tm-uno/data/tm-uno'
+Config_Service  = require '../services/utils/Config-Service'
+Content_Service = require '../services/import/Content-Service'
+Import_Service  = require '../services/data/Import-Service'
+TM_Guidance     = require '../graph/TM-Guidance'
 
 class Config_API
     constructor: (options)->

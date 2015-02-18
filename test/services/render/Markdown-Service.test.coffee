@@ -1,4 +1,4 @@
-Markdown_Service = require '../../src/services/Markdown-Service'
+Markdown_Service = require '../../../src/services/render/Markdown-Service'
 
 describe '| Services | Markdown-Service.test',->
   it 'constructor', ->

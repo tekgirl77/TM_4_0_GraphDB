@@ -1,8 +1,6 @@
 TM_Server        = require '../../src/TM-Server'
-Swagger_Service  = require '../../src/services/Swagger-Service'
-Config_API = require '../../src/api/Config-API'
-
-require '../../src/_extra_fluentnode'
+Swagger_Service  = require '../../src/services/rest/Swagger-Service'
+Config_API       = require '../../src/api/Config-API'
 
 describe '| api | Config-API.test', ->
 

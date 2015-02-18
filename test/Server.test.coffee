@@ -2,7 +2,6 @@ TM_Server = require('./../src/TM-Server')
 expect    = require('chai').expect
 request   = require('request')
 supertest = require('supertest')
-require('../src/_extra_fluentnode')
 
 describe '| test-Server |',->
 

@@ -1,6 +1,6 @@
 require 'fluentnode'
-Import_Service        = require '../services/Import-Service'
-TM_Guidance           = require '../graph/tm-uno/data/tm-uno'
+Import_Service        = require '../services/data/Import-Service'
+TM_Guidance           = require '../graph/TM-Guidance'
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes
 errors                = swagger_node_express.errors

@@ -1,6 +1,6 @@
 expect         = require('chai'         ).expect
 
-Dot_Service   = require('./../../src/services/Dot-Service')
+Dot_Service   = require('./../../../src/services/import/Dot-Service')
 
 describe 'services | test-Dot-Service |', ->
 

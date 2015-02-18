@@ -1,4 +1,4 @@
-Import_Service = require('./../../src/services/Import-Service')
+Import_Service = require('./../../../src/services/data/Import-Service')
 async          = require('async')
 
 describe '| services | Import-Service.test', ->

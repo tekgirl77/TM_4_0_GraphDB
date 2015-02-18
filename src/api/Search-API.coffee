@@ -1,5 +1,5 @@
 require 'fluentnode'
-Search_Service        = require '../services/Search-Service'
+Search_Service        = require '../services/data/Search-Service'
 Cache_Service         = require('teammentor').Cache_Service
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes

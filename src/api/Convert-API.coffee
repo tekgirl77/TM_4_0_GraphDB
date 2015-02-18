@@ -1,7 +1,7 @@
 require 'fluentnode'
-Import_Service        = require '../services/Import-Service'
-Wiki_Service          = require '../services/Wiki-Service'
-Markdown_Service      = require '../services/Markdown-Service'
+Import_Service        = require '../services/data/Import-Service'
+Wiki_Service          = require '../services/render/Wiki-Service'
+Markdown_Service      = require '../services/render/Markdown-Service'
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes
 errors                = swagger_node_express.errors

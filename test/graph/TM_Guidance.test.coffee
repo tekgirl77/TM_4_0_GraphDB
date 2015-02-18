@@ -1,7 +1,7 @@
-TM_Guidance         = require '../../../../src/graph/tm-uno/data/tm-uno'
-Import_Service = require '../../../../src/services/Import-Service'
+TM_Guidance    = require '../../src/graph/TM-Guidance'
+Import_Service = require '../../src/services/data/Import-Service'
 
-describe '| graph | tm-uno | data', ->
+describe '| graph | TM-Guidance.test', ->
 
   tmGuidance = null
 

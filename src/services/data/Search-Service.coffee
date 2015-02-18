@@ -1,4 +1,4 @@
-Import_Service        = require '../services/Import-Service'
+Import_Service        = require './Import-Service'
 
 class Search_Service
 

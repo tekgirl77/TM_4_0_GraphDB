@@ -1,5 +1,5 @@
 expect        = require('chai'         ).expect
-Graph_Service  = require('./../../src/services/Graph-Service')
+Graph_Service  = require('./../../../src/services/graph/Graph-Service')
 
 describe 'services | Graph-Service.test |', ->
   describe 'core |', ->

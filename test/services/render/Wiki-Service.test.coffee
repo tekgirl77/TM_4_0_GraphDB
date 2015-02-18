@@ -1,4 +1,4 @@
-Wiki_Service = require '../../src/services/Wiki-Service'
+Wiki_Service = require '../../../src/services/render/Wiki-Service'
 
 describe '| Services | Wiki-Service.test',->
   it 'constructor', ->

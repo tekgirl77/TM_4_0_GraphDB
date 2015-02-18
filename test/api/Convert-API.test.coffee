@@ -1,6 +1,6 @@
 TM_Server        = require '../../src/TM-Server'
-Swagger_Service  = require '../../src/services/Swagger-Service'
-Convert_API = require '../../src/api/Convert-API'
+Swagger_Service  = require '../../src/services/rest/Swagger-Service'
+Convert_API      = require '../../src/api/Convert-API'
 
 describe '| api | Convert-API.test', ->
 

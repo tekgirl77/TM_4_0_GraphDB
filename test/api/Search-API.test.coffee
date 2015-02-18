@@ -1,5 +1,5 @@
 TM_Server        = require '../../src/TM-Server'
-Swagger_Service  = require '../../src/services/Swagger-Service'
+Swagger_Service  = require '../../src/services/rest/Swagger-Service'
 Search_API       = require '../../src/api/Search-API'
 
 describe '| api | Search-API.test', ->

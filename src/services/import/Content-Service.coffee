@@ -2,8 +2,8 @@ require 'fluentnode'
 xml2js  = require('xml2js')
 async   = require('async')
 
-Config_Service = require '../services/Config-Service'
-Git_API        = require '../api/Git-API'
+Config_Service = require '../utils/Config-Service'
+Git_API        = require '../../api/Git-API'
 
 class Content_Service
   constructor: (options)->

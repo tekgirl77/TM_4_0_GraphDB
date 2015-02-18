@@ -1,5 +1,5 @@
-TM_Server        = require '../../src/TM-Server'
-Swagger_Service  = require '../../src/services/Swagger-Service'
+TM_Server        = require '../../../src/TM-Server'
+Swagger_Service  = require '../../../src/services/rest/Swagger-Service'
 supertest        = require 'supertest'
 
 describe 'swagger | Swagger-Service.test', ->

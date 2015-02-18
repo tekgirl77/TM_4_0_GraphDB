@@ -1,15 +1,14 @@
 require('fluentnode')
 coffeeScript       = require 'coffee-script'
 async              = require('async')
-
+Dot_Service        = require '../import/Dot-Service'
+Graph_Service      = require('../graph/Graph-Service')
+Data_Import_Util   = require('../data/Data-Import-Util')
+Content_Service    = require('../import/Content-Service')
 Cache_Service      = require('teammentor').Cache_Service
-Dot_Service        = require './Dot-Service'
-Graph_Service      = require('./Graph-Service')
-#TeamMentor_Service = require('teammentor').TeamMentor_Service
-Guid               = require('teammentor').Guid
-Data_Import_Util   = require('../utils/Data-Import-Util')
 Vis_Graph          = require('teammentor').Vis_Graph
-Content_Service    = require('./Content-Service')
+Guid               = require('teammentor').Guid
+
 
 Local_Cache        = { Queries_Mappings : null , Query_Tree: {}}
 

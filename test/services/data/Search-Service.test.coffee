@@ -1,4 +1,4 @@
-Search_Service = require '../../src/services/Search-Service'
+Search_Service = require '../../../src/services/data/Search-Service'
 
 describe '| services | Search-Service.test |', ->
 

@@ -1,5 +1,5 @@
 async           = require 'async'
-Content_Service = require '../../src/services/Content-Service'
+Content_Service = require '../../../src/services/import/Content-Service'
 
 describe '| services | Content-Service.test |', ->
 

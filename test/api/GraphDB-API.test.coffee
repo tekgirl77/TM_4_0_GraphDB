@@ -1,5 +1,5 @@
 TM_Server        = require '../../src/TM-Server'
-Swagger_Service  = require '../../src/services/Swagger-Service'
+Swagger_Service  = require '../../src/services/rest/Swagger-Service'
 GraphDB_API      = require '../../src/api/GraphDB-API'
 
 describe '| api | GraphDB-API.test', ->

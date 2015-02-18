@@ -1,5 +1,5 @@
 expect          = require('chai'     ).expect
-Data_Import_Util = require('./../../src/utils/Data-Import-Util')
+Data_Import_Util = require('./../../../src/services/data/Data-Import-Util')
 
 describe 'utils | Data-Import-Util.test', ->
 

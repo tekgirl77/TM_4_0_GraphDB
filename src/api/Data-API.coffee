@@ -1,6 +1,6 @@
 require 'fluentnode'
 GraphDB_API           = require '../../src/api/GraphDB-API'
-Import_Service        = require '../services/Import-Service'
+Import_Service        = require '../services/data/Import-Service'
 Article               = require '../graph/Article'
 swagger_node_express  = require 'swagger-node-express'
 paramTypes            = swagger_node_express.paramTypes

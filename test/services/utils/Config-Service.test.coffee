@@ -1,4 +1,4 @@
-Config_Service = require '../../src/services/Config-Service'
+Config_Service = require '../../../src/services/utils/Config-Service'
 
 describe '| services | Config-Service.test', ->
 
