@@ -1,7 +1,6 @@
 require('fluentnode')
 coffeeScript       = require 'coffee-script'
 async              = require('async')
-Dot_Service        = require '../import/Dot-Service'
 Graph_Service      = require('../graph/Graph-Service')
 Data_Import_Util   = require('../data/Data-Import-Util')
 Content_Service    = require('../import/Content-Service')
@@ -22,95 +21,13 @@ class ImportService
     #@teamMentor    = new TeamMentor_Service({tmConfig_File: '.tm-Config.json'});
     @path_Root     = ".tmCache"
     @path_Name     = ".tmCache/#{@name}"
-    @path_Data     = "#{@path_Name}/data"
-    @path_Filters  = "#{@path_Name}/filters"
-    @path_Queries  = "#{@path_Name}/queries"
 
   setup: (callback)->
     @path_Root   .folder_Create()
     @path_Name   .folder_Create()
-    @path_Data   .folder_Create()
-    @path_Filters.folder_Create()
-    @path_Queries.folder_Create()
+
     @graph.openDb ->
       callback()
-
-    #@load_Data(callback)
-
-  #Load DB data
-  data_Files: =>
-    @path_Data.files()
-
-  query_Files: =>
-    @path_Queries.files()
-
-  load_Data_From_Coffee: (file,callback) =>
-    if file != '' and file?
-      code = file.file_Contents()
-      if code != null
-        add_Mappings = require('coffee-script').eval(code)
-        if typeof add_Mappings is 'function'
-          dataImport = new Data_Import_Util()
-          options = {data: dataImport, importService: @}
-          add_Mappings options, =>
-            if dataImport.data.empty()
-              callback()
-            else
-              @graph.db.put dataImport.data , callback
-          return
-    callback()
-
-  load_Data: (callback)=>
-    #"[Import-Service] load_data".log()
-    @graph.openDb =>
-      files = @path_Data.files()
-      loadNextFile = =>
-        file = files.pop()
-        if file is undefined
-          callback()
-        else
-          switch file.file_Extension()
-            when '.json'
-              file_Data = JSON.parse(file.file_Contents())
-              @graph.db.put file_Data, loadNextFile
-            when '.coffee'
-              @load_Data_From_Coffee(file, loadNextFile)
-            when '.dot'
-              dot_Data = file.file_Contents()
-              new Dot_Service().dot_To_Triplets dot_Data, (triplets)=>
-                @graph.db.put triplets, loadNextFile
-            else
-              loadNextFile()
-      loadNextFile()
-
-  run_Query: (queryName, params, callback)=>
-    queryFile = @path_Queries.path_Combine("#{queryName}.coffee")
-    if(queryFile.file_Not_Exists())
-      queryFile = process.cwd().path_Combine('db-queries').path_Combine("#{queryName}.coffee")
-    if(queryFile.file_Not_Exists())
-      queryFile = __dirname.path_Combine('../graph/tm-uno/queries').path_Combine("#{queryName}.coffee")
-      #log queryFile
-
-    if(queryFile?.fullPath()?.file_Exists())
-      get_Graph = coffeeScript.eval(queryFile.fullPath().file_Contents())
-      if typeof get_Graph is 'function'
-        options = {importService:@ , params: params}
-        get_Graph options, callback
-        return
-    callback({})
-
-  run_Filter: (filterName, graph, callback)=>
-    filterFile = @path_Filters.path_Combine("#{filterName}.coffee")
-    if(filterFile.file_Not_Exists())
-      filterFile = __dirname.path_Combine('../graph/tm-uno/filters').path_Combine("#{filterName}.coffee")
-
-    if(filterFile.file_Exists())
-      get_Data = coffeeScript.eval(filterFile.fullPath().file_Contents())
-      if typeof get_Data is 'function'
-        options = {importService:@ , graph: graph}
-        get_Data options, callback
-        return
-    callback({})
 
   #new object Utils
   new_Short_Guid: (title, guid)->
@@ -118,10 +35,6 @@ class ImportService
 
   new_Data_Import_Util: (data)->
     new Data_Import_Util(data)
-
-  new_Vis_Graph: ->
-    new Vis_Graph()
-
 
   #add data to GraphDB
   add_Db: (type, guid, data, callback)->
