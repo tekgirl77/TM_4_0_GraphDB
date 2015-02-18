@@ -53,9 +53,14 @@ class Data_API
           @._close_DB_and_Send res, data
 
     articles: (req,res)=>
+      key = 'articles.json'
+      if (@.cache.has_Key(key))
+        res.send @.cache.get(key)
+        return
       @._open_DB =>
         @.importService.find_Using_Is 'Article', (articles_Ids)=>
           @.importService.get_Subjects_Data articles_Ids, (data)=>
+            @.cache.put key,data
             @._close_DB_and_Send res, data
 
     article_Html: (req,res)=>
