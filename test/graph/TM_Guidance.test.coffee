@@ -38,8 +38,8 @@ describe '| graph | TM-Guidance.test', ->
   it '(add library query)', (done)->
     using tmGuidance, ->
       @.setupDb =>
-        @.importService.library (library)=>
-          @.importService.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
+        @.importService.library_Import.library (library)=>
+          @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
             @.importService.graph.allData (data)->
               data.first() .object   .assert_Is_String()
               data.second().object   .assert_Is_String()
@@ -49,9 +49,9 @@ describe '| graph | TM-Guidance.test', ->
   it 'import_Articles',(done)->
     using tmGuidance, ->
       @.setupDb =>
-        @.importService.library (library)=>
+        @.importService.library_Import.library (library)=>
           @.create_Metadata_Global_Nodes =>
-            @.importService.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
+            @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
               @.import_Articles library.id, library.articles.take(1), =>
                 @.importService.graph.allData (data)->
                   data.assert_Size_Is(36)

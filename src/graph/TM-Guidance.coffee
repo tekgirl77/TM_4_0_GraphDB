@@ -18,7 +18,7 @@ class TM_Guidance
   setupDb: (callback)=>
     @.importService.graph.deleteDb =>
       @.importService.graph.openDb =>
-        @importService.library (data)->
+        @importService.library_Import.library (data)->
           @.library = data
           callback()
 
@@ -26,10 +26,10 @@ class TM_Guidance
 
   create_Metadata_Global_Nodes: (next)=>
     @.metadata_Queries  = {}
-    importUtil = @.importService.new_Data_Import_Util()
+    importUtil = @.importService.graph_Add_Data.new_Data_Import_Util()
 
     add_Metadata_Global_Node = (target)=>
-      target_Id = @.importService.new_Short_Guid('query')
+      target_Id = @.importService.graph_Add_Data.new_Short_Guid('query')
       importUtil.add_Triplet target_Id, 'title', target
       importUtil.add_Triplet target_Id, 'is', 'Query'
       importUtil.add_Triplet target_Id, 'is', 'Metadata'
@@ -42,7 +42,7 @@ class TM_Guidance
       next()
 
   import_Article_Metadata: (article_Id, article_Data, next)=>
-    importUtil = @importService.new_Data_Import_Util()
+    importUtil = @importService.graph_Add_Data.new_Data_Import_Util()
 
     add_Metadata_Target = (target)=>
       target_Value      = article_Data.Metadata.first()[target].first()
@@ -51,7 +51,7 @@ class TM_Guidance
         target_Id        = @.metadata_Queries[target_Value]
 
         if not target_Id
-          target_Id = @.metadata_Queries[target_Value] = @.importService.new_Short_Guid('query')
+          target_Id = @.metadata_Queries[target_Value] = @.importService.graph_Add_Data.new_Short_Guid('query')
           importUtil.add_Triplet(target_Id       , 'is','Query')
           importUtil.add_Triplet(target_Global_Id, 'contains-query',target_Id)
         importUtil.add_Triplet(target_Id         , 'contains-article', article_Id)
@@ -75,11 +75,11 @@ class TM_Guidance
       next()
 
   import_Article: (article, next)=>
-    @.importService.article_Data article.guid, (article_Data)=>
+    @.importService.library_Import.article_Data article.guid, (article_Data)=>
       if (article_Data? and article_Data.Metadata)
         title = article_Data.Metadata.first().Title.first()
         if title isnt undefined
-          @.importService.add_Db_using_Type_Guid_Title 'Article', article.guid, title, (article_Id)=>
+          @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Article', article.guid, title, (article_Id)=>
             @.importService.graph.add article.parent, 'contains-article', article_Id, =>
               @.import_Article_Metadata article_Id, article_Data, next
         else
@@ -92,7 +92,7 @@ class TM_Guidance
     async.each articlesToAdd, @import_Article, next
 
   import_View: (view, next)=>
-    @.importService.add_Db_using_Type_Guid_Title 'Query', view.guid, view.title, (view_Id)=>
+    @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', view.guid, view.title, (view_Id)=>
       @.importService.graph.add view.parent, 'contains-query', view_Id, =>
         @.import_Articles view_Id, view.articles, next
 
@@ -101,7 +101,7 @@ class TM_Guidance
     async.each viewsToAdd, @.import_View, next
 
   import_Folder: (folder, next)=>
-    @.importService.add_Db_using_Type_Guid_Title 'Query', folder.guid, folder.title, (folderId)=>
+    @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', folder.guid, folder.title, (folderId)=>
       @.importService.graph.add folder.parent, 'contains-query', folderId, =>
         @.import_Views folderId, folder.views , next
 
@@ -111,9 +111,9 @@ class TM_Guidance
 
   load_Data : (callback)=>
     @.setupDb =>
-      @.importService.library (library)=>
+      @.importService.library_Import.library (library)=>
         @.create_Metadata_Global_Nodes =>
-          @.importService.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
+          @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
             #@.import_Articles library_Id, library.articles, =>
               @.import_Folders library_Id, library.folders, =>
                 @.import_Views library_Id, library.views, =>

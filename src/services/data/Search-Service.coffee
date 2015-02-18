@@ -63,7 +63,7 @@ class Search_Service
   query_From_Text_Search: (text, callback)=>
     query_Id = @query_Id_From_Text text
 
-    @.importService.get_Subject_Data query_Id, (data)=>
+    @.importService.graph_Find.get_Subject_Data query_Id, (data)=>
       if data.is
         callback data.id
         return
@@ -84,10 +84,10 @@ class Search_Service
         for article_Id in article_Ids
           articles_Nodes.push { subject:query_Id , predicate:'contains-article'  , object:article_Id }
         @graph.db.put articles_Nodes, =>
-          @.importService.add_Is query_Id, 'Query', =>
-            @importService.add_Is query_Id, 'Search', =>
-              @importService.add_Title query_Id, text, =>
-                @importService.update_Query_Mappings_With_Search_Id query_Id, =>
+          @.importService.graph_Add_Data.add_Is query_Id, 'Query', =>
+            @importService.graph_Add_Data.add_Is query_Id, 'Search', =>
+              @importService.graph_Add_Data.add_Title query_Id, text, =>
+                @importService.query_Mappings.update_Query_Mappings_With_Search_Id query_Id, =>
                   callback(query_Id)
 
 module.exports = Search_Service

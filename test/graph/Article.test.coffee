@@ -1,6 +1,6 @@
 Article = require '../../src/graph/Article'
 
-describe '| graph | Articles |',->
+describe '| graph | Article |',->
 
   importService  = null
   article        = null

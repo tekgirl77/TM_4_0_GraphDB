@@ -49,7 +49,9 @@ describe '| services | graph | Graph-Service.test |', ->
     graphService  = new Graph_Service()
 
     before (done) ->
-      graphService.openDb done
+      graphService.openDb (status)->
+        status.assert_True
+        done()
 
     after (done) ->
       graphService.deleteDb done
@@ -137,21 +139,20 @@ describe '| services | graph | Graph-Service.test |', ->
         data.assert_Is [ '3', '30', '300' ]
         done()
 
-  describe 'open and close of dbs |', ->
-    it 'confirm that open_Dbs stores db ref', (done)->
-      graphService  = new Graph_Service('_tm_Db1')
-      originalSize = Graph_Service.open_Dbs.keys().size();
-      #Object.keys(Graph_Service.open_Dbs).assert_Size_Is(0)
-      graphService.openDb ->
-        db = graphService.db
-        Graph_Service.open_Dbs.keys().assert_Size_Is(originalSize + 1)
-        graphService.openDb ->
-          db.assert_Is_Equal_To(graphService.db)
-          db.assert_Is_Equal_To(Graph_Service.open_Dbs[graphService.dbPath])
-          Graph_Service.open_Dbs.keys().assert_Size_Is(originalSize + 1)
-          graphService.closeDb ->
-            Graph_Service.open_Dbs.keys().assert_Size_Is(originalSize)
-            graphService.dbPath.assert_That_File_Exists()
-            graphService.deleteDb ->
-              graphService.dbPath.assert_That_File_Not_Exists()
-              done()
+#  describe 'open and close of dbs |', ->
+
+
+    it 'confirm that only one db can be opened at the same time', (done)->
+      graphService_1 = graphService
+      graphService_2  = new Graph_Service()
+      graphService_2.openDb (status)->
+        status.assert_False()
+        graphService_1.closeDb ->
+          graphService_2.openDb (status)->
+            status.assert_True()
+            graphService_1.openDb (status)->
+              status.assert_False()
+              graphService_2.closeDb ->
+                graphService_1.openDb (status)->
+                  status.assert_True()
+                  done()

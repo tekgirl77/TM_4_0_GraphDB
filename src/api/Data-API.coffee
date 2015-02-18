@@ -72,7 +72,7 @@ class Data_API
     id: (req,res)=>
       id = req.params.id
       @._open_DB =>
-        @.importService.get_Subjects_Data [id], (data)=>
+        @.importService.graph_Find.get_Subjects_Data [id], (data)=>
           @._close_DB_and_Send res, data
 
 
@@ -105,23 +105,23 @@ class Data_API
     query_parent_queries: (req,res)=>
       query_Id = req.params.id
       @._open_DB =>
-        @.importService.find_Query_Parent_Queries query_Id, (queries)=>
+        @.importService.graph_Find.find_Query_Parent_Queries query_Id, (queries)=>
           @._close_DB_and_Send res, queries
 
     queries_mappings: (req,res)=>
       @._open_DB =>
-        @.importService.get_Queries_Mappings (queries)=>
+        @.importService.query_Mappings.get_Queries_Mappings (queries)=>
           @._close_DB_and_Send res, queries
 
     query_mappings: (req,res)=>
       query_Id = req.params.id
       @._open_DB =>
-        @.importService.get_Query_Mappings query_Id, (queries)=>
+        @.importService.query_Mappings.get_Query_Mappings query_Id, (queries)=>
           @._close_DB_and_Send res, queries
 
     root_queries: (req,res)=>
       @._open_DB =>
-        @.importService.find_Root_Queries (queries)=>
+        @.importService.query_Mappings.find_Root_Queries (queries)=>
           @._close_DB_and_Send res, queries
 
     query_tree: (req,res)=>
@@ -132,7 +132,7 @@ class Data_API
         return
       query_Id = req.params.id
       @._open_DB =>
-        @.importService.get_Query_Tree query_Id, (query_Tree)=>
+        @.importService.query_Tree.get_Query_Tree query_Id, (query_Tree)=>
           @.cache.put key, query_Tree
           @._close_DB_and_Send res, query_Tree
 
@@ -144,25 +144,25 @@ class Data_API
         res.send @.cache.get(key)
         return
       @._open_DB =>
-        @.importService.get_Query_Tree query_Id, (query_Tree)=>
-          @.importService.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (query_Tree_Filtered)=>
+        @.importService.query_Tree.get_Query_Tree query_Id, (query_Tree)=>
+          @.importService.query_Tree.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (query_Tree_Filtered)=>
             @.cache.put key, query_Tree_Filtered
             @._close_DB_and_Send res, query_Tree_Filtered
 
     articles_queries: (req,res)=>
       @._open_DB =>
-        @.importService.get_Articles_Queries (queries)=>
+        @.importService.queries.get_Articles_Queries (queries)=>
           @._close_DB_and_Send res, queries
 
     articles_parent_queries: (req,res)=>
       query_Id = req.params.id.split(',')
       @._open_DB =>
-        @.importService.map_Articles_Parent_Queries query_Id, (articleParentQueries)=>
+        @.importService.queries.map_Articles_Parent_Queries query_Id, (articleParentQueries)=>
           @._close_DB_and_Send res, articleParentQueries
 
     library: (req,res)=>
       @._open_DB =>
-        @.importService.library (library)=>
+        @.importService.library_Import.library (library)=>
           @._close_DB_and_Send res, library
 
     add_Methods: ()=>

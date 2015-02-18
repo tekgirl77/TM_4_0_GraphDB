@@ -35,7 +35,7 @@ class Convert_API
     to_ids: (req,res)=>
       values = req.params.values
       @_open_DB =>
-        @.importService.convert_To_Ids values, (result)=>
+        @.importService.graph_Find.convert_To_Ids values, (result)=>
           @_close_DB_and_Send res, result
 
     wikitext_to_html:(req,res)=>

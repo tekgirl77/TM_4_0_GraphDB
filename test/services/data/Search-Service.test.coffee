@@ -29,7 +29,7 @@ describe '| services | data | Search-Service.test |', ->
       titles.assert_Size_Is_Bigger_Than 10
       article_Id    = titles.first().id
       article_Title = titles.first().title
-      importService.get_Subjects_Data article_Id, (data)=>
+      importService.graph_Find.get_Subjects_Data article_Id, (data)=>
         data.keys().assert_Size_Is 1
         using data[article_Id],->
           @.assert_Is_Object()
@@ -43,7 +43,7 @@ describe '| services | data | Search-Service.test |', ->
       titles.assert_Size_Is_Bigger_Than 10
       article_Id    = titles.first().id
       article_Summary = titles.first().summary
-      importService.get_Subjects_Data article_Id, (data)=>
+      importService.graph_Find.get_Subjects_Data article_Id, (data)=>
         data.keys().assert_Size_Is 1
         using data[article_Id],->
           @.assert_Is_Object()
@@ -57,7 +57,7 @@ describe '| services | data | Search-Service.test |', ->
       titles.assert_Size_Is_Bigger_Than 10
       query_Id    = titles.first().id
       query_Title = titles.first().title
-      importService.get_Subjects_Data query_Id, (data)=>
+      importService.graph_Find.get_Subjects_Data query_Id, (data)=>
         data.keys().assert_Size_Is 1
         using data[query_Id],->
           @.assert_Is_Object()
@@ -92,6 +92,6 @@ describe '| services | data | Search-Service.test |', ->
     text = 'Security'
     searchService.query_From_Text_Search text, (query_Id)->
       query_Id.assert_Is 'search-security'
-      importService.get_Subject_Data query_Id, (data)->
+      importService.graph_Find.get_Subject_Data query_Id, (data)->
         data.title.assert_Is text
         done();

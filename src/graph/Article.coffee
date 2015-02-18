@@ -8,11 +8,11 @@ class Article
     @.importService  = importService || new Import_Service('tm-uno')
 
   ids: (callback)=>
-    @.importService.find_Using_Is 'Article', (articles_Ids)=>
+    @.importService.graph_Find.find_Using_Is 'Article', (articles_Ids)=>
       callback articles_Ids
 
   graph_Data: (article_Id, callback)=>
-    @.importService.get_Subject_Data article_Id, callback
+    @.importService.graph_Find.get_Subject_Data article_Id, callback
 
   file_Path: (article_Id, callback)=>
     log article_Id
