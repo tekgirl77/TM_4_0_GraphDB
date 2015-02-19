@@ -10,8 +10,8 @@ class Data_API
     constructor: (options)->
       @.options        = options || {}
       @.swaggerService = @options.swaggerService
-      @.importService  = new Import_Service('tm-uno')
-      @.db             = null
+      #@.importService  =
+      #@.db             = null
       @.cache          = new Cache_Service("data_cache")
 
     add_Get_Method: (name)=>
@@ -33,47 +33,81 @@ class Data_API
 
       @.swaggerService.addGet(get_Command)
 
-    _open_DB: (callback)=>
-      @.importService.graph.openDb =>
-        @.db = @.importService.graph.db
-        callback()
-
-    _close_DB_and_Send: (res, data)=>
-      @.importService.graph.closeDb =>
-        @.db = null
-        res.send data?.json_pretty()
-
-    _send_Search: (searchTerms, res,key)=>
-      @._open_DB =>
-        @.db.search searchTerms(@.db.v), (error, data)=>
-          if key
-            "Adding key: #{key}".log()
-            @.cache.put(key,data)
-            "Key path: #{@.cache.path_Key(key)}".log()
-          @._close_DB_and_Send res, data
-
-    articles: (req,res)=>
-      key = 'articles.json'
-      if (@.cache.has_Key(key))
+    open_Import_Service: (res, key ,callback)->
+      if (key and @.cache.has_Key(key))
         res.send @.cache.get(key)
         return
-      @._open_DB =>
-        @.importService.graph_Find.find_Using_Is 'Article', (articles_Ids)=>
-          @.importService.graph_Find.get_Subjects_Data articles_Ids, (data)=>
-            @.cache.put key,data
-            @._close_DB_and_Send res, data
+      using new Import_Service('tm-uno'), ->
+        @.graph.openDb (status)=>
+          ">>>>>>> openDb Status: #{status}".log()
+          if status
+            callback @
+          else
+            res.status(503)
+               .send { error : message : 'GraphDB is busy, please try again'}
+
+    close_Import_Service_and_Send: (importService, res, data, key)=>
+      importService.graph.closeDb =>
+        if key and data and data isnt '' and data isnt {}
+          ">>>>> saving data into cache key: #{key}".log()
+          @.cache.put key,data
+        res.send data?.json_pretty()
+
+    #_open_DB: (callback)=>
+    #  @.importService.graph.openDb =>
+    #    @.db = @.importService.graph.db
+    #    callback()
+
+    #_close_DB_and_Send: (res, data)=>
+    #  @.importService.graph.closeDb =>
+    #    @.db = null
+    #    res.send data?.json_pretty()
+
+    _send_Search: (searchTerms, res,key)=>
+          @.db.search searchTerms(@.db.v), (error, data)=>
+            if key
+              "Adding key: #{key}".log()
+              @.cache.put(key,data)
+              "Key path: #{@.cache.path_Key(key)}".log()
+            @.closeDb =>
+              res.send data?.json_pretty()
+          #@._close_DB_and_Send res, data
+
+    articles: (req,res)=>
+      cache_Key = 'articles.json'
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.graph_Find.find_Using_Is 'Article', (articles_Ids)=>
+          import_Service.graph_Find.get_Subjects_Data articles_Ids, (data)=>
+            @close_Import_Service_and_Send import_Service, res, data, cache_Key
+              #@._close_DB_and_Send res, data
 
     article_Html: (req,res)=>
-      id = req.params.id
+      id        = req.params.id
+      cache_Key = "article_Html_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        new Article(import_Service).html id, (html)=>
+          data = { html: html }
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+            #@._close_DB_and_Send res, html
+
+    articles_queries: (req,res)=>
       @._open_DB =>
-        new Article(@.importService).html id, (html)=>
-            @._close_DB_and_Send res, html
+        @.importService.queries.get_Articles_Queries (queries)=>
+          @._close_DB_and_Send res, queries
+
+    articles_parent_queries: (req,res)=>
+      query_Id = req.params.id.split(',')
+      @._open_DB =>
+        @.importService.queries.map_Articles_Parent_Queries query_Id, (articleParentQueries)=>
+          @._close_DB_and_Send res, articleParentQueries
 
     id: (req,res)=>
-      id = req.params.id
-      @._open_DB =>
-        @.importService.graph_Find.get_Subjects_Data [id], (data)=>
-          @._close_DB_and_Send res, data
+      id        = req.params.id
+      cache_Key = "id_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.graph_Find.get_Subjects_Data [id], (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+          #@._close_DB_and_Send res, data
 
 
     queries: (req,res)=>
@@ -148,17 +182,6 @@ class Data_API
           @.importService.query_Tree.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (query_Tree_Filtered)=>
             @.cache.put key, query_Tree_Filtered
             @._close_DB_and_Send res, query_Tree_Filtered
-
-    articles_queries: (req,res)=>
-      @._open_DB =>
-        @.importService.queries.get_Articles_Queries (queries)=>
-          @._close_DB_and_Send res, queries
-
-    articles_parent_queries: (req,res)=>
-      query_Id = req.params.id.split(',')
-      @._open_DB =>
-        @.importService.queries.map_Articles_Parent_Queries query_Id, (articleParentQueries)=>
-          @._close_DB_and_Send res, articleParentQueries
 
     library: (req,res)=>
       @._open_DB =>

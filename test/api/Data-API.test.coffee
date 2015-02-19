@@ -2,7 +2,7 @@ TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/rest/Swagger-Service'
 Data_API         = require '../../src/api/Data-API'
 
-describe '| api | Data-API.test', ->
+describe.only '| api | Data-API.test', ->
 
   describe '| via web api |',->
 
@@ -13,11 +13,10 @@ describe '| api | Data-API.test', ->
 
       before (done)->
         dataApi = new Data_API()
-        tmServer  = new TM_Server({ port : 12346})
+        tmServer  = new TM_Server({ port : 10000.random().add(10000)})
         options = { app: tmServer.app ,  port : tmServer.port}
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()
-        #swaggerService.setup()
 
         new Data_API({swaggerService: swaggerService}).add_Methods()
         swaggerService.swagger_Setup()
@@ -46,15 +45,6 @@ describe '| api | Data-API.test', ->
             clientApi.assert_Is_Object()
             done()
 
-      it 'id', (done)->
-        clientApi.articles (data)->
-          articles = data.obj
-          article_Id = articles.keys().first()
-          article = articles[articles.keys().first()]
-          clientApi.id {id: article_Id }, (data)->
-            data.obj[article_Id].assert_Is(article)
-            done()
-
       it 'articles', (done)->
         clientApi.articles (data)->
           data.obj.keys().assert_Size_Is_Bigger_Than(50)
@@ -64,8 +54,19 @@ describe '| api | Data-API.test', ->
           clientApi.articles (article_Ids)->
             article_Id = article_Ids.obj.keys().first()
             clientApi.article_Html {id: article_Id}, (data)->
-              data.obj.assert_Contains('<p>')
+              data.obj.html.assert_Contains('<p>')
               done()
+
+      it 'id', (done)->
+        clientApi.articles (data)->
+          articles = data.obj
+          article_Id = articles.keys().first()
+          article = articles[articles.keys().first()]
+          clientApi.id {id: article_Id }, (data)->
+            data.obj[article_Id].assert_Is(article)
+            done()
+
+      return
 
       it 'library', (done)->
         clientApi.library (data)->
