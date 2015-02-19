@@ -2,7 +2,7 @@ TM_Server        = require '../../src/TM-Server'
 Swagger_Service  = require '../../src/services/rest/Swagger-Service'
 Data_API         = require '../../src/api/Data-API'
 
-describe.only '| api | Data-API.test', ->
+describe '| api | Data-API.test', ->
 
   describe '| via web api |',->
 
@@ -57,6 +57,20 @@ describe.only '| api | Data-API.test', ->
               data.obj.html.assert_Contains('<p>')
               done()
 
+      it 'article_parent_queries', (done)->
+        clientApi.articles (data)->
+          article_Id = data.obj.keys().first()
+          clientApi.articles_parent_queries { id: article_Id }, (data) ->
+            query_Id = data.obj.articles.keys().first()
+            clientApi.articles { id: query_Id }, (data)->
+              data.obj.keys().contains(article_Id)
+              done()
+
+      it 'articles_queries', (done)->
+        clientApi.articles_queries (articles_Queries)=>
+          articles_Queries.keys().assert_Not_Empty()
+          done();
+
       it 'id', (done)->
         clientApi.articles (data)->
           articles = data.obj
@@ -66,12 +80,13 @@ describe.only '| api | Data-API.test', ->
             data.obj[article_Id].assert_Is(article)
             done()
 
-      return
 
       it 'library', (done)->
         clientApi.library (data)->
           library = data.obj
           library.assert_Is_Object()
+          library.id.assert_Is_String()
+          library.name.assert_Is_String()
           library.folders.assert_Not_Empty()
           library.articles.assert_Not_Empty()
           done()
@@ -81,15 +96,38 @@ describe.only '| api | Data-API.test', ->
           data.obj.assert_Size_Is_Bigger_Than(10)
           done()
 
-      it 'queries, query_parent_queries', (done)=>
-        clientApi.queries (data)=>
-          query_Id    = data.obj.first().id
-          clientApi.query_parent_queries {id:query_Id}, (data)=>
-            parent_Query = data.obj.first()
-            clientApi.queries {id:parent_Query}, (data)=>
-              (item.id for item in data.obj).assert_Contains(query_Id)
-              done()
+      it 'query_articles', (done)->
+        clientApi.queries (data)->
+          query_Id = data.obj.first()
+          clientApi.query_articles {id: query_Id }, (data)->
+            data.obj.assert_Is_Array()
+            done()
 
+      it 'query_queries', (done)->
+        clientApi.queries (data)->
+          query_Id = data.obj.first()
+          clientApi.query_queries {id: query_Id }, (data)->
+            data.obj.assert_Is_Array()
+            done()
+
+      it 'query_parent_queries', (done)->
+        clientApi.queries (data)->
+          query_Id = data.obj.first()
+          clientApi.query_parent_queries {id: query_Id }, (data)->
+            data.obj.assert_Is_Array()
+            done()
+
+      it 'queries_mappings', (done)->
+        clientApi.queries_mappings (data)->
+          data.obj.keys().assert_Size_Is_Bigger_Than 10
+          done()
+
+      it 'query_mappings', (done)->
+        clientApi.queries (data)->
+          query_Id = data.obj.first()
+          clientApi.query_mappings { id: query_Id }, (data)->
+            data.obj.keys().assert_Size_Is 7
+            done()
       it 'queries_mappings, query_mappings', (done)=>
         clientApi.queries_mappings (data)=>
           queries_Mappings = data.obj
@@ -99,8 +137,16 @@ describe.only '| api | Data-API.test', ->
             query_Mappings.assert_Is(queries_Mappings[queriesIds.first()])
             done()
 
-      it 'root_queries, query_tree', (done)->
-        @timeout 15500
+      it 'root_queries', (done)->
+        clientApi.root_queries (data)->
+          using data.obj, ->
+            @.id.assert_Is 'Root-Queries'
+            @.title.assert_Is 'Root Queries'
+            @.queries.assert_Size_Is_Bigger_Than 4
+          #data.obj.keys().assert_Size_Is_Bigger_Than 10
+          done()
+
+      it 'query_tree', (done)->
         clientApi.root_queries (data)=>
           root_Queries = data.obj
           query_Id = root_Queries.queries.first().id
@@ -124,16 +170,6 @@ describe.only '| api | Data-API.test', ->
               data.obj.results.assert_Size_Is result_Filter.size
               done()
 
-      it 'articles_queries', (done)->
-        clientApi.articles_queries (articles_Queries)=>
-          articles_Queries.keys().assert_Not_Empty()
-          done();
 
-      xit 'articles, article_parent_queries', (done)=>
-        clientApi.articles (data)=>
-          article_Id = data.obj.keys().first()
-          clientApi.article_parent_queries { id: article_Id }, (data) =>
-            query_Id = data.obj.first()
-            clientApi.articles { id: query_Id }, (data)=>
-              data.obj.keys().contains(article_Id)
-              done()
+
+

@@ -39,7 +39,6 @@ class Data_API
         return
       using new Import_Service('tm-uno'), ->
         @.graph.openDb (status)=>
-          ">>>>>>> openDb Status: #{status}".log()
           if status
             callback @
           else
@@ -48,30 +47,21 @@ class Data_API
 
     close_Import_Service_and_Send: (importService, res, data, key)=>
       importService.graph.closeDb =>
-        if key and data and data isnt '' and data isnt {}
-          ">>>>> saving data into cache key: #{key}".log()
-          @.cache.put key,data
+        #if key and data and data isnt '' and data isnt {} and data isnt []
+          #">>>>> saving data into cache key: #{key}".log()
+          #@.cache.put key,data
         res.send data?.json_pretty()
 
-    #_open_DB: (callback)=>
-    #  @.importService.graph.openDb =>
-    #    @.db = @.importService.graph.db
-    #    callback()
 
-    #_close_DB_and_Send: (res, data)=>
-    #  @.importService.graph.closeDb =>
-    #    @.db = null
-    #    res.send data?.json_pretty()
 
-    _send_Search: (searchTerms, res,key)=>
-          @.db.search searchTerms(@.db.v), (error, data)=>
-            if key
-              "Adding key: #{key}".log()
-              @.cache.put(key,data)
-              "Key path: #{@.cache.path_Key(key)}".log()
-            @.closeDb =>
-              res.send data?.json_pretty()
-          #@._close_DB_and_Send res, data
+#    _send_Search: (searchTerms, res,key)=>
+#          @.db.search searchTerms(@.db.v), (error, data)=>
+#            if key
+#              "Adding key: #{key}".log()
+##              @.cache.put(key,data)
+#              "Key path: #{@.cache.path_Key(key)}".log()
+#            @.closeDb =>
+#              res.send data?.json_pretty()
 
     articles: (req,res)=>
       cache_Key = 'articles.json'
@@ -79,7 +69,6 @@ class Data_API
         import_Service.graph_Find.find_Using_Is 'Article', (articles_Ids)=>
           import_Service.graph_Find.get_Subjects_Data articles_Ids, (data)=>
             @close_Import_Service_and_Send import_Service, res, data, cache_Key
-              #@._close_DB_and_Send res, data
 
     article_Html: (req,res)=>
       id        = req.params.id
@@ -90,16 +79,21 @@ class Data_API
           @close_Import_Service_and_Send import_Service, res, data, cache_Key
             #@._close_DB_and_Send res, html
 
-    articles_queries: (req,res)=>
-      @._open_DB =>
-        @.importService.queries.get_Articles_Queries (queries)=>
-          @._close_DB_and_Send res, queries
-
     articles_parent_queries: (req,res)=>
-      query_Id = req.params.id.split(',')
-      @._open_DB =>
-        @.importService.queries.map_Articles_Parent_Queries query_Id, (articleParentQueries)=>
-          @._close_DB_and_Send res, articleParentQueries
+      id        = req.params.id
+      cache_Key = "articles_parent_queries_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        query_Ids = id.split(',')
+        import_Service.queries.map_Articles_Parent_Queries query_Ids, (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+
+    articles_queries: (req,res)=>
+      id        = req.params.id
+      cache_Key = "articles_queries.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.queries.get_Articles_Queries (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+
 
     id: (req,res)=>
       id        = req.params.id
@@ -107,86 +101,84 @@ class Data_API
       @open_Import_Service res, cache_Key, (import_Service)=>
         import_Service.graph_Find.get_Subjects_Data [id], (data)=>
           @close_Import_Service_and_Send import_Service, res, data, cache_Key
-          #@._close_DB_and_Send res, data
+
+    library: (req,res)=>
+      cache_Key = "library.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.library_Import.library (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
 
     queries: (req,res)=>
-      key = 'queries.json'
-      if (@.cache.has_Key(key))
-        res.send @.cache.get(key)
-        return
-      searchTerms = (v)->[{ subject: v('id') , predicate: 'is'     , object: 'Query'   }
-                          { subject: v('id') , predicate: 'title'  , object: v('title')}]
-      @._send_Search searchTerms, res,key
+      cache_Key = "queries.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        #db = import_Service.graph.db
+        #searchTerms = (v)->[{ subject: v('id') , predicate: 'is'     , object: 'Query'   }
+        #                    { subject: v('id') , predicate: 'title'  , object: v('title')}]
+        #db.search searchTerms(db.v), (error, data)=>
+        import_Service.graph_Find.find_Queries (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+
+        #@._send_Search searchTerms, res,key
 
     query_articles: (req,res)=>
-      query_Id = req.params.id
-      key = "query_articles_#{query_Id}.json"
-      if (@.cache.has_Key(key))
-        res.send @.cache.get(key)
-        return
-      @._open_DB =>
-        @.importService.graph_Find.find_Query_Articles query_Id, (articles)=>
-          @.cache.put key,articles
-          @._close_DB_and_Send res, articles
+      id        = req.params.id
+      cache_Key = "query_articles_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.graph_Find.find_Query_Articles id, (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
     query_queries: (req,res)=>
-      query_Id = req.params.id
-      @._open_DB =>
-        @.importService.graph_Find.find_Query_Queries query_Id, (articles)=>
-          @._close_DB_and_Send res, articles
+      id        = req.params.id
+      cache_Key = "query_queries_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.graph_Find.find_Query_Queries id, (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
     query_parent_queries: (req,res)=>
-      query_Id = req.params.id
-      @._open_DB =>
-        @.importService.graph_Find.find_Query_Parent_Queries query_Id, (queries)=>
-          @._close_DB_and_Send res, queries
+      id        = req.params.id
+      cache_Key = "query_parent_queries_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.graph_Find.find_Query_Parent_Queries id, (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
     queries_mappings: (req,res)=>
-      @._open_DB =>
-        @.importService.query_Mappings.get_Queries_Mappings (queries)=>
-          @._close_DB_and_Send res, queries
+      cache_Key = "queries_mappings.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.query_Mappings.get_Queries_Mappings (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
     query_mappings: (req,res)=>
-      query_Id = req.params.id
-      @._open_DB =>
-        @.importService.query_Mappings.get_Query_Mappings query_Id, (queries)=>
-          @._close_DB_and_Send res, queries
-
-    root_queries: (req,res)=>
-      @._open_DB =>
-        @.importService.query_Mappings.find_Root_Queries (queries)=>
-          @._close_DB_and_Send res, queries
+      id        = req.params.id
+      cache_Key = "query_mappings_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.query_Mappings.get_Query_Mappings id, (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
     query_tree: (req,res)=>
-      query_Id = req.params.id
-      key = "query_tree_#{query_Id}.json"
-      if (@.cache.has_Key(key))
-        res.send @.cache.get(key)
-        return
-      query_Id = req.params.id
-      @._open_DB =>
-        @.importService.query_Tree.get_Query_Tree query_Id, (query_Tree)=>
-          @.cache.put key, query_Tree
-          @._close_DB_and_Send res, query_Tree
+      id        = req.params.id
+      cache_Key = "query_tree_#{id}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.query_Tree.get_Query_Tree id, (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
     query_tree_filtered: (req,res)=>
-      query_Id = req.params.id
+      id       = req.params.id
       filters  = req.params.filters
-      key = "query_tree_filtered_#{query_Id}_#{filters}.json"
-      if (@.cache.has_Key(key))
-        res.send @.cache.get(key)
-        return
-      @._open_DB =>
-        @.importService.query_Tree.get_Query_Tree query_Id, (query_Tree)=>
-          @.importService.query_Tree.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (query_Tree_Filtered)=>
-            @.cache.put key, query_Tree_Filtered
-            @._close_DB_and_Send res, query_Tree_Filtered
+      cache_Key = "query_tree_filtered_#{id}_#{filters}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.query_Tree.get_Query_Tree id, (query_Tree)=>
+          import_Service.query_Tree.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (data)=>
+            @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
-    library: (req,res)=>
-      @._open_DB =>
-        @.importService.library_Import.library (library)=>
-          @._close_DB_and_Send res, library
+    root_queries: (req,res)=>
+      cache_Key = "root_queries.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.query_Mappings.find_Root_Queries (data)=>
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+
+
+
 
     add_Methods: ()=>
       @add_Get_Method 'id'

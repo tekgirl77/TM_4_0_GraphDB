@@ -14,7 +14,7 @@ class GraphService
   #Setup methods
 
   openDb : (callback)=>
-    "[Opening Db]: #{locked}".log()
+    #"[Opening Db]: #{locked}".log()
     if locked
       "Error: [GraphDB] is in use".log()
       callback false
@@ -26,7 +26,7 @@ class GraphService
           callback true
 
   closeDb: (callback)=>
-    "[closing Db]: #{locked} : #{@db is null}".log()
+    #"[closing Db]: #{locked} : #{@db is null}".log()
     if (@db)
       @db.close =>
         @db    = null
