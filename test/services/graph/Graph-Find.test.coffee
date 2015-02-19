@@ -62,7 +62,7 @@ describe '| services | graph | Graph-Find.test', ->
             using data,->
               article_Data = @
               @.id.assert_Is article_Id
-              @.keys().assert_Is ['guid','title','summary','is','id']
+              @.keys().assert_Contains ['guid','title','summary','is','id']
             done()
 
     it 'find_Article', (done)->
