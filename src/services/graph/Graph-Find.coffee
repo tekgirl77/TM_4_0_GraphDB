@@ -77,6 +77,47 @@ class Graph_Find
              .solutions (err,data) ->
                 callback (item.x0 for item in data)
 
+  find_Article: (ref, callback)=>
+    find_Using = (method, next)->
+      method ref, (article_Id)->
+        if article_Id
+          callback article_Id
+        else
+          next()
+
+    find_Using @.find_Article_By_Id, =>
+      find_Using @.find_Article_By_Guid, =>
+        find_Using @.find_Article_By_Title, =>
+          callback null
+
+  find_Article_By_Id: (id, callback)=>
+    @graph.db.nav(id).archOut('is').as('is')
+                      .solutions (err,data) ->
+                        if data?.first()?.is is 'Article'
+                          callback id
+                        else
+                          callback null
+
+  find_Article_By_Guid: (guid, callback)=>
+    @graph.db.nav(guid).archIn('guid').as('id')
+                       .archOut('is').as('is')
+                       .solutions (err,data) ->
+                         if data?.first()?.is is 'Article'
+                           callback data.first().id
+                         else
+                           callback null
+
+  find_Article_By_Title: (title, callback)=>
+    title = title.replace(/-/g,' ')  # handle titles with dashes
+    @graph.db.nav(title).archIn('title').as('id')
+                       .archOut('is').as('is')
+                       .solutions (err,data) ->
+                         if data?.first()?.is is 'Article'
+                           callback data.first().id
+                         else
+                           callback null
+
+
   find_Articles: (callback)=>
     @graph.db.nav('Article').archIn('is').as('article')
                             .solutions (err,data) ->

@@ -48,3 +48,56 @@ describe '| services | graph | Graph-Find.test', ->
   it 'get_Subject_Data (bad data)', (done)->
     graph_Find.get_Subject_Data null, ->
       done()
+
+  describe 'find_Article_By_....', ->
+    articles     = null
+    article_Id   = null
+    article_Data = null
+
+    before (done)->
+      using graph_Find, ->
+        @.find_Articles (articles)=>
+          article_Id = articles.first()
+          @.get_Subject_Data article_Id, (data)->
+            using data,->
+              article_Data = @
+              @.id.assert_Is article_Id
+              @.keys().assert_Is ['guid','title','summary','is','id']
+            done()
+
+    it 'find_Article', (done)->
+      using graph_Find, ->
+        @.find_Article article_Data.id, (by_id)=>
+          @.find_Article article_Data.guid, (by_guid)=>
+            @.find_Article article_Data.title, (by_title)=>
+              @.find_Article article_Data.title.replace(' ', '-'), (by_title_dashed)->
+                by_id.assert_Is article_Id
+                by_guid.assert_Is article_Id
+                by_title.assert_Is article_Id
+                by_title_dashed.assert_Is article_Id
+                done()
+
+    it 'find_Article_By_Id', (done)->
+      using graph_Find, ->
+        @.find_Article article_Id, (article_Data)->
+          article_Data.assert_Is article_Id
+          done()
+
+    it 'find_Article_By_Guid', (done)->
+      using graph_Find, ->
+        @.find_Article_By_Guid article_Data.guid, (article_Data)->
+          article_Data.assert_Is article_Id
+          done()
+
+    it 'find_Article_By_Title', (done)->
+      using graph_Find, ->
+        @.find_Article_By_Title article_Data.title, (article_Data)->
+          article_Data.assert_Is article_Id
+          done()
+
+    it 'find_Article_By_Title (dashed title)', (done)->
+      title = article_Data.title.replace(/ /g,'-')
+      using graph_Find, ->
+        @.find_Article_By_Title title, (article_Data)->
+          article_Data.assert_Is article_Id
+          done()

@@ -26,6 +26,10 @@ class Data_API
         get_Command.spec.path += '{id}'
         get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string') ]
 
+      if ['article'].contains(name)
+        get_Command.spec.path += '{ref}'
+        get_Command.spec.parameters = [ paramTypes.path('ref', 'ref value', 'string') ]
+
       if ['query_tree_filtered'].contains(name)
         get_Command.spec.path += '{id}/{filters}'
         get_Command.spec.parameters = [ paramTypes.path('id', 'id value', 'string'),
@@ -62,6 +66,13 @@ class Data_API
 #              "Key path: #{@.cache.path_Key(key)}".log()
 #            @.closeDb =>
 #              res.send data?.json_pretty()
+    article: (req,res)=>
+      ref        = req.params.ref
+      cache_Key = "article_#{ref}.json"
+      @open_Import_Service res, cache_Key, (import_Service)=>
+        import_Service.graph_Find.find_Article ref, (article_Id)=>
+          data = { article_Id: article_Id}
+          @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
     articles: (req,res)=>
       cache_Key = 'articles.json'
@@ -77,7 +88,6 @@ class Data_API
         new Article(import_Service).html id, (html)=>
           data = { html: html }
           @close_Import_Service_and_Send import_Service, res, data, cache_Key
-            #@._close_DB_and_Send res, html
 
     articles_parent_queries: (req,res)=>
       id        = req.params.id
@@ -182,6 +192,7 @@ class Data_API
 
     add_Methods: ()=>
       @add_Get_Method 'id'
+      @add_Get_Method 'article'
       @add_Get_Method 'articles'
       @add_Get_Method 'article_Html'
       @add_Get_Method 'library'
