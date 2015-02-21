@@ -83,6 +83,14 @@ describe '| services | graph | Graph-Find.test', ->
           article_Data.assert_Is article_Id
           done()
 
+    it 'find_Article_By_Partial_Id', (done)->
+      using graph_Find, ->
+        @.find_Article_By_Partial_Id article_Id.remove('article-'), (article_Data)=>
+          article_Data.assert_Is article_Id
+          @.find_Article_By_Partial_Id 'aaab', (article_Data)->
+            assert_Is_Null article_Data
+            done()
+
     it 'find_Article_By_Guid', (done)->
       using graph_Find, ->
         @.find_Article_By_Guid article_Data.guid, (article_Data)->

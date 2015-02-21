@@ -97,6 +97,15 @@ class Graph_Find
                           callback id
                         else
                           callback null
+                          
+  find_Article_By_Partial_Id: (partial_Id, callback)=>
+    id = "article-#{partial_Id}"
+    @graph.db.nav(id).archOut('is').as('is')
+                      .solutions (err,data) ->
+                        if data?.first()?.is is 'Article'
+                          callback id
+                        else
+                          callback null
 
   find_Article_By_Guid: (guid, callback)=>
     @graph.db.nav(guid).archIn('guid').as('id')
