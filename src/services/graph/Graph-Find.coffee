@@ -86,9 +86,10 @@ class Graph_Find
           next()
 
     find_Using @.find_Article_By_Id, =>
-      find_Using @.find_Article_By_Guid, =>
-        find_Using @.find_Article_By_Title, =>
-          callback null
+      find_Using @.find_Article_By_Partial_Id, =>
+        find_Using @.find_Article_By_Guid, =>
+          find_Using @.find_Article_By_Title, =>
+            callback null
 
   find_Article_By_Id: (id, callback)=>
     @graph.db.nav(id).archOut('is').as('is')
