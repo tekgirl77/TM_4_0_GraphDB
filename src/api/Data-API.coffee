@@ -51,9 +51,8 @@ class Data_API
 
     close_Import_Service_and_Send: (importService, res, data, key)=>
       importService.graph.closeDb =>
-        #if key and data and data isnt '' and data isnt {} and data isnt []
-          #">>>>> saving data into cache key: #{key}".log()
-          #@.cache.put key,data
+        if key and data and data isnt '' and data isnt {} and data isnt []
+          @.cache.put key,data
         res.send data?.json_pretty()
 
 
