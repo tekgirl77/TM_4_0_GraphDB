@@ -133,7 +133,7 @@ describe '| api | Data-API.test', ->
         clientApi.queries (data)->
           query_Id = data.obj.first()
           clientApi.query_mappings { id: query_Id }, (data)->
-            data.obj.keys().assert_Size_Is_Bigger_Than 5
+            data.obj.keys().assert_Size_Is_Bigger_Than 4
             done()
 
       it 'queries_mappings, query_mappings', (done)=>
