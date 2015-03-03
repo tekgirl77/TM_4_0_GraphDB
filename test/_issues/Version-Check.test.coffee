@@ -1,8 +1,8 @@
-TM_Server         = require('./../../src/TM-Server')
+TM_Server         = require './../../src/TM-Server'
 supertest         = require 'supertest'
 Swagger_Service   = require '../../src/services/rest/Swagger-Service'
 GraphDB_API       = require '../../src/api/GraphDB-API'
-Git_API = require '../../src/api/Git-API'
+Git_API           = require '../../src/api/Git-API'
 
 
 describe.only '| Validate Version of Graph URLs |',->
@@ -33,7 +33,7 @@ describe.only '| Validate Version of Graph URLs |',->
     supertest(server.app)
       .get('/git/status/')
       .expect(200)
-      .end (err,res)->
+      .end (err)->
         throw err if (err)
         done()
 
@@ -41,14 +41,14 @@ describe.only '| Validate Version of Graph URLs |',->
     supertest(server.app)
       .get('/graph-db/contents/')
       .expect(200)
-      .end (err, res)->
+      .end (err)->
         throw err if (err)
         done()
 
   it 'Check /graph-db/subjects', (done)->
     supertest(server.app)
-      .get('/graph-db/subjects/')
+      .get('/graph-db/subjects/err')
       .expect(200)
-      .end (err, res)->
+      .end (err)->
         throw err if (err)
         done()
