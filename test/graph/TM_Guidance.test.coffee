@@ -61,6 +61,8 @@ describe '| graph | TM-Guidance.test', ->
     @timeout 20000
     using tmGuidance, ()->
       @.load_Data ()=>
-        @.importService.graph.allData (data)->
-          data.assert_Size_Is_Bigger_Than(1700)
-          done()
+        @.importService.graph.allData (data)=>
+          data.assert_Size_Is_Bigger_Than(1700)                            # there should be a large number of triplets
+          @.importService.graph_Find.find_Using_Is 'Library', (results)->
+            results.assert_Size_Is 1                                       # there should only be one library
+            done()

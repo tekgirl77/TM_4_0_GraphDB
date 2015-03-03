@@ -10,8 +10,6 @@ class Data_API
     constructor: (options)->
       @.options        = options || {}
       @.swaggerService = @options.swaggerService
-      #@.importService  =
-      #@.db             = null
       @.cache          = new Cache_Service("data_cache")
 
     add_Get_Method: (name)=>

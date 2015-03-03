@@ -13,7 +13,7 @@ describe '| services | import | Library-Import-Service.test |', ->
         done()
 
   after ->
-    log importService.cache.cacheFolder()
+    importService.cache.cacheFolder()
     importService.cache.cacheFolder().folder_Delete_Recursive()
 
   it 'library_Json', (done)->
