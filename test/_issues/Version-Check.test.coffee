@@ -5,7 +5,7 @@ GraphDB_API       = require '../../src/api/GraphDB-API'
 Git_API           = require '../../src/api/Git-API'
 
 
-describe.only '| Validate Version of Graph URLs |',->
+describe '| Validate Version of Graph URLs |',->
 
   server          = null
   swaggerService  = null
@@ -47,7 +47,7 @@ describe.only '| Validate Version of Graph URLs |',->
 
   it 'Check /graph-db/subjects', (done)->
     supertest(server.app)
-      .get('/graph-db/subjects/err')
+      .get('/graph-db/subjects/')
       .expect(200)
       .end (err)->
         throw err if (err)
