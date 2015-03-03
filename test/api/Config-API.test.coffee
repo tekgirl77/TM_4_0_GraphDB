@@ -12,14 +12,13 @@ describe '| api | Config-API.test', ->
       configApi      = null
 
       before (done)->
-        configApi = new Config_API()
         tmServer  = new TM_Server({ port : 12345 + 1000.random()})
         options = { app: tmServer.app ,  port : tmServer.port}
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()
-        #swaggerService.setup()
 
-        new Config_API({swaggerService: swaggerService}).add_Methods()
+        configApi = new Config_API({swaggerService: swaggerService}).add_Methods()
+
         swaggerService.swagger_Setup()
         tmServer.start()
 
@@ -56,7 +55,7 @@ describe '| api | Config-API.test', ->
 
       it 'contents', (done)->
         clientApi.contents (data)->
-          data.obj.assert_Is_Object() #configApi.configService.config_File_Path().file_Contents()
+          data.obj.assert_Is_Object()
           done()
 
       it 'load_Library_Data', (done)->
@@ -77,3 +76,15 @@ describe '| api | Config-API.test', ->
         clientApi.reload (data)->
           data.obj.assert_Is('data reloaded')
           done()
+
+      it 'delete_data_cache', (done)->
+        tmp_Cache_Root = '.tmp_Cache_Folder'
+        using configApi.cache, ->
+          @._cacheFolder = tmp_Cache_Root
+          @.cacheFolder().folder_Create().assert_Folder_Exists()
+          clientApi.delete_data_cache (data)=>
+            @.cacheFolder().assert_Folder_Not_Exists()
+            data.obj.assert_Is "deleted folder #{@.cacheFolder()}"
+            tmp_Cache_Root.folder_Delete()
+            tmp_Cache_Root.assert_Folder_Not_Exists()
+            done()

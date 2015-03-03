@@ -3,13 +3,15 @@ Config_Service  = require '../services/utils/Config-Service'
 Content_Service = require '../services/import/Content-Service'
 Import_Service  = require '../services/data/Import-Service'
 TM_Guidance     = require '../graph/TM-Guidance'
+Cache_Service   = require('teammentor').Cache_Service
 
 class Config_API
     constructor: (options)->
       @.options        = options || {}
       @.swaggerService = @options.swaggerService
-      @.configService   = new Config_Service()
+      @.configService  = new Config_Service()
       @.contentService = new Content_Service()
+      @.cache          = new Cache_Service("data_cache")
 
     add_Get_Method: (name)=>
       get_Command =
@@ -43,11 +45,18 @@ class Config_API
         options.importService.graph.closeDb ->
           res.send data.json_pretty()
 
+    delete_data_cache: (req,res)=>
+      @.cache.cacheFolder().folder_Delete_Recursive()
+      result = "deleted folder #{@.cache.cacheFolder()}"
+      res.send result.json_pretty()
+
     add_Methods: ()=>
       @add_Get_Method 'file'
       @add_Get_Method 'contents'
       @add_Get_Method 'load_Library_Data'
       @add_Get_Method 'convert_Xml_To_Json'
       @add_Get_Method 'reload'
+      @add_Get_Method 'delete_data_cache'
+      @
 
 module.exports = Config_API
