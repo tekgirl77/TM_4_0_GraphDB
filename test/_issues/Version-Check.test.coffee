@@ -7,10 +7,8 @@ Git_API = require '../../src/api/Git-API'
 
 describe.only '| Validate Version of Graph URLs |',->
 
-  url_server      = null
   server          = null
   swaggerService  = null
-  clientApi       = null
   graphDbApi      = null
 
   before (done)->
@@ -21,17 +19,10 @@ describe.only '| Validate Version of Graph URLs |',->
       options    = { app: server.app ,  port : server.port}
       swaggerService = new Swagger_Service options
       swaggerService.set_Defaults()
-      #swaggerService.setup()
-
       new GraphDB_API({swaggerService: swaggerService}).add_Methods()
       new Git_API({swaggerService: swaggerService}).add_Methods()
       swaggerService.swagger_Setup()
       server.start()
-
-      #swaggerService.get_Client_Api 'graph-db', (swaggerApi)->
-      #  clientApi = swaggerApi
-
-
       done()
 
   after (done)->
