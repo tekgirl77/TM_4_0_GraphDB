@@ -47,7 +47,8 @@ class Config_API
 
     delete_data_cache: (req,res)=>
       @.cache.cacheFolder().folder_Delete_Recursive()
-      result = "deleted folder #{@.cache.cacheFolder()}"
+      result = "deleted all files from folder #{@.cache.cacheFolder()}"
+      @.cache.cacheFolder().folder_Create()                             # create it again (so that it exists for new puts)
       res.send result.json_pretty()
 
     add_Methods: ()=>

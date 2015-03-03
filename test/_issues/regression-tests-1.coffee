@@ -1,8 +1,8 @@
-TM_Server = require('./../../src/TM-Server')
+
 supertest = require 'supertest'
 express   = require 'express'
 
-describe '| _issues | to-fix',->
+describe '| _issues | regresion-tests-1 |',->
 
   describe 'Issue 421 - Specific search causes Express error', (done)->
 

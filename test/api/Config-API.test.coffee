@@ -82,9 +82,11 @@ describe '| api | Config-API.test', ->
         using configApi.cache, ->
           @._cacheFolder = tmp_Cache_Root
           @.cacheFolder().folder_Create().assert_Folder_Exists()
+          @.cacheFolder().path_Combine('test_file.txt').file_Create('aaaa')
+          @.cacheFolder().files().assert_Not_Empty()
           clientApi.delete_data_cache (data)=>
-            @.cacheFolder().assert_Folder_Not_Exists()
-            data.obj.assert_Is "deleted folder #{@.cacheFolder()}"
-            tmp_Cache_Root.folder_Delete()
+            @.cacheFolder().files().assert_Empty()
+            data.obj.assert_Is "deleted all files from folder #{@.cacheFolder()}"
+            tmp_Cache_Root.folder_Delete_Recursive()
             tmp_Cache_Root.assert_Folder_Not_Exists()
             done()

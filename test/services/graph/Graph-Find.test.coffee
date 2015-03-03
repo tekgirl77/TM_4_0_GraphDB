@@ -37,6 +37,15 @@ describe '| services | graph | Graph-Find.test', ->
             query_Articles.assert_Contains(articles.first())
             done()
 
+  it 'find_Library', (done)->
+    using graph_Find, ->
+      @.find_Library (library_Data)=>
+        library_Data.title.assert_Is_String()
+        library_Data.id   .assert_Is_String()
+        library_Data.is   .assert_Is ['Library', 'Query']
+        library_Data['contains-query'].assert_Not_Empty()
+        done()
+
   it 'find_Queries, find_Query_Parent_Queries, find_Query_Queries', (done)->
     using graph_Find, ->
       @.find_Queries (queries)=>
