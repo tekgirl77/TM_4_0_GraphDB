@@ -1,6 +1,6 @@
 require 'fluentnode'
 GraphDB_API          = require '../../src/api/GraphDB-API'
-Import_Service       = require '../services/data/Import-Service'
+#Import_Service       = require '../services/data/Import-Service'
 Swagger_GraphDB      = require './base-classes/Swagger-GraphDB'
 Article              = require '../graph/Article'
 
@@ -14,33 +14,32 @@ class Data_API extends Swagger_GraphDB
   article: (req,res)=>
     ref        = req.params.ref
     cache_Key = "article_#{ref}.json"
-    @open_Import_Service res, cache_Key, (import_Service)=>
+    @.open_Import_Service res, cache_Key, (import_Service)=>
       import_Service.graph_Find.find_Article ref, (article_Id)=>
         data = { article_Id: article_Id}
         @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
   articles: (req,res)=>
     cache_Key = 'articles.json'
-    @open_Import_Service res, cache_Key, (import_Service)=>
-      import_Service.graph_Find.find_Using_Is 'Article', (articles_Ids)=>
-        import_Service.graph_Find.get_Subjects_Data articles_Ids, (data)=>
-          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+    @.using_graph_Find res, cache_Key, (send)->
+      @.find_Using_Is 'Article', (articles_Ids)=>
+        @.get_Subjects_Data articles_Ids, send
 
   article_Html: (req,res)=>
     id        = req.params.id
     cache_Key = "article_Html_#{id}.json"
-    @open_Import_Service res, cache_Key, (import_Service)=>
-      new Article(import_Service).html id, (html)=>
+
+    @.using_Import_Service res, cache_Key, (send)->
+      new Article(@).html id, (html)->
         data = { html: html }
-        @close_Import_Service_and_Send import_Service, res, data, cache_Key
+        send data
 
   articles_parent_queries: (req,res)=>
     id        = req.params.id
     cache_Key = "articles_parent_queries_#{id}.json"
-    @open_Import_Service res, cache_Key, (import_Service)=>
+    @.using_Import_Service res, cache_Key, (send)->
       query_Ids = id.split(',')
-      import_Service.queries.map_Articles_Parent_Queries query_Ids, (data)=>
-        @close_Import_Service_and_Send import_Service, res, data, cache_Key
+      @.queries.map_Articles_Parent_Queries query_Ids, send
 
   articles_queries: (req,res)=>
     id        = req.params.id
@@ -67,14 +66,8 @@ class Data_API extends Swagger_GraphDB
   queries: (req,res)=>
     cache_Key = "queries.json"
     @open_Import_Service res, cache_Key, (import_Service)=>
-      #db = import_Service.graph.db
-      #searchTerms = (v)->[{ subject: v('id') , predicate: 'is'     , object: 'Query'   }
-      #                    { subject: v('id') , predicate: 'title'  , object: v('title')}]
-      #db.search searchTerms(db.v), (error, data)=>
       import_Service.graph_Find.find_Queries (data)=>
         @close_Import_Service_and_Send import_Service, res, data, cache_Key
-
-      #@._send_Search searchTerms, res,key
 
   query_articles: (req,res)=>
     id        = req.params.id
@@ -133,10 +126,7 @@ class Data_API extends Swagger_GraphDB
         @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
 
-
-
   add_Methods: ()=>
-
     @add_Get_Method 'article'                 , ['ref']
     @add_Get_Method 'articles'                , [     ]
     @add_Get_Method 'article_Html'            , ['id' ]
@@ -153,7 +143,6 @@ class Data_API extends Swagger_GraphDB
     @add_Get_Method 'query_tree'              , ['id' ]
     @add_Get_Method 'query_tree_filtered'     , ['id','filters' ]
     @add_Get_Method 'root_queries'            , [     ]
-
     @
 
 
