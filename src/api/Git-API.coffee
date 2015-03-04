@@ -14,9 +14,6 @@ class Git_API
             log   : { name: 'log'    , params: ['log', '--graph', '--pretty=oneline', '-15']}
             pull  : { name: 'pull'   , params: ['pull', 'origin']}
 
-    #git_Exec: (command)=>
-    #  git_Exec_Method
-
     git_Exec_Method : (command)=>
       (req,res)=>
           result = ''

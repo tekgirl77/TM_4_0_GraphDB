@@ -10,7 +10,7 @@ class Convert_API extends Swagger_GraphDB
 
     to_ids: (req,res)=>
       values = req.params.values              #cache_Key = "to_ids_#{values}.json"
-      @.using_graph_Find res, null, (send)->
+      @.using_Graph_Find res, null, (send)->
         @.convert_To_Ids values, send
 
     wikitext_to_html:(req,res)=>

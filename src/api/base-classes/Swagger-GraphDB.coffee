@@ -1,6 +1,7 @@
 Cache_Service   = require('teammentor').Cache_Service
 Swagger_Common  = require './Swagger-Common'
 Import_Service  = require '../../services/data/Import-Service'
+Search_Service  = require '../../services/data/Search-Service'
 
 class Swagger_GraphDB extends Swagger_Common
 
@@ -32,9 +33,19 @@ class Swagger_GraphDB extends Swagger_Common
       callback.call import_Service, (data)=>
         @.close_Import_Service_and_Send import_Service, res,data, key
 
-  using_graph_Find: (res, key, callback)=>
+  using_Graph: (res, key, callback)=>
+    @.using_Import_Service res, key, (send)->
+      callback.call @.graph, send
+
+  using_Graph_Find: (res, key, callback)=>
     @.using_Import_Service res, key, (send)->
       callback.call @.graph_Find, send
+
+  using_Search_Service: (res, key, callback)=>
+    @.using_Import_Service res, key, (send)->
+      search_Service = new Search_Service( importService: @ )
+      callback.call search_Service, send
+
 
 
 module.exports = Swagger_GraphDB

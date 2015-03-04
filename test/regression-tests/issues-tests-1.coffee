@@ -7,9 +7,6 @@ describe '| regression-tests | tests-1',->
   before (done)->
     using new Import_Service('tm-uno'), ->
       importService  = @
-      #graph_Find     = @.graph_Find
-      #query_Mappings = @.query_Mappings
-      #query_Tree     = @.query_Tree
       @.content.load_Data =>
         importService.graph.openDb =>
           @.graph_Find.find_Library (data)=>
@@ -21,7 +18,7 @@ describe '| regression-tests | tests-1',->
       done()
 
   it 'Issue xxx - weird bug in query-tree', (done)->
-    log library_Data
+    #log library_Data
     #log root_Queries
     #query_Id = root_Queries.first().id
     #log query_Id

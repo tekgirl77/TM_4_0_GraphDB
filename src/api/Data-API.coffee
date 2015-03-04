@@ -19,7 +19,7 @@ class Data_API extends Swagger_GraphDB
 
   articles: (req,res)=>
     cache_Key = 'articles.json'
-    @.using_graph_Find res, cache_Key, (send)->
+    @.using_Graph_Find res, cache_Key, (send)->
       @.find_Using_Is 'Article', (articles_Ids)=>
         @.get_Subjects_Data articles_Ids, send
 

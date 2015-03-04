@@ -4,71 +4,69 @@ Search_API       = require '../../src/api/Search-API'
 
 describe '| api | Search-API.test', ->
 
-  describe '| via web api',->
+  tmServer       = null
+  swaggerService = null
+  clientApi      = null
+  searchApi      = null
 
-      tmServer       = null
-      swaggerService = null
-      clientApi      = null
-      searchApi      = null
+  before (done)->
+    tmServer  = new TM_Server({ port : 12345})
+    options = { app: tmServer.app ,  port : tmServer.port}
+    swaggerService = new Swagger_Service options
+    swaggerService.set_Defaults()
+    #swaggerService.setup()
 
-      before (done)->
-        searchApi = new Search_API()
-        tmServer  = new TM_Server({ port : 12345})
-        options = { app: tmServer.app ,  port : tmServer.port}
-        swaggerService = new Swagger_Service options
-        swaggerService.set_Defaults()
-        #swaggerService.setup()
+    searchApi = new Search_API({swaggerService: swaggerService}).add_Methods()
+    swaggerService.swagger_Setup()
+    tmServer.start()
 
-        new Search_API({swaggerService: swaggerService}).add_Methods()
-        swaggerService.swagger_Setup()
-        tmServer.start()
+    swaggerService.get_Client_Api 'search', (swaggerApi)->
+      clientApi = swaggerApi
+      done()
 
-        swaggerService.get_Client_Api 'search', (swaggerApi)->
-            clientApi = swaggerApi
-            done()
+  after (done)->
+    tmServer.stop ->
+      done()
 
-      after (done)->
-        tmServer.stop ->
-          done()
+  it 'constructor', ->
+    searchApi.assert_Is_Object()
+    searchApi.options.area.assert_Is 'search'
 
-      it 'constructor', ->
-        Search_API.assert_Is_Function()
+  it 'check search section exists', (done)->
+    swaggerService.url_Api_Docs.GET_Json (docs)->
+      api_Paths = (api.path for api in docs.apis)
+      api_Paths.assert_Contains('/search')
 
-      it 'check search section exists', (done)->
-        swaggerService.url_Api_Docs.GET_Json (docs)->
-          api_Paths = (api.path for api in docs.apis)
-          api_Paths.assert_Contains('/search')
+      swaggerService.url_Api_Docs.append("/search").GET_Json (data)->
+        data.apiVersion    .assert_Is('1.0.0')
+        data.swaggerVersion.assert_Is('1.2')
+        data.resourcePath  .assert_Is('/search')
+        clientApi.assert_Is_Object()
+        done()
 
-          swaggerService.url_Api_Docs.append("/search").GET_Json (data)->
-            data.apiVersion    .assert_Is('1.0.0')
-            data.swaggerVersion.assert_Is('1.2')
-            data.resourcePath  .assert_Is('/search')
-            clientApi.assert_Is_Object()
-            done()
+  it 'article_titles', (done)->
+    clientApi.article_titles (data)->
+      title = data.obj.assert_Not_Empty().first()
+      title.id.assert_Contains('article-')
+      title.title.assert_Is_String()
+      done()
 
+  it 'article_summaries', (done)->
+    clientApi.article_summaries (data)->
+      summary = data.obj.assert_Not_Empty().first()
+      summary.id.assert_Contains('article-')
+      summary.summary.assert_Is_String()
+      done()
 
-      it 'article_titles', (done)->
-        clientApi.article_titles (data)->
-          data.obj.assert_Not_Empty()
-          done()
+  it 'query_titles', (done)->
+    clientApi.query_titles (data)->
+      title = data.obj.assert_Not_Empty().first()
+      title.id.assert_Contains('query-')
+      title.title.assert_Is_String()
+      done()
 
-      it 'article_summaries', (done)->
-        clientApi.article_summaries (data)->
-          data.obj.assert_Not_Empty()
-          done()
-
-      it 'query_titles', (done)->
-        clientApi.query_titles (data)->
-          data.obj.assert_Not_Empty()
-          done()
-
-      it 'search_using_text', (done)->
-        text = 'access'
-        clientApi.search_using_text { text: text}, (data)->
-          data.obj.assert_Not_Empty()
-          done()
-      #it 'using_text', (done)->
-      #  params = {text:'some text'}
-      #  clientApi.using_text params, (data)->
-      #    log data.obj
-      #    done()
+  it 'query_from_text_search', (done)->
+    text = 'access'
+    clientApi.query_from_text_search { text: text}, (data)->
+      data.obj.assert_Is "search-#{text}"
+      done()

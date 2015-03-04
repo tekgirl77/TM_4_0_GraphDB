@@ -24,10 +24,6 @@ class Search_Service
                              .solutions (err,data) ->
                                 callback data
 
-
-    #results = ['an titlaaaae 123']
-    #callback results
-
   search_Using_Text: (text, callback)=>
     text = text.lower()
     @.article_Titles (article_Titles)=>
@@ -41,21 +37,6 @@ class Search_Service
             results.push {id: article_Summary.id, text: article_Summary.summary, source: 'summary'}
 
         callback results
-
-  #query_Tree_From_Text: (text,callback)=>
-  #  @using_Text text, (results)=>
-  #    article_Ids = (result.id for result in results)
-  #    log article_Ids
-  #    @.importService.get_Queries_Mappings (queries_Mappings)=>
-  #      query_key = "search-#{text}"
-  #      new_Query =
-  #        title   : text
-  #        id      : query_key
-  #        queries : []
-  #        articles: article_Ids
-  #      queries_Mappings[query_key] = new_Query
-  #      @.importService.get_Query_Tree query_key, (query_Tree)=>
-  #        callback(query_Tree)
 
   query_Id_From_Text: (text)=>
     "search-#{text.trim().to_Safe_String()}"
