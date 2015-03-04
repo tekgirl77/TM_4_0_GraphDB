@@ -36,6 +36,9 @@ class Library_Import_Service
 
 
   parse_Library_Json: (json,callback)=>
+    if not json
+      return callback null
+
     library =
       id      : null
       name    : null

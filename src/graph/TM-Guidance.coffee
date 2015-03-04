@@ -112,7 +112,6 @@ class TM_Guidance
       @.importService.graph_Add_Data.add_Is library_Id, 'Library', ->
         next(library_Id)
 
-
   load_Data: (callback)=>
     @.setupDb =>
       @.importService.library_Import.library (library)=>
@@ -125,5 +124,10 @@ class TM_Guidance
                     @.importService.graph.openDb =>
                       "[tm-uno] finished loading data".log()
                       callback()
+
+  reload_Data: (skip_If_Exists, callback)=>
+    if skip_If_Exists and @.importService.graph.dbPath.folder_Exists()
+      return callback()
+    @.load_Data callback
 
 module.exports = TM_Guidance

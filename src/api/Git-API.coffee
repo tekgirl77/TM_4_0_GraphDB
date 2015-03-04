@@ -14,17 +14,23 @@ class Git_API
             log   : { name: 'log'    , params: ['log', '--graph', '--pretty=oneline', '-15']}
             pull  : { name: 'pull'   , params: ['pull', 'origin']}
 
-    git_Exec: (command)=>
-      git_Exec_Method
+    #git_Exec: (command)=>
+    #  git_Exec_Method
 
     git_Exec_Method : (command)=>
-        (req,res)=>
-            result = ''
-            options = { cwd : __dirname}
-            using child_process.spawn('git', command.params),->
-                @.stdout.on 'data', (data)-> result += data.str()
-                @.stderr.on 'data', (data)-> result += data.str()
-                @.on 'exit'       , (    )-> res.send JSON.stringify(result)
+      (req,res)=>
+          result = ''
+          options = { cwd : __dirname}
+          using child_process.spawn('git', command.params),->
+              @.stdout.on 'data', (data)->
+                result += data.str()
+              @.stderr.on 'data', (data)->
+                result += data.str()
+              @.on 'exit'       , ()->
+                res.send JSON.stringify(result)
+              @.on 'error'       , (err)->
+                log err
+                res.send JSON.stringify(result)
 
     add_Git_Command: (command)=>
       get_Command =

@@ -1,6 +1,6 @@
 Import_Service = require('./../../src/services/data/Import-Service')
 
-describe '| _issues | to-fix',->
+describe '| regression-tests | tests-1',->
   importService  = null
   library_Data   = null
 

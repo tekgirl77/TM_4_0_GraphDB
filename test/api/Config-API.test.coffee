@@ -59,7 +59,7 @@ describe '| api | Config-API.test', ->
           done()
 
       it 'load_Library_Data', (done)->
-        @.timeout(0)
+        @.timeout(60000)
         clientApi.load_Library_Data (data)->
           data.obj.assert_Is_String()
           done()
@@ -73,6 +73,7 @@ describe '| api | Config-API.test', ->
 
       it 'reload', (done)->
         @timeout 10000
+
         clientApi.reload (data)->
           data.obj.assert_Is('data reloaded')
           done()

@@ -113,7 +113,7 @@ describe '| services | graph | Graph-Find.test', ->
           done()
 
     it 'find_Article_By_Title (dashed title)', (done)->
-      title = article_Data.title.replace(/ /g,'-')
+      title = article_Data.title.replace(/\s/g ,'-')
       using graph_Find, ->
         @.find_Article_By_Title title, (article_Data)->
           article_Data.assert_Is article_Id

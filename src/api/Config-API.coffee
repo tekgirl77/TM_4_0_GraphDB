@@ -12,6 +12,7 @@ class Config_API
       @.configService  = new Config_Service()
       @.contentService = new Content_Service()
       @.cache          = new Cache_Service("data_cache")
+      @.tmGuidance     = new TM_Guidance { importService : new Import_Service('tm-uno') }
 
     add_Get_Method: (name)=>
       get_Command =
@@ -36,13 +37,10 @@ class Config_API
         @.contentService.json_Files (data)->
           res.send data.json_pretty()
 
-
     reload: (req,res)=>
-      options = { importService : new Import_Service('tm-uno') }
-      tmGuidance  = new TM_Guidance options
-      tmGuidance.load_Data ()=>
+      @.tmGuidance.reload_Data true, ()=>
         data = "data reloaded"
-        options.importService.graph.closeDb ->
+        @.tmGuidance.importService.graph.closeDb ->
           res.send data.json_pretty()
 
     delete_data_cache: (req,res)=>
