@@ -12,14 +12,13 @@ describe '| api | Config-API.test', ->
       configApi      = null
 
       before (done)->
-        configApi = new Config_API()
         tmServer  = new TM_Server({ port : 12345 + 1000.random()})
         options = { app: tmServer.app ,  port : tmServer.port}
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()
-        #swaggerService.setup()
 
-        new Config_API({swaggerService: swaggerService}).add_Methods()
+        configApi = new Config_API({swaggerService: swaggerService}).add_Methods()
+
         swaggerService.swagger_Setup()
         tmServer.start()
 
@@ -48,7 +47,6 @@ describe '| api | Config-API.test', ->
             clientApi.contents.assert_Is_Function()
             done()
 
-
       it 'file', (done)->
         clientApi.file (data)->
           data.obj.assert_Is configApi.configService.config_File_Path()
@@ -56,11 +54,11 @@ describe '| api | Config-API.test', ->
 
       it 'contents', (done)->
         clientApi.contents (data)->
-          data.obj.assert_Is_Object() #configApi.configService.config_File_Path().file_Contents()
+          data.obj.assert_Is_Object()
           done()
 
       it 'load_Library_Data', (done)->
-        @.timeout(0)
+        @.timeout(60000)
         clientApi.load_Library_Data (data)->
           data.obj.assert_Is_String()
           done()
@@ -69,11 +67,24 @@ describe '| api | Config-API.test', ->
         @.timeout(20000)
         clientApi.convert_Xml_To_Json (data)->
           data.obj.assert_Size_Is_Bigger_Than(10)
-          #log data.obj
           done()
 
       it 'reload', (done)->
         @timeout 10000
         clientApi.reload (data)->
-          data.obj.assert_Is('data reloaded')
+          #data.obj.assert_Is('data reloaded')
           done()
+
+      it 'delete_data_cache', (done)->
+        tmp_Cache_Root = '.tmp_Cache_Folder'
+        using configApi.cache, ->
+          @._cacheFolder = tmp_Cache_Root
+          @.cacheFolder().folder_Create().assert_Folder_Exists()
+          @.cacheFolder().path_Combine('test_file.txt').file_Create('aaaa')
+          @.cacheFolder().files().assert_Not_Empty()
+          clientApi.delete_data_cache (data)=>
+            @.cacheFolder().files().assert_Empty()
+            data.obj.assert_Is "deleted all files from folder #{@.cacheFolder()}"
+            tmp_Cache_Root.folder_Delete_Recursive()
+            tmp_Cache_Root.assert_Folder_Not_Exists()
+            done()

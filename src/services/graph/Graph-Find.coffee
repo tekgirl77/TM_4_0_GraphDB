@@ -133,6 +133,16 @@ class Graph_Find
                             .solutions (err,data) ->
                               callback (item.article for item in data)
 
+  find_Library: (callback)=>
+    @graph.db.nav('Library').archIn('is').as('id')
+                       .solutions (err,data) =>
+                          query_Id = data?.first()?.id
+                          if not query_Id
+                            return callback {}
+                          @get_Subject_Data query_Id, (data)=>
+                            callback data
+
+
   find_Queries: (callback)=>
     if @graph.db is null
       callback null

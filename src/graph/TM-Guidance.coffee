@@ -22,8 +22,6 @@ class TM_Guidance
           @.library = data
           callback()
 
-
-
   create_Metadata_Global_Nodes: (next)=>
     @.metadata_Queries  = {}
     importUtil = @.importService.graph_Add_Data.new_Data_Import_Util()
@@ -109,11 +107,16 @@ class TM_Guidance
     foldersToAdd = ({guid: folder.id, title: folder.name, parent:parent, views:folder.views} for folder in folders).take(take)
     async.each foldersToAdd, @.import_Folder, -> next()
 
-  load_Data : (callback)=>
+  import_Library: (guid, title, next)=>
+    @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', guid, title, (library_Id)=>
+      @.importService.graph_Add_Data.add_Is library_Id, 'Library', ->
+        next(library_Id)
+
+  load_Data: (callback)=>
     @.setupDb =>
       @.importService.library_Import.library (library)=>
         @.create_Metadata_Global_Nodes =>
-          @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
+          @.import_Library library.id, library.name, (library_Id)=>
             #@.import_Articles library_Id, library.articles, =>
               @.import_Folders library_Id, library.folders, =>
                 @.import_Views library_Id, library.views, =>
@@ -121,5 +124,10 @@ class TM_Guidance
                     @.importService.graph.openDb =>
                       "[tm-uno] finished loading data".log()
                       callback()
+
+  reload_Data: (skip_If_Exists, callback)=>
+    if skip_If_Exists and @.importService.graph.dbPath.folder_Exists()
+      return callback()
+    @.load_Data callback
 
 module.exports = TM_Guidance
