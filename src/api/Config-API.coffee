@@ -1,11 +1,13 @@
-require 'fluentnode'
+Swagger_Common  = require './base-classes/Swagger-Common'
 Config_Service  = require '../services/utils/Config-Service'
 Content_Service = require '../services/import/Content-Service'
 Import_Service  = require '../services/data/Import-Service'
 TM_Guidance     = require '../graph/TM-Guidance'
 Cache_Service   = require('teammentor').Cache_Service
 
-class Config_API
+
+class Config_API extends Swagger_Common
+
     constructor: (options)->
       @.options        = options || {}
       @.swaggerService = @options.swaggerService
@@ -13,13 +15,8 @@ class Config_API
       @.contentService = new Content_Service()
       @.cache          = new Cache_Service("data_cache")
       @.tmGuidance     = new TM_Guidance { importService : new Import_Service('tm-uno') }
-
-    add_Get_Method: (name)=>
-      get_Command =
-            spec   : { path : "/config/#{name}/", nickname : name}
-            action : (req,res)=> @[name](req, res)
-
-      @.swaggerService.addGet(get_Command)
+      @.options.area   = 'config'
+      super(options)
 
     file: (req,res)=>
       res.send @configService.config_File_Path().json_pretty()
@@ -39,8 +36,8 @@ class Config_API
 
     reload: (req,res)=>
       @.tmGuidance.reload_Data true, ()=>
-        data = "data reloaded"
         @.tmGuidance.importService.graph.closeDb ->
+          data = "data reloaded"
           res.send data.json_pretty()
 
     delete_data_cache: (req,res)=>
@@ -50,12 +47,12 @@ class Config_API
       res.send result.json_pretty()
 
     add_Methods: ()=>
-      @add_Get_Method 'file'
-      @add_Get_Method 'contents'
-      @add_Get_Method 'load_Library_Data'
-      @add_Get_Method 'convert_Xml_To_Json'
-      @add_Get_Method 'reload'
-      @add_Get_Method 'delete_data_cache'
+      @.add_Get_Method 'file'
+      @.add_Get_Method 'contents'
+      @.add_Get_Method 'load_Library_Data'
+      @.add_Get_Method 'convert_Xml_To_Json'
+      @.add_Get_Method 'reload'
+      @.add_Get_Method 'delete_data_cache'
       @
 
 module.exports = Config_API

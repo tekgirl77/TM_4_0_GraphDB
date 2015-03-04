@@ -1,6 +1,4 @@
-require 'fluentnode'
 GraphDB_API          = require '../../src/api/GraphDB-API'
-#Import_Service       = require '../services/data/Import-Service'
 Swagger_GraphDB      = require './base-classes/Swagger-GraphDB'
 Article              = require '../graph/Article'
 

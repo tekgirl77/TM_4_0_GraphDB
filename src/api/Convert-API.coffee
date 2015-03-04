@@ -1,42 +1,17 @@
-require 'fluentnode'
-Import_Service        = require '../services/data/Import-Service'
+Swagger_GraphDB      = require './base-classes/Swagger-GraphDB'
 Wiki_Service          = require '../services/render/Wiki-Service'
 Markdown_Service      = require '../services/render/Markdown-Service'
-swagger_node_express  = require 'swagger-node-express'
-paramTypes            = swagger_node_express.paramTypes
-errors                = swagger_node_express.errors
 
-class Convert_API
+class Convert_API extends Swagger_GraphDB
     constructor: (options)->
-      @.options        = options || {}
-      @.swaggerService = @options.swaggerService
-      @.importService   = new Import_Service('tm-uno')
-
-    add_Get_Method: (name, params)=>
-      get_Command =
-            spec       : { path : "/convert/#{name}", nickname : name, parameters : []}
-            action     : (req,res)=> @[name](req, res)
-
-      for param in params
-        get_Command.spec.path += "/{#{param}}"
-        get_Command.spec.parameters.push(paramTypes.path(param, 'method parameter', 'string'))
-      @.swaggerService.addGet(get_Command)
-
-    _open_DB: (callback)=>
-      @.importService.graph.openDb =>
-        @.db = @.importService.graph.db
-        callback()
-
-    _close_DB_and_Send: (res, data)=>
-      @.importService.graph.closeDb =>
-        @.db = null
-        res.send data.json_pretty()
+      @.options      = options || {}
+      @.options.area = 'convert'
+      super(@.options)
 
     to_ids: (req,res)=>
-      values = req.params.values
-      @_open_DB =>
-        @.importService.graph_Find.convert_To_Ids values, (result)=>
-          @_close_DB_and_Send res, result
+      values = req.params.values              #cache_Key = "to_ids_#{values}.json"
+      @.using_graph_Find res, null, (send)->
+        @.convert_To_Ids values, send
 
     wikitext_to_html:(req,res)=>
       wikitext = req.params.wikitext
@@ -49,8 +24,9 @@ class Convert_API
         res.send { markdown: markdown, html : html, tokens:tokens}
 
     add_Methods: ()=>
-      @add_Get_Method 'to_ids'          , ['values']
-      @add_Get_Method 'wikitext_to_html', ['wikitext']
-      @add_Get_Method 'markdown_to_html', ['markdown']
+      @.add_Get_Method 'to_ids'          , ['values']
+      @.add_Get_Method 'wikitext_to_html', ['wikitext']
+      @.add_Get_Method 'markdown_to_html', ['markdown']
+      @
 
 module.exports = Convert_API

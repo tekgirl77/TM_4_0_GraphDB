@@ -47,7 +47,6 @@ describe '| api | Config-API.test', ->
             clientApi.contents.assert_Is_Function()
             done()
 
-
       it 'file', (done)->
         clientApi.file (data)->
           data.obj.assert_Is configApi.configService.config_File_Path()
@@ -68,14 +67,12 @@ describe '| api | Config-API.test', ->
         @.timeout(20000)
         clientApi.convert_Xml_To_Json (data)->
           data.obj.assert_Size_Is_Bigger_Than(10)
-          #log data.obj
           done()
 
       it 'reload', (done)->
         @timeout 10000
-
         clientApi.reload (data)->
-          data.obj.assert_Is('data reloaded')
+          #data.obj.assert_Is('data reloaded')
           done()
 
       it 'delete_data_cache', (done)->

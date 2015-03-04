@@ -9,17 +9,15 @@ describe '| api | Convert-API.test', ->
       tmServer       = null
       swaggerService = null
       clientApi      = null
-      contentApi     = null
+      convertApi     = null
 
       before (done)->
-        contentApi = new Convert_API()
         tmServer  = new TM_Server({ port : 12345})
         options = { app: tmServer.app ,  port : tmServer.port}
-        swaggerService = new Swagger_Service options
+        swaggerService = new Swagger_Service(options)
         swaggerService.set_Defaults()
-        #swaggerService.setup()
 
-        new Convert_API({swaggerService: swaggerService}).add_Methods()
+        convertApi = new Convert_API({swaggerService: swaggerService}).add_Methods()
         swaggerService.swagger_Setup()
         tmServer.start()
 
@@ -32,7 +30,10 @@ describe '| api | Convert-API.test', ->
           done()
 
       it 'constructor', ->
-        Convert_API.assert_Is_Function()
+        convertApi.assert_Is_Object()
+        convertApi.swaggerService.assert_Is swaggerService
+        convertApi.options.area.assert_Is 'convert'
+
 
       it 'check convert section exists', (done)->
         swaggerService.url_Api_Docs.GET_Json (docs)->
@@ -46,7 +47,6 @@ describe '| api | Convert-API.test', ->
             clientApi.assert_Is_Object()
             done()
 
-
       it 'to_ids (bad data)', (done)->
 
         check = (send, expect, next)->
@@ -57,7 +57,6 @@ describe '| api | Convert-API.test', ->
         check 'abcdefg' , { abcdefg : { } }, ->
           check 'abcdefg , 123456 ' , { abcdefg: {} , 123456: {} }, ->
             done()
-
 
       it 'to_Ids (one value)', (done)->
         values = 'Technology'
