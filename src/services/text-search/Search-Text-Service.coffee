@@ -24,9 +24,15 @@ class Search_Text_Service
 
     callback {}
 
+  word_Data: (word, callback)=>
+    @.search_Mappings (mappings)->
+      callback mappings[word]
+
   words_List: (callback)=>
-    @.search_Mappings (data)->
-      words_List = (word for word of data.words)
+    @.search_Mappings (mappings)->
+      words_List = (word for word of mappings)
       callback words_List
+
+
 
 module.exports = Search_Text_Service

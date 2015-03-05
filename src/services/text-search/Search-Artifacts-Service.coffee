@@ -100,17 +100,14 @@ class Search_Artifacts_Service
 
   create_Search_Mappings: (callback)=>
     @.raw_Articles_Html (articles_Data)=>
-      search_Mappings =
-        words: {}
+      search_Mappings = {}
       for article_Data in articles_Data #.take(10)
         for word,where of article_Data.words
-          if search_Mappings.words[word] is undefined or typeof search_Mappings.words[word] is 'function'
-            search_Mappings.words[word] = []
-            #search_Mappings.words[word].where = search_Mappings.words[word].where.concat where
-          search_Mappings.words[word].push articles: [ { id: article_Data.id, where: where.unique()}]
+          if search_Mappings[word] is undefined or typeof search_Mappings[word] is 'function'
+            search_Mappings[word] = []
+          search_Mappings[word].push articles: [ { id: article_Data.id, where: where.unique()}]
 
       @.cache_Search.put 'search_mappings.json', search_Mappings
-      log search_Mappings.words
       callback()
 
 module.exports = Search_Artifacts_Service
