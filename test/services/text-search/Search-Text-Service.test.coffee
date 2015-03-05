@@ -16,7 +16,7 @@ describe '| services | text-search | Search-Text-Service.test', ->
   it 'word_Data', (done)->
     search_Text.word_Data 'injection', (results)->
       results.assert_Not_Empty()
-      log results.first()
+      log results.first().json_Pretty()
       done()
 
   it 'words_List ', (done)->

@@ -37,7 +37,8 @@ class Search_Artifacts_Service
       @.parse_Article_Html article_Id, (data)=>
         #log "Parsed html for #{article_Id}"
         @.cache.put key, data
-        callback data, true
+        process.nextTick ->
+          callback data, true
 
   parse_Articles: (article_Ids, callback)=>
     results = []
@@ -61,7 +62,7 @@ class Search_Artifacts_Service
           words    : {}
           tags     : {}
           links    : []
-    @.article.html article_Id, (html)->
+    @.article.html article_Id, (html)=>
       data.html     = html
       data.checksum = checksum(html,'sha1')
 
@@ -84,7 +85,16 @@ class Search_Artifacts_Service
             if data.words[word] is undefined or typeof data.words[word] is 'function' # need to do this in order to avoid confict with js build in methods (like constructor)
               data.words[word] = []
             data.words[word].push(tagName)
-      callback data
+
+      @.article.raw_Data article_Id, (raw_Data)->
+        title = raw_Data.TeamMentor_Article.Metadata[0].Title.first()
+        for word in title.split(' ')
+          word = word.trim().lower().replace(/[,\.;\:\n\(\)\[\]<>]/,'')
+          if word isnt ''
+            if data.words[word] is undefined or typeof data.words[word] is 'function'
+              data.words[word] = []
+            data.words[word].push('title')
+        callback data
 
   raw_Articles_Html: (callback)=>
     "in raw_Articles_Html".log()
@@ -96,11 +106,18 @@ class Search_Artifacts_Service
     else
       "no key so calculating them all".log()
       raw_Articles_Html = []
+      log '------'
+      log @.cache.cacheFolder()
+      log @.cache.cacheFolder().files()
       for file in @.cache.cacheFolder().files() #.take(10)
         log file
         raw_Articles_Html.push file.load_Json()
         log raw_Articles_Html.size()
-      @.cache_Search.put key, raw_Articles_Html
+      log '-------- raw_Articles_Html'
+      log raw_Articles_Html
+      log '----------------------'
+      if raw_Articles_Html.not_Empty()
+        @.cache_Search.put key, raw_Articles_Html,
       callback raw_Articles_Html
 
   create_Search_Mappings: (callback)=>
