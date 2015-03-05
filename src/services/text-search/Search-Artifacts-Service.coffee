@@ -124,7 +124,7 @@ class Search_Artifacts_Service
         for word,where of article_Data.words
           if search_Mappings[word] is undefined or typeof search_Mappings[word] is 'function'
             search_Mappings[word] = {}
-          search_Mappings[word][article_Data.id] =  where : where.unique()
+          search_Mappings[word][article_Data.id] =  where : where #.unique()
       if search_Mappings isnt {}
         @.cache_Search.put 'search_mappings.json', search_Mappings
       callback()

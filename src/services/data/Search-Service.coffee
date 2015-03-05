@@ -1,4 +1,5 @@
 Import_Service        = require './Import-Service'
+Search_Text_Service   = require '../text-search/Search-Text-Service'
 
 class Search_Service
 
@@ -26,17 +27,20 @@ class Search_Service
 
   search_Using_Text: (text, callback)=>
     text = text.lower()
-    @.article_Titles (article_Titles)=>
-      @.article_Summaries (article_Summaries)=>
-        results = []
-        for article_Title in article_Titles
-          if article_Title.title.lower().contains text.lower()
-            results.push {id: article_Title.id, text: article_Title.title,  source: 'title'}
-        for article_Summary in article_Summaries
-          if article_Summary.summary.lower().contains text.lower()
-            results.push {id: article_Summary.id, text: article_Summary.summary, source: 'summary'}
+    new Search_Text_Service().word_Score text, (results)->
+      callback results
 
-        callback results
+    #return
+    #@.article_Titles (article_Titles)=>
+    #  @.article_Summaries (article_Summaries)=>
+    #    results = []
+    #    for article_Title in article_Titles
+    #      if article_Title.title.lower().contains text.lower()
+    #        results.push {id: article_Title.id, text: article_Title.title,  source: 'title'}
+    #    for article_Summary in article_Summaries
+    #      if article_Summary.summary.lower().contains text.lower()
+    #        results.push {id: article_Summary.id, text: article_Summary.summary, source: 'summary'}
+    #    callback results
 
   query_Id_From_Text: (text)=>
     "search-#{text.trim().to_Safe_String()}"

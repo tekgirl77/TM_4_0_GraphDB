@@ -70,3 +70,9 @@ describe '| api | Search-API.test', ->
     clientApi.query_from_text_search { text: text}, (data)->
       data.obj.assert_Is "search-#{text}"
       done()
+
+  it 'word_score', (done)->
+    word = 'injection'
+    clientApi.word_score { word: word}, (data)->
+      #log data.obj
+      done()
