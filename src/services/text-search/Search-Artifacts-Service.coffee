@@ -113,9 +113,6 @@ class Search_Artifacts_Service
         log file
         raw_Articles_Html.push file.load_Json()
         log raw_Articles_Html.size()
-      log '-------- raw_Articles_Html'
-      log raw_Articles_Html
-      log '----------------------'
       if raw_Articles_Html.not_Empty()
         @.cache_Search.put key, raw_Articles_Html,
       callback raw_Articles_Html
@@ -126,10 +123,10 @@ class Search_Artifacts_Service
       for article_Data in articles_Data #.take(10)
         for word,where of article_Data.words
           if search_Mappings[word] is undefined or typeof search_Mappings[word] is 'function'
-            search_Mappings[word] = []
-          search_Mappings[word].push articles: [ { id: article_Data.id, where: where.unique()}]
-
-      @.cache_Search.put 'search_mappings.json', search_Mappings
+            search_Mappings[word] = {}
+          search_Mappings[word][article_Data.id] =  where : where.unique()
+      if search_Mappings isnt {}
+        @.cache_Search.put 'search_mappings.json', search_Mappings
       callback()
 
 module.exports = Search_Artifacts_Service

@@ -1,6 +1,6 @@
 Search_Text_Service = require './../../../src/services/text-search/Search-Text-Service'
 
-describe '| services | text-search | Search-Text-Service.test', ->
+describe.only '| services | text-search | Search-Text-Service.test', ->
 
   search_Text = null
 
@@ -15,9 +15,11 @@ describe '| services | text-search | Search-Text-Service.test', ->
 
   it 'word_Data', (done)->
     search_Text.word_Data 'injection', (results)->
-      results.assert_Not_Empty()
-      log results.first().json_Pretty()
+      log results.keys().assert_Not_Empty()
       done()
+
+  it 'word_Score', (done)->
+    done()
 
   it 'words_List ', (done)->
     search_Text.words_List (words)->
