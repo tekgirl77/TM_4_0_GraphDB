@@ -87,14 +87,19 @@ class Search_Artifacts_Service
       callback data
 
   raw_Articles_Html: (callback)=>
+    "in raw_Articles_Html".log()
     key = 'raw_articles_html.json'
     if @.cache_Search.has_Key key
+      "found key".log()
       data =@.cache_Search.get key
       callback data.json_Parse()
     else
+      "no key so calculating them all".log()
       raw_Articles_Html = []
       for file in @.cache.cacheFolder().files() #.take(10)
+        log file
         raw_Articles_Html.push file.load_Json()
+        log raw_Articles_Html.size()
       @.cache_Search.put key, raw_Articles_Html
       callback raw_Articles_Html
 
