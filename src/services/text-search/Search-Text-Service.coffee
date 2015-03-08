@@ -53,7 +53,8 @@ class Search_Text_Service
           result.why +="#{tag}:#{score} , "
         results.push result
 
-      results = (results.sort (a,b)-> a.score > b.score).reverse()
+      #results = results.t
+      results = (results.sort (a,b)-> a.score - b.score).reverse()
 
       callback results
 
