@@ -33,6 +33,11 @@ class Search_API extends Swagger_GraphDB
       new Search_Text_Service().word_Score word, (data)->
         res.send data.json_Pretty()
 
+    words_score: (req,res)=>
+      words = req.params?.words || ''
+      new Search_Text_Service().words_Score words, (data)->
+        res.send data.json_Pretty()
+
     add_Methods: ()=>
 
       @.add_Get_Method 'article_titles'
@@ -40,6 +45,7 @@ class Search_API extends Swagger_GraphDB
       @.add_Get_Method 'query_titles'
       @.add_Get_Method 'query_from_text_search', ['text',]
       @.add_Get_Method 'word_score', ['word']
+      @.add_Get_Method 'words_score', ['words']
       @
 
 

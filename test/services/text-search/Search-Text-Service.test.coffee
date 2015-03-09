@@ -20,7 +20,13 @@ describe '| services | text-search | Search-Text-Service.test', ->
 
   it 'word_Score', (done)->
     search_Text.word_Score 'injection', (results)->
+      results.assert_Not_Empty()
       #log results
+      done()
+
+  it 'words_Score', (done)->
+    search_Text.words_Score 'sQL   injection', (results)->
+      results.assert_Not_Empty()
       done()
 
   it 'words_List ', (done)->
