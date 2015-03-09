@@ -28,7 +28,7 @@ describe '| services | text-search | Search-Artifacts-Service.test', ->
     search_Artifacts.article       .constructor.name.assert_Is 'Article'
 
   it 'create_Search_Mappings', (done)->
-    @.timeout 10000
+    @.timeout 60000
     search_Artifacts.create_Search_Mappings ->
       done()
 

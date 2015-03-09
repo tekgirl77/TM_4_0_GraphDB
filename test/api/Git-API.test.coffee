@@ -63,11 +63,11 @@ describe '| api | Git-API.test', ->
           data.obj.assert_Is_String()
           done()
 
-      it 'remote', (done)->
-        clientApi.remote (data)->
-          data.obj.assert_Contains(':')
-          #log data.obj
-          done()
+      #it 'remote', (done)->
+      #  clientApi.remote (data)->
+      #    data.obj.assert_Contains(':')     # not a reliable way to confirm this
+      #    #log data.obj
+      #    done()
 
       it 'log', (done)->
         clientApi.head (head)->

@@ -61,11 +61,11 @@ class Search_Service
 
         article_Ids = (result.id for result in results)
 
-        articles_Nodes = [{ subject:query_Id , predicate:'is'   , object:'Query' }
-                          { subject:query_Id , predicate:'is'   , object:'Search' }
-                          { subject:query_Id , predicate:'title', object: text }
-                          { subject:query_Id , predicate:'id'   , object: query_Id }]
-
+        articles_Nodes = [{ subject:query_Id , predicate:'is'         , object:'Query' }
+                          { subject:query_Id , predicate:'is'         , object:'Search' }
+                          { subject:query_Id , predicate:'title'      , object: text }
+                          { subject:query_Id , predicate:'id'         , object: query_Id }
+                          { subject:query_Id , predicate:'search-data', object: results }]
         for article_Id in article_Ids
           articles_Nodes.push { subject:query_Id , predicate:'contains-article'  , object:article_Id }
         @graph.db.put articles_Nodes, =>

@@ -97,14 +97,12 @@ class Search_Artifacts_Service
         callback data
 
   raw_Articles_Html: (callback)=>
-    "in raw_Articles_Html".log()
     key = 'raw_articles_html.json'
     if @.cache_Search.has_Key key
-      "found key".log()
       data =@.cache_Search.get key
       callback data.json_Parse()
     else
-      "no key so calculating them all".log()
+      "no key for raw_Articles_Html, so calculating them all".log()
       raw_Articles_Html = []
       log '------'
       log @.cache.cacheFolder()
@@ -121,10 +119,13 @@ class Search_Artifacts_Service
     @.raw_Articles_Html (articles_Data)=>
       search_Mappings = {}
       for article_Data in articles_Data #.take(10)
+        #if article_Data.id is 'article-1caa0dbb89ca'
+        #  "log FOUND article-1caa0dbb89ca".log()
         for word,where of article_Data.words
           if search_Mappings[word] is undefined or typeof search_Mappings[word] is 'function'
             search_Mappings[word] = {}
           search_Mappings[word][article_Data.id] =  where : where #.unique()
+      #log search_Mappings['1']['article-1caa0dbb89ca']
       if search_Mappings isnt {}
         @.cache_Search.put 'search_mappings.json', search_Mappings
       callback()

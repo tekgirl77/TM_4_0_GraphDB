@@ -8,7 +8,7 @@ class Swagger_GraphDB extends Swagger_Common
   constructor: (options)->
     @.options       = options || {}
     @.cache         = new Cache_Service("data_cache")
-    @.cache_Enabled = false
+    @.cache_Enabled = true
     super(options)
 
   close_Import_Service_and_Send: (importService, res, data, key)=>

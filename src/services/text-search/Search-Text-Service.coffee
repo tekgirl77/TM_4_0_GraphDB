@@ -55,8 +55,6 @@ class Search_Text_Service
           result.why[tag]?=0
           result.why[tag]+=score
         results.push result
-        if results.size() > 15
-          break
 
       results = (results.sort (a,b)-> a.score - b.score).reverse()
 
@@ -83,6 +81,8 @@ class Search_Text_Service
         mapped_Scores[result.id]?={}
         mapped_Scores[result.id][word]=result
 
+    #log mapped_Scores
+
     results = []
     words_Size =  scores.keys().size()
     for id, id_Data of mapped_Scores
@@ -92,6 +92,8 @@ class Search_Text_Service
           result.score +=  word_Data.score
           result.why[word] = word_Data.why
         results.push result
+
+    #log results
 
     results = (results.sort (a,b)-> a.score - b.score).reverse()
 
