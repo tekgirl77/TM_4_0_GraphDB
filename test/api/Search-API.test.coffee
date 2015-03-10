@@ -65,6 +65,7 @@ describe '| api | Search-API.test', ->
       title.title.assert_Is_String()
       done()
 
+  # see https://github.com/TeamMentor/TM_4_0_Design/issues/521
   # doesn't work until the search data is parsed and loaded. This should be fixed in an improved version of the search cache
   #it 'query_from_text_search', (done)->
   #  text = 'access'
@@ -72,6 +73,7 @@ describe '| api | Search-API.test', ->
   #    data.obj.assert_Is "search-#{text}"
   #    done()
 
+  # see https://github.com/TeamMentor/TM_4_0_Design/issues/521
   # doesn't work until the search data is parsed and loaded. This should be fixed in an improved version of the search cache
   #it 'word_score', (done)->
   #  word = 'injection'

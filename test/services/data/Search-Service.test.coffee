@@ -66,6 +66,7 @@ describe '| services | data | Search-Service.test |', ->
           @.is   .assert_Is 'Query'
         done()
 
+  # see https://github.com/TeamMentor/TM_4_0_Design/issues/521
   # doesn't work until the search data is parsed and loaded. This should be fixed in an improved version of the search cache
   #it 'search_Using_Text', (done)->
   #  text = 'access'
@@ -88,6 +89,7 @@ describe '| services | data | Search-Service.test |', ->
       @('X-s-s').assert_Is('search-x-s-s')
       @('X$s*s').assert_Is('search-x-s-s')
 
+  # see https://github.com/TeamMentor/TM_4_0_Design/issues/521
   # doesn't work until the search data is parsed and loaded. This should be fixed in an improved version of the search cache
   #it 'query_From_Text_Search', (done)->
   #  text = 'Security'
