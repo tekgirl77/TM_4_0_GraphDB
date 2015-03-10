@@ -70,7 +70,7 @@ describe '| api | Config-API.test', ->
           done()
 
       it 'reload', (done)->
-        @timeout 10000
+        @timeout 50000
         clientApi.reload (data)->
           #data.obj.assert_Is('data reloaded')
           done()

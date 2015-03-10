@@ -8,12 +8,12 @@ class Swagger_GraphDB extends Swagger_Common
   constructor: (options)->
     @.options       = options || {}
     @.cache         = new Cache_Service("data_cache")
-    @.cache_Enabled = false
+    @.cache_Enabled = true
     super(options)
 
   close_Import_Service_and_Send: (importService, res, data, key)=>
     importService.graph.closeDb =>
-      if key and data and data isnt '' and data isnt {} and data isnt []
+      if key and data and data isnt '' and data isnt [] # and data.keys().not_Empty()  # not sure of side effects of this (need more testing)
         @.cache.put key,data
       res.send data?.json_pretty()
 

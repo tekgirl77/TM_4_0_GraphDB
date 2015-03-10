@@ -46,9 +46,10 @@ describe '| services | graph | Graph-Service.test |', ->
 
 
   describe 'data operations |', ->
-    graphService  = new Graph_Service()
+    graphService  = null
 
     before (done) ->
+      graphService = new Graph_Service()
       graphService.openDb (status)->
         status.assert_True
         done()
@@ -155,4 +156,4 @@ describe '| services | graph | Graph-Service.test |', ->
               graphService_2.closeDb ->
                 graphService_1.openDb (status)->
                   status.assert_True()
-                  done()
+                  graphService_2.deleteDb done

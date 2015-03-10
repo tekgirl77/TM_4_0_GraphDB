@@ -15,7 +15,7 @@ class Article
     @.importService.graph_Find.get_Subject_Data article_Id, callback
 
   file_Path: (article_Id, callback)=>
-    log article_Id
+    #log article_Id
     @.graph_Data article_Id, (article_Data)=>
       if article_Data
         guid = article_Data.guid

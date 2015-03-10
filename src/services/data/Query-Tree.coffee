@@ -1,5 +1,5 @@
 
-Local_Cache        = { Query_Tree: {}}
+#Local_Cache        = { Query_Tree: {}}
 
 class Query_Tree
 
@@ -8,19 +8,25 @@ class Query_Tree
     @.graph_Find     = import_Service.graph_Find
 
   get_Query_Tree: (query_Id,callback)=>
-    if Local_Cache.Query_Tree[query_Id]
-      callback Local_Cache.Query_Tree[query_Id]
-      return
+    #if Local_Cache.Query_Tree[query_Id]
+    #  callback Local_Cache.Query_Tree[query_Id]
+    #  return
 
     @.import_Service.query_Mappings.get_Query_Mappings query_Id, (query_Mappings)=>
+      if not query_Mappings
+        return callback null
 
-      if typeof(query_Mappings?.articles) is 'string'         # handle the case when there is one article in query_Mappings.articles
-        query_Mappings.articles = [query_Mappings.articles]
+      articles = query_Mappings.articles
+      if query_Mappings['search-data']
+        articles = (item.id for item in query_Mappings['search-data'])
+
+      if typeof(articles) is 'string'         # handle the case when there is one article in query_Mappings.articles
+        articles = [articles]
 
       query_Tree =
         id          : query_Id
         title       : query_Mappings?.title
-        resultsTitle: "Showing #{query_Mappings?.articles.size()} articles",
+        resultsTitle: "Showing #{articles.size()} articles",
         containers  : []
         results     : []
         filters     : []
@@ -35,13 +41,15 @@ class Query_Tree
             size : query?.articles.size()
           query_Tree.containers.add container
 
-        @get_Query_Tree_Filters query_Mappings.articles, (filters)=>
+        @get_Query_Tree_Filters articles, (filters)=>
           query_Tree.filters = filters
-          @.import_Service.graph_Find.get_Subjects_Data query_Mappings.articles, (data)=>
-            for article_Id in query_Mappings.articles
+          @.import_Service.graph_Find.get_Subjects_Data articles, (data)=>
+            for article_Id in articles
               query_Tree.results.add data[article_Id]
 
-            callback Local_Cache.Query_Tree[query_Id] = query_Tree
+            callback query_Tree
+
+            #callback Local_Cache.Query_Tree[query_Id] = query_Tree
 
   get_Query_Tree_Filters: (articles_Ids, callback)=>
 

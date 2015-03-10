@@ -1,4 +1,5 @@
 Import_Service        = require './Import-Service'
+Search_Text_Service   = require '../text-search/Search-Text-Service'
 
 class Search_Service
 
@@ -26,17 +27,8 @@ class Search_Service
 
   search_Using_Text: (text, callback)=>
     text = text.lower()
-    @.article_Titles (article_Titles)=>
-      @.article_Summaries (article_Summaries)=>
-        results = []
-        for article_Title in article_Titles
-          if article_Title.title.lower().contains text.lower()
-            results.push {id: article_Title.id, text: article_Title.title,  source: 'title'}
-        for article_Summary in article_Summaries
-          if article_Summary.summary.lower().contains text.lower()
-            results.push {id: article_Summary.id, text: article_Summary.summary, source: 'summary'}
-
-        callback results
+    new Search_Text_Service().words_Score text, (results)->
+      callback results
 
   query_Id_From_Text: (text)=>
     "search-#{text.trim().to_Safe_String()}"
@@ -57,11 +49,11 @@ class Search_Service
 
         article_Ids = (result.id for result in results)
 
-        articles_Nodes = [{ subject:query_Id , predicate:'is'   , object:'Query' }
-                          { subject:query_Id , predicate:'is'   , object:'Search' }
-                          { subject:query_Id , predicate:'title', object: text }
-                          { subject:query_Id , predicate:'id'   , object: query_Id }]
-
+        articles_Nodes = [{ subject:query_Id , predicate:'is'         , object:'Query' }
+                          { subject:query_Id , predicate:'is'         , object:'Search' }
+                          { subject:query_Id , predicate:'title'      , object: text }
+                          { subject:query_Id , predicate:'id'         , object: query_Id }
+                          { subject:query_Id , predicate:'search-data', object: results }]
         for article_Id in article_Ids
           articles_Nodes.push { subject:query_Id , predicate:'contains-article'  , object:article_Id }
         @graph.db.put articles_Nodes, =>
