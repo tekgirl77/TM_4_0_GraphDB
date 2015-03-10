@@ -1,12 +1,14 @@
-Cache_Service          = null
-async                  = null
-loaded_Search_Mappings = null
+Cache_Service            = null
+Search_Artifacts_Service = null
+async                    = null
+loaded_Search_Mappings   = null
 
 class Search_Text_Service
 
   dependencies: ->
-    Cache_Service   = require('teammentor').Cache_Service
-    async           = require 'async'
+    Cache_Service            = require('teammentor').Cache_Service
+    Search_Artifacts_Service = require './Search-Artifacts-Service'
+    async                    = require 'async'
 
   constructor: (options)->
     @.dependencies()
@@ -22,8 +24,8 @@ class Search_Text_Service
       data = @.cache_Search.get key
       loaded_Search_Mappings = data.json_Parse()
       return callback loaded_Search_Mappings
-
-    callback {}
+    new Search_Artifacts_Service().create_Search_Mappings (search_Mappings)->
+      callback search_Mappings
 
   word_Data: (word, callback)=>
     @.search_Mappings (mappings)->

@@ -28,6 +28,10 @@ class Search_Artifacts_Service
     @.cache           = new Cache_Service("article_cache")
     @.cache_Search    = new Cache_Service("search_cache")
 
+  batch_Parse_All_Articles: (callback)=>
+    @.article.ids  (article_Ids)=>
+      @.parse_Articles article_Ids, callback
+
   parse_Article: (article_Id, callback)=>
     key = "#{article_Id}.json"
     if @.cache.has_Key key
@@ -42,17 +46,19 @@ class Search_Artifacts_Service
 
   parse_Articles: (article_Ids, callback)=>
     results = []
+    if article_Ids is undefined or article_Ids is null
+      return callback results
     total = article_Ids.size()
     count = 0
     map_Article = (article_Id, next)=>
       @.parse_Article article_Id, (data, showLog)->
         count++
-        if showLog
+        if showLog and (count %% 50) is 0
           log "[#{count}/#{total}] Parsed html for #{article_Id}"
         results.push data
         next()
 
-    async.each article_Ids , map_Article, ()=>
+    async.eachSeries article_Ids , map_Article, ()=>
       callback results
 
   parse_Article_Html: (article_Id, callback)=>
@@ -103,31 +109,26 @@ class Search_Artifacts_Service
       callback data.json_Parse()
     else
       "no key for raw_Articles_Html, so calculating them all".log()
-      raw_Articles_Html = []
-      log '------'
-      log @.cache.cacheFolder()
-      log @.cache.cacheFolder().files()
-      for file in @.cache.cacheFolder().files() #.take(10)
-        log file
-        raw_Articles_Html.push file.load_Json()
-        log raw_Articles_Html.size()
-      if raw_Articles_Html.not_Empty()
-        @.cache_Search.put key, raw_Articles_Html,
-      callback raw_Articles_Html
+      @.batch_Parse_All_Articles =>
+        raw_Articles_Html = []
+        for file in @.cache.cacheFolder().files()
+          raw_Articles_Html.push file.load_Json()
+        if raw_Articles_Html.not_Empty()
+          @.cache_Search.put key, raw_Articles_Html,
+        callback raw_Articles_Html
 
   create_Search_Mappings: (callback)=>
     @.raw_Articles_Html (articles_Data)=>
       search_Mappings = {}
-      for article_Data in articles_Data #.take(10)
-        #if article_Data.id is 'article-1caa0dbb89ca'
-        #  "log FOUND article-1caa0dbb89ca".log()
+      for article_Data in articles_Data
         for word,where of article_Data.words
           if search_Mappings[word] is undefined or typeof search_Mappings[word] is 'function'
             search_Mappings[word] = {}
           search_Mappings[word][article_Data.id] =  where : where #.unique()
-      #log search_Mappings['1']['article-1caa0dbb89ca']
-      if search_Mappings isnt {}
+
+      keys =  (key for key of search_Mappings)
+      if keys.length > 0
         @.cache_Search.put 'search_mappings.json', search_Mappings
-      callback()
+      callback search_Mappings
 
 module.exports = Search_Artifacts_Service
