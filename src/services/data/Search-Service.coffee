@@ -30,18 +30,6 @@ class Search_Service
     new Search_Text_Service().words_Score text, (results)->
       callback results
 
-    #return
-    #@.article_Titles (article_Titles)=>
-    #  @.article_Summaries (article_Summaries)=>
-    #    results = []
-    #    for article_Title in article_Titles
-    #      if article_Title.title.lower().contains text.lower()
-    #        results.push {id: article_Title.id, text: article_Title.title,  source: 'title'}
-    #    for article_Summary in article_Summaries
-    #      if article_Summary.summary.lower().contains text.lower()
-    #        results.push {id: article_Summary.id, text: article_Summary.summary, source: 'summary'}
-    #    callback results
-
   query_Id_From_Text: (text)=>
     "search-#{text.trim().to_Safe_String()}"
 
