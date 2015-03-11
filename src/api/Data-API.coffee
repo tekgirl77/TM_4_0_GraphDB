@@ -60,6 +60,10 @@ class Data_API extends Swagger_GraphDB
       import_Service.library_Import.library (data)=>
         @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
+  library_Query: (req,res)=>
+    @.using_Graph res, 'library_Query.json' , (send)->
+      @.search undefined, 'is', 'Library', (data)=>
+        send { queryId: data?.first()?.subject }
 
   queries: (req,res)=>
     cache_Key = "queries.json"
@@ -132,6 +136,7 @@ class Data_API extends Swagger_GraphDB
     @add_Get_Method 'articles_parent_queries' , ['id' ]
     @add_Get_Method 'id'                      , ['id' ]
     @add_Get_Method 'library'                 , [     ]
+    @add_Get_Method 'library_Query'           , [     ]
     @add_Get_Method 'query_articles'          , ['id' ]
     @add_Get_Method 'query_mappings'          , ['id' ]
     @add_Get_Method 'query_queries'           , ['id' ]

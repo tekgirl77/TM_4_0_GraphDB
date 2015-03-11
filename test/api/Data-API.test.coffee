@@ -100,6 +100,12 @@ describe '| api | Data-API.test', ->
         library.articles.assert_Not_Empty()
         done()
 
+    it 'library_Query', (done)->
+      clientApi.library_Query (data)->
+        if data.obj.queryId
+          data.obj.queryId.assert_Contains 'query-'
+        done()
+
     it 'queries', (done)->
       clientApi.queries (data)->
         data.obj.assert_Size_Is_Bigger_Than(10)
