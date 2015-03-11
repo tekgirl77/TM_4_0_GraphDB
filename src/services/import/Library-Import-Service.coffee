@@ -53,7 +53,7 @@ class Library_Import_Service
     for item in json_Library.libraryStructure
       if (item.folder)
         for folder in item.folder
-          library.articles = @add_Json_Folder library.folders,  folder
+          library.articles = library.articles.concat(@.add_Json_Folder library.folders,  folder)
     callback(library)
 
   library: (callback)=>
