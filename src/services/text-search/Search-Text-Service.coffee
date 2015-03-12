@@ -34,31 +34,42 @@ class Search_Text_Service
   word_Score: (word, callback)=>
     word = word.lower()
     results = []
-    @.search_Mappings (mappings)->
-      for article_Id, data of mappings[word]
-        result = {id : article_Id, score: 0, why: {}}
-        for tag in data.where
-          score = 1
-          switch tag
-            when 'title'
-              score = 10
-            when 'h1'
-              score = 5
-            when 'h2'
-              score = 4
-            when 'em'
-              score = 3
-            when 'b'
-              score = 3
-            when 'a'
-              score = -4
 
-          result.score += score
-          result.why[tag]?=0
-          result.why[tag]+=score
-        results.push result
+    @.search_Mappings (mappings)->
+
+      add_Results_Mappings =  (key)->
+        for article_Id, data of mappings[key]
+            result = {id : article_Id, score: 0, why: {}}
+            for tag in data.where
+              score = 1
+              switch tag
+                when 'title'
+                  score = 10
+                when 'h1'
+                  score = 5
+                when 'h2'
+                  score = 4
+                when 'em'
+                  score = 3
+                when 'b'
+                  score = 3
+                when 'a'
+                  score = -4
+
+              result.score += score
+              result.why[tag]?=0
+              result.why[tag]+=score
+            results.push result
+
+      add_Results_Mappings word
 
       results = (results.sort (a,b)-> a.score - b.score).reverse()
+
+      # if there are no results via exact match, try searching inside each work
+      if results.empty()
+        for key,value of mappings
+          if key.contains(word)
+            add_Results_Mappings key
 
       callback results
 
