@@ -1,13 +1,15 @@
 express              = require 'express'
 compress             = require 'compression'
-Jade_Service         = require('teammentor').Jade_Service
+{Jade_Service}       = require 'teammentor'
+Logging_Service      = require './services/utils/Logging-Service'
 
 class TM_Server
     constructor: (options)->
-        @.options     = options || {}
-        @_server      = null;
-        @app          = express()
-        @port         = process.env.PORT || @.options.port || 1332
+        @.options         = options || {}
+        @_server          = null;
+        @.app             = express()
+        @.port            = process.env.PORT || @.options.port || 1332
+        @.logging_Service = null
         @configure()
 
     configure: =>
@@ -38,10 +40,13 @@ class TM_Server
                 paths.push(item.route.path)               
         return paths
 
-    enabled_Logging: ->
-        @app.use (req, res, next)->
-          console.log('%s %s', req.method, req.url)#, req.path);
-          next();
+    enabled_Logging: =>
+      @.logging_Service = new Logging_Service().setup()
+
+      @app.use (req, res, next)->
+
+        console.log({method: req.method, url: req.url})
+        next();
         
 module.exports = TM_Server
 

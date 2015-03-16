@@ -54,6 +54,7 @@
     "teammentor": "latest",
     "vis": "latest",
     "winser": "latest",
+    "winston": "^0.9.0",
     "xml2js": "latest"
   },
   "devDependencies": {
