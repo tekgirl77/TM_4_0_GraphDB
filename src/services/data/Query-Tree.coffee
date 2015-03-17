@@ -36,9 +36,11 @@ class Query_Tree
       else
         for query in query_Mappings.queries
           container =
-            id   : query?.id
-            title: query?.title
-            size : query?.articles.size()
+            id      : query?.id
+            title   : query?.title
+            size    : query?.articles.size()
+            articles: query?.articles
+
           query_Tree.containers.add container
 
         @get_Query_Tree_Filters articles, (filters)=>
@@ -66,9 +68,11 @@ class Query_Tree
             for child_Query_Id in query.child_Queries
               child_Query = articles_Parent_Queries.queries[child_Query_Id]
               result =
-                title: child_Query.title
-                size : child_Query.articles.size()
-                id   : child_Query_Id
+                id      : child_Query_Id
+                title   : child_Query.title
+                size    : child_Query.articles.size()
+                articles: child_Query.articles
+
 
               filter.results.add result
 
@@ -81,7 +85,66 @@ class Query_Tree
 
       callback filters
 
-  apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Id, callback)=>
+  apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Ids, callback)=>
+    @.import_Service.query_Mappings.get_Queries_Mappings (queries_Mappings)=>
+
+      #log '------------------'
+      #log query_Tree.id
+      #log '------------------'
+      #log query_Id
+      #log '------------------'
+
+      articles = []
+
+      for query_Id in query_Ids.split(',')
+
+        filter_Query     = queries_Mappings[query_Id]
+        if filter_Query
+          if articles.empty()
+            articles = filter_Query.articles
+          else
+            articles = (article for article in articles when article in filter_Query.articles)
+
+
+      if articles.empty()
+        return callback {} #query_Tree
+
+      @.apply_Query_Tree_Articles_Filter query_Tree, articles, callback
+
+  apply_Query_Tree_Articles_Filter: (query_Tree, articles, callback)=>
+
+      filtered_Tree =
+        id         : query_Tree.id
+        containers : query_Tree.containers
+        results    : []
+        filters    : query_Tree.filters
+
+      for result in query_Tree.results
+        if articles.contains(result.id)
+          filtered_Tree.results.add result
+
+      #log query_Tree.containers.first()
+      for container in query_Tree.containers
+        container.size = 0
+        for result in filtered_Tree.results
+          if container.articles.contains(result.id)
+            container.size++
+
+      for filter in query_Tree.filters
+        for filter_Result in filter.results
+          filter_Result.size = 0
+          for result in filtered_Tree.results
+            if filter_Result.articles.contains(result.id)
+              filter_Result.size++
+
+      filtered_Tree.title = query_Tree.title
+      callback filtered_Tree
+
+
+
+
+  ###
+   apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Id, callback)=>
     @.import_Service.query_Mappings.get_Queries_Mappings (queries_Mappings)=>
       filter_Query     = queries_Mappings[query_Id]
       if not filter_Query
@@ -101,5 +164,5 @@ class Query_Tree
           filtered_Tree.results.add result
       filtered_Tree.title = query_Tree.title
       callback filtered_Tree
-
+  ###
 module.exports = Query_Tree

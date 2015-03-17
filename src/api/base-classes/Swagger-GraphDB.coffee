@@ -46,6 +46,9 @@ class Swagger_GraphDB extends Swagger_Common
       search_Service = new Search_Service( importService: @ )
       callback.call search_Service, send
 
+  using_Query_Tree: (res, key, callback)=>
+    @.using_Import_Service res, key, (send)->
+      callback.call @.query_Tree, send
 
 
 module.exports = Swagger_GraphDB
