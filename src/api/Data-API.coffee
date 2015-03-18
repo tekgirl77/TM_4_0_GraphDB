@@ -116,7 +116,7 @@ class Data_API extends Swagger_GraphDB
     id       = req.params.id
     filters  = req.params.filters
     cache_Key = "query_tree_filtered_#{id}_#{filters}.json"
-    cache_Key = null
+    #cache_Key = null
     @.using_Query_Tree res, cache_Key, (send)->
       @.get_Query_Tree id, (query_Tree)=>
         @.apply_Query_Tree_Query_Id_Filter query_Tree, filters, (data)=>
