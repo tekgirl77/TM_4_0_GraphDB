@@ -7,6 +7,12 @@ describe '| services | utils | Logging-Service.test |', ->
   before ->
     logging_Service = new Logging_Service().setup()
 
+  after ()->
+    logging_Service.assert_Is_Object()
+    logging_Service.original_Console.assert_Is_Function()
+    logging_Service.restore_Console()
+    console.log       .assert_Is_Not global.info
+    console.log       .assert_Is logging_Service.original_Console
 
   it 'constructor()',->
     using new Logging_Service(), ->
@@ -15,9 +21,8 @@ describe '| services | utils | Logging-Service.test |', ->
       assert_Is_Null @.logger
 
   it 'setup',->
-    using new Logging_Service().setup(), ->
-      @.assert_Is_Instance_Of Logging_Service
-      logger.assert_Is @
+      logging_Service.assert_Is_Instance_Of Logging_Service
+      logger.assert_Is logging_Service
 
   it 'info', ()->
     logging_Service.info '[Logging-Service.test] Testing info'

@@ -12,7 +12,7 @@ describe '| api | Data-API.test', ->
     dataApi      = null
 
     before (done)->
-      tmServer  = new TM_Server({ port : 10000.random().add(10000)})
+      tmServer  = new TM_Server({ port : 10000.random().add(10000)}).configure()
       options = { app: tmServer.app ,  port : tmServer.port}
       swaggerService = new Swagger_Service options
       swaggerService.set_Defaults()
@@ -25,9 +25,9 @@ describe '| api | Data-API.test', ->
           clientApi = swaggerApi
           done()
 
-    #after (done)->
-    #  tmServer.stop ->
-    #    done()
+    after (done)->
+      tmServer.stop ->
+        done()
 
     it 'constructor', ->
       dataApi.assert_Is_Object()

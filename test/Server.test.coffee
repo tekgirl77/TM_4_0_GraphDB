@@ -5,7 +5,10 @@ supertest = require('supertest')
 
 describe '| test-Server |',->
 
-  server  = new TM_Server({ port : 12345} )
+  server  = null
+
+  before ->
+    server = new TM_Server({ port : 12345} ).configure()
 
   it 'check ctor', ->
       expect(TM_Server     ).to.be.an('function')
@@ -71,10 +74,12 @@ describe '| test-Server |',->
 
     before ->
       tmServer = new TM_Server({ port : 30000.random()}).configure()
-      mock_app = supertest(server.app)
+      mock_app = supertest(tmServer.app)
+
+    after ->
+      tmServer.logging_Service.restore_Console()
 
     it '/', (done)->
-
       mock_app.get('/')
               .end (err,res)->
                 res.text.assert_Is 'Moved Temporarily. Redirecting to docs'

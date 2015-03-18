@@ -5,7 +5,7 @@ require('coffee-script/register');              // adding coffee-script support
 
 var Server = require('./src/TM-Server');           // gets the express server
 
-var server = new Server().start()               // start server
+var server = new Server().configure().start()      // configure and start server
 
 function add_Swagger(app)
   {

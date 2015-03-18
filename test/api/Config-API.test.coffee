@@ -12,7 +12,7 @@ describe '| api | Config-API.test', ->
       configApi      = null
 
       before (done)->
-        tmServer  = new TM_Server({ port : 12345 + 1000.random()})
+        tmServer  = new TM_Server({ port : 12345 + 1000.random()}).configure()
         options = { app: tmServer.app ,  port : tmServer.port}
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()

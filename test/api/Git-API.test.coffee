@@ -18,7 +18,7 @@ describe '| api | Git-API.test', ->
       clientApi      = null
 
       before (done)->
-        tmServer  = new TM_Server({ port : 12345})
+        tmServer  = new TM_Server({ port : 12345}).configure()
         options = { app: tmServer.app ,  port : tmServer.port}
         swaggerService = new Swagger_Service options
         swaggerService.set_Defaults()

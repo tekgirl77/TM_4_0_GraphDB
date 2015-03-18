@@ -10,24 +10,25 @@ class TM_Server
         @.app             = express()
         @.port            = process.env.PORT || @.options.port || 1332
         @.logging_Service = null
-        @configure()
 
     configure: =>
-        @app.set('view engine', 'jade')
-        @app.use(compress())
-        @app.get '/'    , (req,res) -> res.redirect 'docs'
-        @enabled_Logging()
+        @.app.set('view engine', 'jade')
+        @.app.use(compress())
+        @.app.get '/'    , (req,res) -> res.redirect 'docs'
+        @.enable_Logging()
         @
 
     start: (callback)=>
-        @_server = @app.listen @port, ->
-            callback() if callback
+        @._server = @app.listen @port, ->
+          callback() if callback
         @
 
     stop: (callback)=>
-        @_server._connections = 0   # trick the server to believe there are no more connections (I didn't find a nice way to get and open existing connections)
-        @_server.close ->
-            callback() if callback
+      @.logging_Service.restore_Console()
+      @_server._connections = 0   # trick the server to believe there are no more connections (I didn't find a nice way to get and open existing connections)
+
+      @_server.close ->
+        callback() if callback
 
     url: =>
         "http://localhost:#{@port}"
@@ -40,11 +41,10 @@ class TM_Server
                 paths.push(item.route.path)               
         return paths
 
-    enabled_Logging: =>
+    enable_Logging: =>
       @.logging_Service = new Logging_Service().setup()
 
-      @app.use (req, res, next)->
-
+      @.app.use (req, res, next)->
         console.log({method: req.method, url: req.url})
         next();
         
