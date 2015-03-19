@@ -34,6 +34,14 @@ describe '| services | graph | Graph-Service.test |', ->
           expect(graphService.db                              ).to.equal(null)
           done()
 
+    it.only 'wait_For_Unlocked_DB', (done)->
+      using new Graph_Service() , ->
+        @.wait_For_Unlocked_DB done, done
+        70.wait =>
+          console.log 'setting lock'
+          @.locked = true
+
+
     #xit 'deleteDb', (done) ->
     #  using new Graph_Service(),->
     #    @.openDb =>
