@@ -13,8 +13,9 @@ class Swagger_GraphDB extends Swagger_Common
 
   close_Import_Service_and_Send: (importService, res, data, key)=>
     importService.graph.closeDb =>
-      if key and data and data isnt '' and data isnt [] # and data.keys().not_Empty()  # not sure of side effects of this (need more testing)
-        @.cache.put key,data
+      if @.cache_Enabled
+        if key and data and data isnt '' and data isnt [] # and data.keys().not_Empty()  # not sure of side effects of this (need more testing)
+          @.cache.put key,data
       res.send data?.json_pretty()
 
   open_Import_Service: (res, key ,callback)=>

@@ -54,6 +54,7 @@ class TM_Guidance
           importUtil.add_Triplet(target_Global_Id, 'contains-query',target_Id)
         importUtil.add_Triplet(target_Id         , 'contains-article', article_Id)
         importUtil.add_Triplet(target_Id         , 'title', target_Value)
+        importUtil.add_Triplet(article_Id        , target.lower(), target_Value)
 
     add_Article_Summary = ()=>
       html       = article_Data.Content.first().Data.first()
@@ -66,7 +67,7 @@ class TM_Guidance
 
       importUtil.add_Triplet(article_Id, 'summary', summary)
 
-    add_Metadata_Target(target) for target in ['Category', 'Phase', 'Technology', 'Type']
+    add_Metadata_Target(target) for target in ['Phase', 'Technology', 'Type'] # 'Category'
     add_Article_Summary();
 
     @.importService.graph.db.put importUtil.data, ()=>
@@ -117,7 +118,6 @@ class TM_Guidance
       @.importService.library_Import.library (library)=>
         @.create_Metadata_Global_Nodes =>
           @.import_Library library.id, library.name, (library_Id)=>
-            #@.import_Articles library_Id, library.articles, =>
               @.import_Folders library_Id, library.folders, =>
                 @.import_Views library_Id, library.views, =>
                   @.importService.graph.closeDb =>

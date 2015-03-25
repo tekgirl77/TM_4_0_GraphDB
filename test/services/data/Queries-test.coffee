@@ -35,8 +35,8 @@ describe '| services | data | Queries.test', ->
           article_Parent_Queries = @.queries.map_Article_Parent_Queries articles_Queries,queries_Mappings, null, article_Id
           using article_Parent_Queries, ->
             @.articles.keys().assert_Size_Is(1)
-            @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(9)
-            @.queries.keys().assert_Size_Is_Bigger_Than(9)
+            @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(8)
+            @.queries.keys().assert_Size_Is_Bigger_Than(8)
             done();
 
   it 'map_Articles_Parent_Queries', (done)->
@@ -46,6 +46,6 @@ describe '| services | data | Queries.test', ->
         @.queries.map_Articles_Parent_Queries article_Ids, (articles_Parent_Queries)->
           using articles_Parent_Queries, ->
             @.articles.keys().assert_Size_Is(2)
-            @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(9)
-            @.queries.keys().assert_Size_Is_Bigger_Than(13)
+            @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(8)
+            @.queries.keys().assert_Size_Is_Bigger_Than(11)
             done()
