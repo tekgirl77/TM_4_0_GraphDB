@@ -171,7 +171,7 @@ describe '| api | Data-API.test', ->
           query_Tree.id.assert_Is(query_Id )
           done()
 
-    it 'query_tree_filtered', (done)->
+    it 'query_tree_filtered (one filter)', (done)->
       @timeout 10000
       clientApi.root_queries (data)=>
         root_Queries = data.obj
@@ -184,6 +184,25 @@ describe '| api | Data-API.test', ->
           filters         = filter_Query_Id
           clientApi.query_tree_filtered {id: query_Id, filters: filters }, (data)=>
             data.obj.results.assert_Size_Is result_Filter.size
+            done()
+
+    it 'query_tree_filtered (two filters)', (done)->
+      clientApi.root_queries (data)=>
+        root_Queries = data.obj
+        query_Id = root_Queries.queries.first().id
+        filters  = ''
+        clientApi.query_tree {id: query_Id, filters: filters }, (data)=>
+          size_No_Filters = data.obj.results.size()
+          filter_Results  = data.obj.filters.first().results
+          result_Filter_1 = filter_Results.first()
+          result_Filter_2 = filter_Results.second()
+          filter_Query_Id = result_Filter_1.id
+          filter_Query_Id = "#{result_Filter_1.id},#{result_Filter_2.id}"
+
+          filter_Query_Id = "query-10db76a18a35,query-1320f210feae" #WCF,Implementation
+          filters         = filter_Query_Id
+          clientApi.query_tree_filtered {id: query_Id, filters: filters }, (data)=>
+            #log result_Filter_1.size
             done()
 
 
