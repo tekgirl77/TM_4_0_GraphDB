@@ -7,7 +7,7 @@ describe '| services | graph | Graph-Service.test |', ->
       using new Graph_Service(), ->
         @.dbName.assert_Contains '_tmp_db'
         @.dbPath.assert_Contains '.tmCache/_tmp_db'
-        @.db_Lock_Tries.assert_Is 10
+        @.db_Lock_Tries.assert_Is 20
         @.db_Lock_Delay.assert_Is 250
         @.dbPath.folder_Delete_Recursive().assert_True()
         assert_Is_Null @.db
