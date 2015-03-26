@@ -11,14 +11,18 @@ class Graph_Service
 
   constructor: (dbName)->
     @.dependencies()
-    @.dbName     = dbName || '_tmp_db'.add_Random_String(5)
-    @.dbPath     = "./.tmCache/#{@dbName}"
-    @.db         = null
+    @.dbName        = dbName || '_tmp_db'.add_Random_String(5)
+    @.dbPath        = "./.tmCache/#{@dbName}"
+    @.db            = null
+    @.db_Lock_Tries = 10
+    @.db_Lock_Delay = 250
 
   openDb : (callback)=>
+    #"***** [open Db]: #{locked} : #{@db is null}".log()
     if locked
-      "Error: [GraphDB] is in use".log()
-      callback false
+      @.wait_For_Unlocked_DB (()=> @.openDb(callback)), ()->
+        "Error: [GraphDB] is in use".log()
+        callback false
     else
       locked = true
       process.nextTick =>
@@ -27,7 +31,7 @@ class Graph_Service
           callback true
 
   closeDb: (callback)=>
-    #"[closing Db]: #{locked} : #{@db is null}".log()
+    #"***** [closing Db]: #{locked} : #{@db is null}".log()
     if (@db)
       @db.close =>
         @db    = null
@@ -43,20 +47,21 @@ class Graph_Service
       callback();
 
   wait_For_Unlocked_DB: (callback_Ok, callback_Fail) =>
-    tries = 5
-    delay = 150
+    tries = @.db_Lock_Tries
+    delay = @.db_Lock_Delay
     check_Lock = =>
-      console.log "checking lock: #{tries}"
-      if not @.locked
+      console.log "checking lock: #{tries} : #{locked}"
+      if locked is true
         if tries
           tries--
           delay.wait =>
-            check_Lock()
+            process.nextTick =>
+              check_Lock()
         else
-          log "callback_Fail"
+          #log "callback_Fail"
           callback_Fail()
       else
-        log "callback_OK"
+        #log "callback_OK"
         callback_Ok()
     check_Lock()
 
