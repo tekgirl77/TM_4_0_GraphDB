@@ -47,5 +47,5 @@ describe '| services | data | Queries.test', ->
           using articles_Parent_Queries, ->
             @.articles.keys().assert_Size_Is(2)
             @.articles[@.articles.keys().first()].parent_Queries.assert_Size_Is_Bigger_Than(8)
-            @.queries.keys().assert_Size_Is_Bigger_Than(11)
+            @.queries.keys().assert_Size_Is_Bigger_Than(10)
             done()

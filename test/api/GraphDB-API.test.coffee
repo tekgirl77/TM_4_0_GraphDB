@@ -76,7 +76,7 @@ describe '| api | GraphDB-API.test', ->
 
   it 'predicate', (done)->
     clientApi.predicate { value: 'title'}, (data)->
-      data.obj.assert_Size_Is_Bigger_Than(218)
+      data.obj.assert_Size_Is_Bigger_Than(200)
       done()
 
   it 'object', (done)->
