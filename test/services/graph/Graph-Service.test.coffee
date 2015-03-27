@@ -4,19 +4,19 @@ Graph_Service  = require('./../../../src/services/graph/Graph-Service')
 describe '| services | graph | Graph-Service.test |', ->
   describe 'core |', ->
     it 'check ctor', ->
-      graphService  = new Graph_Service()
-      expect(Graph_Service      ).to.be.an  ('Function')
-      expect(graphService       ).to.be.an  ('Object'  )
-      expect(graphService.dbPath).to.be.an  ('String'  )
-      expect(graphService.db    ).to.equal  (null)
-      expect(graphService.dbName).to.contain('_tmp_db')
-      expect(graphService.dbPath).to.contain('.tmCache/_tmp_db')
-      expect(graphService.dbPath.folder_Delete_Recursive()).to.be.true
+      using new Graph_Service(), ->
+        @.dbName.assert_Contains '_tmp_db'
+        @.dbPath.assert_Contains '.tmCache/_tmp_db'
+        @.db_Lock_Tries.assert_Is 20
+        @.db_Lock_Delay.assert_Is 250
+        @.dbPath.folder_Delete_Recursive().assert_True()
+        assert_Is_Null @.db
 
-      graphService  = new Graph_Service('aaaa')
-      expect(graphService.dbName).to.equal('aaaa')
-      expect(graphService.dbPath).to.equal('./.tmCache/aaaa')
-      expect(graphService.dbPath.folder_Delete_Recursive()).to.be.true
+
+      using new Graph_Service('aaaa'),->
+        @.dbName.assert_Is 'aaaa'
+        @.dbPath.assert_Is './.tmCache/aaaa'
+        @.dbPath.folder_Delete_Recursive().assert_Is_True()
 
     it 'openDb and closeDb', (done)->
       graphService  = new Graph_Service()
@@ -33,6 +33,14 @@ describe '| services | graph | Graph-Service.test |', ->
           expect(graphService.dbPath.folder_Delete_Recursive()).to.equal(true)
           expect(graphService.db                              ).to.equal(null)
           done()
+
+    it 'wait_For_Unlocked_DB', (done)->
+      using new Graph_Service() , ->
+        @.wait_For_Unlocked_DB done, done
+        70.wait =>
+          console.log 'setting lock'
+          @.locked = true
+
 
     #xit 'deleteDb', (done) ->
     #  using new Graph_Service(),->
@@ -144,8 +152,11 @@ describe '| services | graph | Graph-Service.test |', ->
 
 
     it 'confirm that only one db can be opened at the same time', (done)->
+      @.timeout 5000
       graphService_1 = graphService
       graphService_2  = new Graph_Service()
+      graphService_1.db_Lock_Tries = 2
+      graphService_2.db_Lock_Tries = 2
       graphService_2.openDb (status)->
         status.assert_False()
         graphService_1.closeDb ->

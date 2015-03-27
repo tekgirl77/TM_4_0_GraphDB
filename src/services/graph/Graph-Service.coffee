@@ -1,23 +1,28 @@
-levelgraph      = require('levelgraph'   )
-GitHub_Service  = require('teammentor').GitHub_Service
+levelgraph      = null
+GitHub_Service  = null
 
-class GraphService
+class Graph_Service
 
-  #@open_Dbs: {}
   locked = false
 
-  constructor: (dbName)->
-    @dbName     = if  dbName then dbName else '_tmp_db'.add_Random_String(5)
-    @dbPath     = "./.tmCache/#{@dbName}"#.create_Dir()
-    @db         = null
+  dependencies: ->
+    levelgraph        = require 'levelgraph'
+    {GitHub_Service}  = require 'teammentor'
 
-  #Setup methods
+  constructor: (dbName)->
+    @.dependencies()
+    @.dbName        = dbName || '_tmp_db'.add_Random_String(5)
+    @.dbPath        = "./.tmCache/#{@dbName}"
+    @.db            = null
+    @.db_Lock_Tries = 20
+    @.db_Lock_Delay = 250
 
   openDb : (callback)=>
-    #"[Opening Db]: #{locked}".log()
+    #"***** [open Db]: #{locked} : #{@db is null}".log()
     if locked
-      "Error: [GraphDB] is in use".log()
-      callback false
+      @.wait_For_Unlocked_DB (()=> @.openDb(callback)), ()->
+        "Error: [GraphDB] is in use".log()
+        callback false
     else
       locked = true
       process.nextTick =>
@@ -26,7 +31,7 @@ class GraphService
           callback true
 
   closeDb: (callback)=>
-    #"[closing Db]: #{locked} : #{@db is null}".log()
+    #"***** [closing Db]: #{locked} : #{@db is null}".log()
     if (@db)
       @db.close =>
         @db    = null
@@ -40,6 +45,27 @@ class GraphService
     @closeDb =>
       @dbPath.folder_Delete_Recursive()
       callback();
+
+  wait_For_Unlocked_DB: (callback_Ok, callback_Fail) =>
+    tries = @.db_Lock_Tries
+    delay = @.db_Lock_Delay
+    check_Lock = =>
+      console.log "checking lock: #{tries} : #{locked}"
+      if locked is true
+        if tries
+          tries--
+          delay.wait =>
+            process.nextTick =>
+              check_Lock()
+        else
+          #log "callback_Fail"
+          callback_Fail()
+      else
+        #log "callback_OK"
+        callback_Ok()
+    check_Lock()
+
+  # Refactor move to different file
 
   add: (subject, predicate, object, callback)=>
     if @.db is null
@@ -130,4 +156,4 @@ class GraphService
       when "all"          then @allData callback
       else callback(null)
 
-module.exports = GraphService
+module.exports = Graph_Service
