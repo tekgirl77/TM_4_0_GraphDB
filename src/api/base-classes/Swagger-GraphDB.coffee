@@ -1,4 +1,4 @@
-Cache_Service   = require('teammentor').Cache_Service
+{Cache_Service} = require('teammentor')
 Swagger_Common  = require './Swagger-Common'
 Import_Service  = require '../../services/data/Import-Service'
 Search_Service  = require '../../services/data/Search-Service'
@@ -7,27 +7,42 @@ class Swagger_GraphDB extends Swagger_Common
 
   constructor: (options)->
     @.options       = options || {}
-    @.cache         = new Cache_Service("data_cache")
+    @.cache         = @.options.cache || new Cache_Service("data_cache")
     @.cache_Enabled = true
+    @.cache_Enabled = false if @.options.cache_Enabled is false
     super(options)
 
   close_Import_Service_and_Send: (importService, res, data, key)=>
+    @.save_To_Cache(key,data)
     importService.graph.closeDb =>
-      if @.cache_Enabled
-        if key and data and data isnt '' and data isnt [] # and data.keys().not_Empty()  # not sure of side effects of this (need more testing)
-          @.cache.put key,data
       res.send data?.json_pretty()
 
   open_Import_Service: (res, key ,callback)=>
+    @.send_From_Cache res,key, ()=>                    # see if the value already exists on the cache
+      using new Import_Service('tm-uno'), ->            # if not
+        @.graph.openDb (status)=>                       #    open the Db (which now has the wait_For_Unlocked_DB capability)
+          if status                                     # if db was opened ok
+            callback @                                  #   call callback with Import_Service obj as param
+          else                                          # if db could not be opened
+            @.send_From_Cache res,key =>                # see if value has been placed on cache (since first check)
+              res.status(503)                           # and if the value is still not of the cache, send a 503 error
+                 .send { error : message : 'GraphDB is busy, please try again'}
+
+  save_To_Cache: (key,data)=>
+    if @.cache_Enabled
+      if key and data                                     # check that both values are set
+        if data instanceof Array and data.empty()         # if array, check if not empty
+          return
+        if data instanceof Object and data.keys().empty() # if object, check if not empty
+          return
+        @.cache.put key,data                              # save data into cache
+
+  send_From_Cache: (res, key, callback)=>
     if @.cache_Enabled
       if (key and @.cache.has_Key(key))
         return res.send @.cache.get(key)
-    using new Import_Service('tm-uno'), ->
-      @.graph.openDb (status)=>
-        if status
-          return callback @
-        res.status(503)
-           .send { error : message : 'GraphDB is busy, please try again'}
+      else
+        callback()
 
   using_Import_Service: (res, key, callback)=>
     @.open_Import_Service res, key, (import_Service)=>

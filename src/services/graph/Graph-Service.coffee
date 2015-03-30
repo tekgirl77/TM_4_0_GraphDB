@@ -18,7 +18,6 @@ class Graph_Service
     @.db_Lock_Delay = 250
 
   openDb : (callback)=>
-    #"***** [open Db]: #{locked} : #{@db is null}".log()
     if locked
       @.wait_For_Unlocked_DB (()=> @.openDb(callback)), ()->
         "Error: [GraphDB] is in use".log()
@@ -31,7 +30,6 @@ class Graph_Service
           callback true
 
   closeDb: (callback)=>
-    #"***** [closing Db]: #{locked} : #{@db is null}".log()
     if (@db)
       @db.close =>
         @db    = null
@@ -58,10 +56,8 @@ class Graph_Service
             process.nextTick =>
               check_Lock()
         else
-          #log "callback_Fail"
           callback_Fail()
       else
-        #log "callback_OK"
         callback_Ok()
     check_Lock()
 

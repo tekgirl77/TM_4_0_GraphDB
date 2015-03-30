@@ -1,9 +1,14 @@
-Cache_Service         = require('teammentor').Cache_Service
-swagger_node_express  = require 'swagger-node-express'
-paramTypes            = swagger_node_express.paramTypes
-
+Cache_Service        = null
+swagger_node_express = null
+paramTypes           = null
 class Swagger_Common
+  dependencies: ->
+    {Cache_Service}       = require('teammentor')
+    swagger_node_express  = require 'swagger-node-express'
+    {paramTypes}          = swagger_node_express
+
   constructor: (options)->
+    @.dependencies()
     @.options        = options || {}
     @.area           = @.options.area
     @.swaggerService = @.options.swaggerService
