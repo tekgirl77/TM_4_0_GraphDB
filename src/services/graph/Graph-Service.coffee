@@ -15,8 +15,8 @@ class Graph_Service
     @.dbName        = @.options.name || '_tmp_db'.add_Random_String(5)
     @.dbPath        = "./.tmCache/#{@dbName}"
     @.db            = null
-    @.db_Lock_Tries = 20
-    @.db_Lock_Delay = 250
+    @.db_Lock_Tries = @.options.db_Lock_Tries || 20
+    @.db_Lock_Delay = @.options.db_Lock_Delay || 250
 
   openDb : (callback)=>
     if locked

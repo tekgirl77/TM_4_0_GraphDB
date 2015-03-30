@@ -132,25 +132,49 @@ describe '| api | base-classes | Swagger-GraphDB.test | open_Import_Service', ->
 
     swagger_DB.open_Import_Service res, temp_Key
 
-  xit 'when GraphDB is not avaiable', (done)->
+  it 'when GraphDB is not avaiable', (done)->
 
     temp_Key      = 'key_'.add_5_Letters()
 
-    graph_Options  =
-      cache: tmp_Cache
-      name: 'temp-db'
-
     res =
-      send: (data)=>
-        log data
-        #data                   .assert_Is temp_Data   # there is a small variation with the previous test (which could cause probs when strings are saved)
-        #tmp_Cache.get(temp_Key).assert_Is temp_Data
-        done()
+      status: (value)->
+        value.assert_Is 503
+        @
+      send: (data)->
+        data.assert_Is error: { message: 'GraphDB is busy, please try again' }
+        import_Service.graph.deleteDb ->
+          done()
 
-    import_Service = new Import_Service(graph_Options)
-    import_Service.graph.db_Lock_Delay = 10
-    import_Service.graph.db_Lock_Tries = 5
-    log import_Service.graph
+    using swagger_DB.graph_Options, ->
+      @.db_Lock_Tries = 2
+      @.db_Lock_Delay = 10
+
+    import_Service = new Import_Service(options)
     import_Service.graph.openDb (status)->
       status.assert_Is_True()
       swagger_DB.open_Import_Service res, temp_Key
+
+
+  it 'when GraphDB is not avaiable but key was added to cache', (done)->
+
+    temp_Data     = 'data_'.add_5_Letters()
+    temp_Key      = 'key_'.add_5_Letters()
+
+    res =
+      send: (data)->
+        data                   .assert_Is temp_Data
+        tmp_Cache.get(temp_Key).assert_Is temp_Data
+        import_Service.graph.deleteDb ->
+          done()
+
+    using swagger_DB.graph_Options, ->
+      @.db_Lock_Tries = 2
+      @.db_Lock_Delay = 10
+
+    import_Service = new Import_Service(options)
+    import_Service.graph.openDb (status)->
+      status.assert_Is_True()
+      swagger_DB.open_Import_Service res, temp_Key
+
+    20.wait ->
+      tmp_Cache.put temp_Key, temp_Data
