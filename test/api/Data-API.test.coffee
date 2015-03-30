@@ -175,7 +175,7 @@ describe '| api | Data-API.test', ->
       @timeout 10000
       clientApi.root_queries (data)=>
         root_Queries = data.obj
-        query_Id = root_Queries.queries.first().id
+        query_Id = root_Queries.queries.second().id
         filters  = ''
         clientApi.query_tree {id: query_Id, filters: filters }, (data)=>
           size_No_Filters = data.obj.results.size()
@@ -189,7 +189,7 @@ describe '| api | Data-API.test', ->
     it 'query_tree_filtered (two filters)', (done)->
       clientApi.root_queries (data)=>
         root_Queries = data.obj
-        query_Id = root_Queries.queries.first().id
+        query_Id = root_Queries.queries.second().id
         filters  = ''
         clientApi.query_tree {id: query_Id, filters: filters }, (data)=>
           size_No_Filters = data.obj.results.size()

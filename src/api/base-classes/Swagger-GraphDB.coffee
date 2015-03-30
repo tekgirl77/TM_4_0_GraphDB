@@ -23,12 +23,12 @@ class Swagger_GraphDB extends Swagger_Common
 
     @.send_From_Cache res,key, ()=>                         # see if the value already exists on the cache
       import_Service = new Import_Service(@.graph_Options)  # if not
-      import_Service.graph.openDb (status)=>                #    open the Db (which now has the wait_For_Unlocked_DB capability)
+      import_Service.graph.openDb (status)=>                #   open the Db (which now has the wait_For_Unlocked_DB capability)
         if status                                           # if db was opened ok
           callback import_Service                           #   call callback with Import_Service obj as param
         else                                                # if db could not be opened
-          @.send_From_Cache res,key, =>                     # see if value has been placed on cache (since first check)
-            res.status(503)                                 # and if the value is still not of the cache, send a 503 error
+          @.send_From_Cache res,key, =>                     #   see if value has been placed on cache (since first check)
+            res.status(503)                                 #   and if the value is still not of the cache, send a 503 error
               .send { error : message : 'GraphDB is busy, please try again'}
 
   save_To_Cache: (key,data)=>
