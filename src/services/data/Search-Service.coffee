@@ -5,7 +5,7 @@ class Search_Service
 
   constructor: (options)->
     @.options       = options || {}
-    @.importService = @.options.importService || new Import_Service('tm-uno')
+    @.importService = @.options.importService || new Import_Service(name:'tm-uno')
     @.graph         = @.importService.graph
 
   article_Titles: (callback)=>

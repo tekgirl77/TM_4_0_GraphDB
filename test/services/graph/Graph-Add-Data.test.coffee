@@ -5,13 +5,13 @@ describe '| services | graph | Graph-Add_Data.test', ->
   importService = null
 
   before (done)->
-    importService = new Import_Service('Graph-Add_Data.test')
+    importService = new Import_Service(name: 'Graph-Add_Data.test')
     importService.setup ->
       done()
 
   after (done)->
     importService.graph.deleteDb ->
-      importService.cache.cacheFolder().folder_Delete_Recursive()
+      #importService.cache.cacheFolder().folder_Delete_Recursive()
       done()
 
   it 'add_Db and get_Subject', (done)->

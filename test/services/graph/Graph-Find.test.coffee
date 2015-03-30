@@ -6,7 +6,7 @@ describe '| services | graph | Graph-Find.test', ->
   graph_Find    = null
 
   before (done)->
-    using new Import_Service('tm-uno'), ->
+    using new Import_Service(name: 'tm-uno'), ->
       importService = @
       graph_Find    = @.graph_Find
       @.content.load_Data =>

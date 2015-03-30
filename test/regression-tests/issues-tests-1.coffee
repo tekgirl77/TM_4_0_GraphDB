@@ -5,7 +5,7 @@ describe '| regression-tests | tests-1',->
   library_Data   = null
 
   before (done)->
-    using new Import_Service('tm-uno'), ->
+    using new Import_Service(name: 'tm-uno'), ->
       importService  = @
       @.content.load_Data =>
         importService.graph.openDb =>

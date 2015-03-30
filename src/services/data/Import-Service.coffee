@@ -13,11 +13,12 @@ Queries                = require './Queries'
 
 class ImportService
 
-  constructor: (name)->
-    @.name            = name || '_tmp_import'
-    @.cache           = new Cache_Service("#{@name}_cache")
+  constructor: (options)->
+    @.options         = options || {}
+    @.name            = options.name || '_tmp_import'
+    #@.cache           = new Cache_Service("#{@name}_cache")  # I don't think we need this anymore
     @.content         = new Content_Service()
-    @.graph           = new Graph_Service("#{@name}")
+    @.graph           = new Graph_Service(options)
     @.graph_Add_Data  = new Graph_Add_Data @.graph
     @.graph_Find      = new Graph_Find @.graph
     @.library_Import  = new Library_Import_Service @.content
@@ -25,7 +26,7 @@ class ImportService
     @.query_Tree      = new Query_Tree @
     @.queries         = new Queries @
     @.path_Root       = ".tmCache"
-    @.path_Name       = ".tmCache/#{@name}"
+    @.path_Name       = ".tmCache/#{@.name}"
 
   setup: (callback)->
     @path_Root   .folder_Create()

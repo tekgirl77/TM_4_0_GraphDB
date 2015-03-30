@@ -10,6 +10,7 @@ class Swagger_GraphDB extends Swagger_Common
     @.cache         = @.options.cache || new Cache_Service("data_cache")
     @.cache_Enabled = true
     @.cache_Enabled = false if @.options.cache_Enabled is false
+    @.db_Name       = @.options.db_Name || 'tm-uno'
     super(options)
 
   close_Import_Service_and_Send: (importService, res, data, key)=>
@@ -18,8 +19,8 @@ class Swagger_GraphDB extends Swagger_Common
       res.send data?.json_pretty()
 
   open_Import_Service: (res, key ,callback)=>
-    @.send_From_Cache res,key, ()=>                    # see if the value already exists on the cache
-      using new Import_Service('tm-uno'), ->            # if not
+    @.send_From_Cache res,key, ()=>                     # see if the value already exists on the cache
+      using new Import_Service(name: @.db_Name), ->     # if not
         @.graph.openDb (status)=>                       #    open the Db (which now has the wait_For_Unlocked_DB capability)
           if status                                     # if db was opened ok
             callback @                                  #   call callback with Import_Service obj as param

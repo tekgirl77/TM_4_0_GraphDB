@@ -9,7 +9,7 @@ describe '| services | data | Queries.test', ->
   @timeout 5000
 
   before (done)->
-    using new Import_Service('tm-uno'), ->
+    using new Import_Service(name:'tm-uno'), ->
       importService  = @
       queries        = @.queries
       graph_Find     = @.graph_Find

@@ -6,12 +6,12 @@ describe '| graph | TM-Guidance.test', ->
   tmGuidance = null
 
   beforeEach ->
-    options = { importService : new Import_Service('_tm_uno_test') }
+    options = { importService : new Import_Service(name: '_tm_uno_test') }
     tmGuidance  = new TM_Guidance options
 
   afterEach (done)->
     tmGuidance.importService.graph.deleteDb ->
-        tmGuidance.importService.cache.cacheFolder().folder_Delete_Recursive()
+        #tmGuidance.importService.cache.cacheFolder().folder_Delete_Recursive()
         done()
 
   it 'constructor',->

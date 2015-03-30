@@ -5,7 +5,7 @@ Markdown_Service = require '../services/render/Markdown-Service'
 class Article
 
   constructor: (importService)->
-    @.importService  = importService || new Import_Service('tm-uno')
+    @.importService  = importService || new Import_Service(name:'tm-uno')
 
   ids: (callback)=>
     @.importService.graph_Find.find_Using_Is 'Article', (articles_Ids)=>

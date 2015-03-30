@@ -14,7 +14,7 @@ class Config_API extends Swagger_Common
       @.configService  = new Config_Service()
       @.contentService = new Content_Service()
       @.cache          = new Cache_Service("data_cache")
-      @.tmGuidance     = new TM_Guidance { importService : new Import_Service('tm-uno') }
+      @.tmGuidance     = new TM_Guidance { importService : new Import_Service(name:'tm-uno') }
       @.options.area   = 'config'
       super(options)
 

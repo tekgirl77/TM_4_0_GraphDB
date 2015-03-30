@@ -8,7 +8,7 @@ describe '| services | data | Query-Tree.test', ->
   query_Tree     = null
 
   before (done)->
-    using new Import_Service('tm-uno'), ->
+    using new Import_Service(name:'tm-uno'), ->
       importService  = @
       graph_Find     = @.graph_Find
       query_Mappings = @.query_Mappings

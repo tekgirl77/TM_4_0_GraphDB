@@ -23,7 +23,7 @@ class Search_Artifacts_Service
   constructor: (options)->
     @.dependencies()
     @.options         = options || {}
-    @.import_Service  = @.options.import_Service || new Import_Service('tm-uno')
+    @.import_Service  = @.options.import_Service || new Import_Service(name:'tm-uno')
     @.article         = new Article(@.import_Service)
     @.cache           = new Cache_Service("article_cache")
     @.cache_Search    = new Cache_Service("search_cache")

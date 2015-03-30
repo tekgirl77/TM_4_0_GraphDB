@@ -9,9 +9,10 @@ class Graph_Service
     levelgraph        = require 'levelgraph'
     {GitHub_Service}  = require 'teammentor'
 
-  constructor: (dbName)->
+  constructor: (options)->
     @.dependencies()
-    @.dbName        = dbName || '_tmp_db'.add_Random_String(5)
+    @.options       = options || {}
+    @.dbName        = @.options.name || '_tmp_db'.add_Random_String(5)
     @.dbPath        = "./.tmCache/#{@dbName}"
     @.db            = null
     @.db_Lock_Tries = 20

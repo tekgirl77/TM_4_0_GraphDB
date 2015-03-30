@@ -7,18 +7,18 @@ describe '| services | data | Import-Service.test', ->
     importService = null
 
     before ->
-      importService = new Import_Service('Import-Service.test')
+      importService = new Import_Service(name: 'Import-Service.test')
 
     after (done)->
       importService.graph.deleteDb ->
-        importService.cache.cacheFolder().folder_Delete_Recursive()
+        #importService.cache.cacheFolder().folder_Delete_Recursive()
         done()
 
     it 'check ctor()', ->
       Import_Service.assert_Is_Function()
       importService             .assert_Is_Object()
       importService.name        .assert_Is_String()
-      importService.cache       .assert_Is_Object()#.assert_Instance_Of()
+      #importService.cache       .assert_Is_Object()#.assert_Instance_Of()
       importService.graph       .assert_Is_Object()
       importService.path_Root   .assert_Is_String()
       importService.path_Name   .assert_Is_String()
@@ -29,12 +29,12 @@ describe '| services | data | Import-Service.test', ->
       importService.path_Name.folder_Delete_Recursive().assert_Is_True()
 
     it 'check ctor (name)', (done)->
-      aaaa_ImportService  = new Import_Service('aaaa')
+      aaaa_ImportService  = new Import_Service(name: 'aaaa')
       aaaa_ImportService.name         .assert_Is 'aaaa'
       aaaa_ImportService.path_Name    .assert_Is '.tmCache/aaaa'
       aaaa_ImportService.graph.dbName .assert_Is 'aaaa'
       aaaa_ImportService.graph.deleteDb ->
-        aaaa_ImportService.cache.cacheFolder().folder_Delete_Recursive()
+        #aaaa_ImportService.cache.cacheFolder().folder_Delete_Recursive()
         done()
 
     it 'setup', (done)->

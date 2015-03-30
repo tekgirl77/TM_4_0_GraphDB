@@ -13,7 +13,7 @@ describe '| services | graph | Graph-Service.test |', ->
         assert_Is_Null @.db
 
 
-      using new Graph_Service('aaaa'),->
+      using new Graph_Service(name: 'aaaa'),->
         @.dbName.assert_Is 'aaaa'
         @.dbPath.assert_Is './.tmCache/aaaa'
         @.dbPath.folder_Delete_Recursive().assert_Is_True()

@@ -6,15 +6,15 @@ describe '| services | import | Library-Import-Service.test |', ->
   importService  = null
   library_Import = null
   before (done)->
-    using new Import_Service('_load_library_data'), ->
+    using new Import_Service(name: '_load_library_data'), ->
       importService = @
       library_Import = @.library_Import
       @.content.load_Data ->
         done()
 
   after ->
-    importService.cache.cacheFolder()
-    importService.cache.cacheFolder().folder_Delete_Recursive()
+    #importService.cache.cacheFolder()
+    #importService.cache.cacheFolder().folder_Delete_Recursive()
 
   it 'library_Json', (done)->
     library_Import.library (library)->
