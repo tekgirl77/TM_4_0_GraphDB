@@ -1,7 +1,9 @@
 {Cache_Service}  = require('teammentor')
 Swagger_GraphDB  = require '../../../src/api/base-classes/Swagger-GraphDB'
+Import_Service   = require '../../../src/services/data/Import-Service'
 
-describe.only '| api | base-classes | Swagger-GraphDB.test', ->
+describe '| api | base-classes | Swagger-GraphDB.test |', ->
+
   tmp_Cache = null
 
   before ->
@@ -15,13 +17,21 @@ describe.only '| api | base-classes | Swagger-GraphDB.test', ->
       @.options      .assert_Is {}
       @.cache.area   .assert_Is 'data_cache'
       @.cache_Enabled.assert_Is_True()
+      @.db_Name      .assert_Is 'tm-uno'
 
   it 'constructor (with options)', ->
-    options =  { cache: tmp_Cache, cache_Enabled:false, area:'cccc',  swaggerService: 'dddd'}
+    options =
+      cache          : tmp_Cache
+      cache_Enabled  : false
+      db_Name        : 'cccc',
+      area           : 'dddd'
+      swaggerService : 'eeee'
+
     using new Swagger_GraphDB(options), ->
       @.options       .assert_Is options
       @.cache         .assert_Is options.cache
       @.cache_Enabled .assert_Is_False()
+      @.db_Name       .assert_Is options.db_Name
       @.area          .assert_Is options.area
       @.swaggerService.assert_Is options.swaggerService
 
@@ -74,3 +84,73 @@ describe.only '| api | base-classes | Swagger-GraphDB.test', ->
       check_Value(@.save_To_Cache key, [])
       check_Value(@.save_To_Cache key, {})
 
+describe '| api | base-classes | Swagger-GraphDB.test | open_Import_Service', ->
+
+  importService = null
+  options       = null
+  swagger_DB    = null
+  tmp_Cache     = null
+
+  before ->
+    tmp_Cache = new Cache_Service("tmp_Cache")
+    options  =
+      cache: tmp_Cache
+      db_Name: 'temp-db'
+    swagger_DB = new Swagger_GraphDB(options)
+
+  afterEach (done)->
+    importService.graph.deleteDb ->
+        done()
+
+  it 'sending data not in cache', (done)->
+
+    temp_Data     = 'data_'.add_5_Letters()
+    temp_Key      = 'key_'.add_5_Letters()
+
+    res =
+      send: (data)=>
+        data                   .assert_Is temp_Data.json_Str()
+        tmp_Cache.get(temp_Key).assert_Is temp_Data
+        done()
+
+    swagger_DB.open_Import_Service res, temp_Key, (_importService)->
+      importService = _importService
+      swagger_DB.close_Import_Service_and_Send importService, res, temp_Data, temp_Key
+
+  it 'sending data in cache', (done)->
+
+    temp_Data     = 'data_'.add_5_Letters()
+    temp_Key      = 'key_'.add_5_Letters()
+
+    res =
+      send: (data)=>
+        data                   .assert_Is temp_Data   # there is a small variation with the previous test (which could cause probs when strings are saved)
+        tmp_Cache.get(temp_Key).assert_Is temp_Data
+        done()
+
+    tmp_Cache.put temp_Key, temp_Data
+
+    swagger_DB.open_Import_Service res, temp_Key
+
+  xit 'when GraphDB is not avaiable', (done)->
+
+    temp_Key      = 'key_'.add_5_Letters()
+
+    graph_Options  =
+      cache: tmp_Cache
+      name: 'temp-db'
+
+    res =
+      send: (data)=>
+        log data
+        #data                   .assert_Is temp_Data   # there is a small variation with the previous test (which could cause probs when strings are saved)
+        #tmp_Cache.get(temp_Key).assert_Is temp_Data
+        done()
+
+    import_Service = new Import_Service(graph_Options)
+    import_Service.graph.db_Lock_Delay = 10
+    import_Service.graph.db_Lock_Tries = 5
+    log import_Service.graph
+    import_Service.graph.openDb (status)->
+      status.assert_Is_True()
+      swagger_DB.open_Import_Service res, temp_Key
