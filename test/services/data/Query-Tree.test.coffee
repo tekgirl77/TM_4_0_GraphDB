@@ -40,6 +40,33 @@ describe '| services | data | Query-Tree.test', ->
         @.query_Tree.get_Query_Tree query_Id, (query_Tree)->
           query_Tree.results.assert_Size_Is_Bigger_Than 10
           query_Tree.id.assert_Is query_Id
+
+          done()
+
+  #TO DO
+  xit 'get_Query_Tree (confirm containers and filters are alphabetically sorted', (done)->
+    using importService, ->
+      @.query_Mappings.find_Root_Queries (root_Queries)=>
+        query_Id = root_Queries.queries.second().id
+        @.query_Tree.get_Query_Tree query_Id, (query_Tree)->
+          query_Tree.results = []
+
+          #log query_Tree
+
+          container_Titles = (query.title for query in query_Tree.containers)
+          for filter in query_Tree.filters
+            filter_Titles = (result.title for result in filter.results )
+
+
+          #log container_Titles
+
+            log '*************************'
+            log filter_Titles
+            log '----'
+            log filter_Titles.sort()
+            log '----'
+            log filter_Titles.sort().reverse()
+            log '----'
           done()
 
   it 'get_Query_Tree_Filters', (done)->
@@ -57,6 +84,7 @@ describe '| services | data | Query-Tree.test', ->
               @.size .assert_Is_Number()
 
           done()
+
 
 
   #it.only 'map_Query_Tree', (done)->

@@ -44,8 +44,8 @@ class Swagger_GraphDB extends Swagger_Common
     if @.cache_Enabled
       if (key and @.cache.has_Key(key))
         return res.send @.cache.get(key)
-      else
-        callback()
+
+    callback()
 
   using_Import_Service: (res, key, callback)=>
     @.open_Import_Service res, key, (import_Service)=>

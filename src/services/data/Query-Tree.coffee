@@ -1,6 +1,4 @@
 
-#Local_Cache        = { Query_Tree: {}}
-
 class Query_Tree
 
   constructor: (import_Service)->
@@ -8,9 +6,6 @@ class Query_Tree
     @.graph_Find     = import_Service.graph_Find
 
   get_Query_Tree: (query_Id,callback)=>
-    #if Local_Cache.Query_Tree[query_Id]
-    #  callback Local_Cache.Query_Tree[query_Id]
-    #  return
 
     @.import_Service.query_Mappings.get_Query_Mappings query_Id, (query_Mappings)=>
       if not query_Mappings
@@ -43,6 +38,8 @@ class Query_Tree
 
           query_Tree.containers.add container
 
+          query_Tree.containers = @.sort_Containers(query_Tree.containers)
+
         @get_Query_Tree_Filters articles, (filters)=>
           query_Tree.filters = filters
           @.import_Service.graph_Find.get_Subjects_Data articles, (data)=>
@@ -50,8 +47,6 @@ class Query_Tree
               query_Tree.results.add data[article_Id]
 
             callback query_Tree
-
-            #callback Local_Cache.Query_Tree[query_Id] = query_Tree
 
   get_Query_Tree_Filters: (articles_Ids, callback)=>
 
@@ -73,10 +68,10 @@ class Query_Tree
                 size    : child_Query.articles.size()
                 articles: child_Query.articles
 
-
               filter.results.add result
 
-        filters.add filter
+
+        filters.add @.sort_Filter(filter)
 
       #map_Filter 'Category'
       map_Filter 'Technology'
@@ -87,12 +82,6 @@ class Query_Tree
 
   apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Ids, callback)=>
     @.import_Service.query_Mappings.get_Queries_Mappings (queries_Mappings)=>
-
-      #log '------------------'
-      #log query_Tree.id
-      #log '------------------'
-      #log query_Id
-      #log '------------------'
 
       articles = []
 
@@ -141,28 +130,30 @@ class Query_Tree
       callback filtered_Tree
 
 
+  #The two sort methods below needs refactoring since there must be a much better way to do this
 
+  sort_Filter: (filter)->
+  #filter.results = (filter.results.sort (a,b)-> a.title.lower() - b.title.lower())  # this doesn't work
 
-  ###
-   apply_Query_Tree_Query_Id_Filter: (query_Tree, query_Id, callback)=>
-    @.import_Service.query_Mappings.get_Queries_Mappings (queries_Mappings)=>
-      filter_Query     = queries_Mappings[query_Id]
-      if not filter_Query
-        callback query_Tree;
-        return
+    titles = (result.title.lower() for result in filter.results).sort()
+    sorted_Results = []
+    for title in titles
+      for result in filter.results
+        if result.title.lower() is title
+          sorted_Results.push result
+          continue
+    filter.results  = sorted_Results
+    filter
 
-      filtered_Tree =
-        id         : query_Tree.id
-        containers : query_Tree.containers
-        results    : []
-        filters    : query_Tree.filters
+  sort_Containers: (containers)->
+    titles = (container.title.lower() for container in containers).sort()
+    log titles
+    sorted_Containers = []
+    for title in titles
+      for container in containers
+        if container.title.lower() is title
+          sorted_Containers.push container
+          continue
+    sorted_Containers
 
-      filter_Articles  = filter_Query.articles
-
-      for result in query_Tree.results
-        if filter_Articles.contains(result.id)
-          filtered_Tree.results.add result
-      filtered_Tree.title = query_Tree.title
-      callback filtered_Tree
-  ###
 module.exports = Query_Tree
