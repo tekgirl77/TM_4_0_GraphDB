@@ -147,7 +147,7 @@ class Query_Tree
 
   sort_Containers: (containers)->
     titles = (container.title.lower() for container in containers).sort()
-    log titles
+
     sorted_Containers = []
     for title in titles
       for container in containers

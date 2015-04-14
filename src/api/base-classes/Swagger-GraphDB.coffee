@@ -38,7 +38,10 @@ class Swagger_GraphDB extends Swagger_Common
           return
         if data instanceof Object and data.keys().empty() # if object, check if not empty
           return
-        @.cache.put key,data                              # save data into cache
+        try
+          @.cache.put key,data                              # save data into cache
+        catch message
+          logger?.error "Got #{message} when saving cache key #{key}"
 
   send_From_Cache: (res, key, callback)=>
     if @.cache_Enabled
