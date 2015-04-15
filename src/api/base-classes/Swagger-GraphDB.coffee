@@ -15,8 +15,7 @@ class Swagger_GraphDB extends Swagger_Common
     super(options)
 
   close_Import_Service_and_Send: (importService, res, data, key)=>
-    if (data?.article_Id)
-      @.save_To_Cache(key,data)
+    @.save_To_Cache(key,data)
     importService.graph.closeDb =>
       res.send data?.json_pretty()
 
