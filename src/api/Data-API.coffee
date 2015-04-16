@@ -12,14 +12,13 @@ class Data_API extends Swagger_GraphDB
   article: (req,res)=>
     ref        = req.params.ref
     cache_Key = "article_#{ref}.json"
-    @.open_Import_Service res, cache_Key, (import_Service)=>
-      import_Service.graph_Find.find_Article ref, (article_Id)=>
-        if (article_Id?)
+    @.using_Graph_Find res, cache_Key, (send)->
+      @.find_Article ref, (article_Id)=>
+        if (article_Id)
           data = { article_Id: article_Id}
-          @close_Import_Service_and_Send import_Service, res, data, cache_Key
+          send data
         else
-          import_Service.graph.closeDb =>
-          res.send data?.json_pretty()
+          send ''
 
   articles: (req,res)=>
     cache_Key = 'articles.json'
