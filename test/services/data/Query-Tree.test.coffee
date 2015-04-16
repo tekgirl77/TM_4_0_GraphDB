@@ -2,6 +2,8 @@ Import_Service = require('./../../../src/services/data/Import-Service')
 
 describe '| services | data | Query-Tree.test', ->
 
+  @timeout 5000
+
   importService  = null
   graph_Find     = null
   query_Mappings = null

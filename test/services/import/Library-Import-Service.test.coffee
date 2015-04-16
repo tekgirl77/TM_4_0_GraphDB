@@ -5,6 +5,9 @@ describe '| services | import | Library-Import-Service.test |', ->
 
   importService  = null
   library_Import = null
+
+  @timeout 5000
+
   before (done)->
     using new Import_Service(name: '_load_library_data'), ->
       importService = @

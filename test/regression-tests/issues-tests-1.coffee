@@ -5,6 +5,7 @@ describe '| regression-tests | tests-1',->
   library_Data   = null
 
   before (done)->
+    @timeout 5000
     using new Import_Service(name: 'tm-uno'), ->
       importService  = @
       @.content.load_Data =>

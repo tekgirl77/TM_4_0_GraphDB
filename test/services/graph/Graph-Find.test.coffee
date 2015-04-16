@@ -5,6 +5,8 @@ describe '| services | graph | Graph-Find.test', ->
   importService = null
   graph_Find    = null
 
+  @timeout 5000
+
   before (done)->
     using new Import_Service(name: 'tm-uno'), ->
       importService = @

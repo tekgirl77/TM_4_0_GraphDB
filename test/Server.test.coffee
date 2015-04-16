@@ -5,7 +5,10 @@ supertest = require('supertest')
 
 describe '| test-Server |',->
 
+  @timeout 5000
+  
   server  = null
+
 
   before ->
     server = new TM_Server({ port : 12345} ).configure()
