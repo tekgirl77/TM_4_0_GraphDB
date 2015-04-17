@@ -28,13 +28,13 @@ describe '| services | text-search | Search-Artifacts-Service.test', ->
     search_Artifacts.article       .constructor.name.assert_Is 'Article'
 
   it 'batch_Parse_All_Articles', (done)->
-    @.timeout 60000
+    @.timeout 0
     search_Artifacts.batch_Parse_All_Articles (results)->
       results.assert_Size_Is_Bigger_Than 100
       done()
 
   it 'create_Search_Mappings', (done)->
-    @.timeout 60000
+    @.timeout 0
     search_Artifacts.create_Search_Mappings ->
       done()
 
