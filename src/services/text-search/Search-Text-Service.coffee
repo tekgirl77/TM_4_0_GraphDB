@@ -45,7 +45,6 @@ class Search_Text_Service
       callback mappings[word]
 
   word_Score: (word, callback)=>
-    log word
     word = word.lower()
     results = []
 
@@ -95,7 +94,7 @@ class Search_Text_Service
         add_Tag_Mappings word
 
         results = (results.sort (a,b)-> a.score - b.score).reverse()
-        log results.size()
+
         # if there are no results via exact match, try searching inside each word
         if results.empty()
           for key,value of mappings
@@ -109,11 +108,8 @@ class Search_Text_Service
     results = {}
 
     @word_Score words, (result)=>
-      callback result
-      #results[words]= result
-      #@.consolidate_Scores(results, callback)
-      return
-
+      if result.not_Empty()
+        return callback result
 
       get_Score = (word,next)=>
         if word is ''
@@ -137,7 +133,6 @@ class Search_Text_Service
     results = []
     words_Size =  scores.keys().size()
     for id, id_Data of mapped_Scores
-      log id_Data.keys()
       if id_Data.keys().size() is words_Size
         result = {id: id, score:0 , why: {}}
         for word,word_Data of id_Data

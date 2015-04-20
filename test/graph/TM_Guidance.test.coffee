@@ -54,7 +54,7 @@ describe '| graph | TM-Guidance.test', ->
             @.importService.graph_Add_Data.add_Db_using_Type_Guid_Title 'Query', library.id, library.name, (library_Id)=>
               @.import_Articles library.id, library.articles.take(1), =>
                 @.importService.graph.allData (data)->
-                  data.assert_Size_Is(35)
+                  data.assert_Size_Is(36)
                   done()
 
   it 'load_Data', (done)->

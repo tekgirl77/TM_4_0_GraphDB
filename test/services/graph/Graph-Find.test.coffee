@@ -122,8 +122,8 @@ describe '| services | graph | Graph-Find.test', ->
           done()
 
     it 'find_Tags', (done)->
-      using article, ->
-        @.tags (tags)=>
+      using graph_Find, ->
+        @.find_Tags (tags)=>
           tags.keys().assert_Not_Empty()
           tags.values().assert_Not_Empty()
           done()

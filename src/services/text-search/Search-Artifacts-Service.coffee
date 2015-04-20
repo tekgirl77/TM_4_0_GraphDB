@@ -36,7 +36,8 @@ class Search_Artifacts_Service
     key = "#{article_Id}.json"
     if @.cache.has_Key key
       data = @.cache.get key
-      callback data.json_Parse(), false
+      setImmediate ->
+        callback data.json_Parse(), false
     else
       @.parse_Article_Html article_Id, (data)=>
         #log "Parsed html for #{article_Id}"
