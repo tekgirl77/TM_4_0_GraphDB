@@ -38,6 +38,12 @@ describe '| services | text-search | Search-Artifacts-Service.test', ->
     search_Artifacts.create_Search_Mappings ->
       done()
 
+  it 'create_Tag_Mappings', (done)->
+    search_Artifacts. create_Tag_Mappings (tag_Mappings_File)->
+      search_Artifacts.cache_Search.path_Key 'tags_mappings.json'
+                      .assert_File_Exists()
+      done()
+
   it 'parse_Article', (done)->
     article_Id = article_Ids.first()
     search_Artifacts.parse_Article article_Id, (data)->

@@ -13,6 +13,11 @@ describe '| services | text-search | Search-Text-Service.test', ->
       data.assert_Is_Object()
       done()
 
+  it 'tag_Mappings', (done)->
+    search_Text.tag_Mappings (data)->
+      data.assert_Is_Object()
+      done()
+
   it 'word_Data', (done)->
     search_Text.word_Data 'injection', (results)->
       results.keys().assert_Not_Empty()
@@ -20,11 +25,13 @@ describe '| services | text-search | Search-Text-Service.test', ->
 
   it 'word_Score', (done)->
     search_Text.word_Score 'injection', (results)->
+    #search_Text.word_Score 'wcf 3.5', (results)->
       results.assert_Not_Empty()
       done()
 
   it 'words_Score', (done)->
     search_Text.words_Score 'sQL   injection', (results)->
+    #search_Text.words_Score 'wcf 3.5', (results)->
       results.assert_Not_Empty()
       done()
 

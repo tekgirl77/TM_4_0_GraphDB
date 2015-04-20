@@ -65,5 +65,4 @@ class Article
       callback html
 
 
-
 module.exports = Article

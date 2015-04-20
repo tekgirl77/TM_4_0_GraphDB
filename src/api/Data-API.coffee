@@ -128,6 +128,16 @@ class Data_API extends Swagger_GraphDB
       import_Service.query_Mappings.find_Root_Queries (data)=>
         @close_Import_Service_and_Send import_Service, res, data, cache_Key
 
+  tags: (req,res)=>
+    cache_Key = "tags.json"
+    @.using_Graph_Find res, cache_Key, (send)->
+      @.find_Tags send
+
+  tag_Values: (req,res)=>
+    cache_Key = "tags.json"
+    @.using_Graph_Find res, cache_Key, (send)->
+      @.find_Tags (tags)=>
+        send tags.keys()
 
   add_Methods: ()=>
     @add_Get_Method 'article'                 , ['ref']
@@ -147,6 +157,8 @@ class Data_API extends Swagger_GraphDB
     @add_Get_Method 'query_tree'              , ['id' ]
     @add_Get_Method 'query_tree_filtered'     , ['id','filters' ]
     @add_Get_Method 'root_queries'            , [     ]
+    @add_Get_Method 'tags'                    , [     ]
+    @add_Get_Method 'tag_Values'              , [     ]
     @
 
 

@@ -67,8 +67,16 @@ class TM_Guidance
 
       importUtil.add_Triplet(article_Id, 'summary', summary)
 
+    add_Article_Tag = ()=>
+      technology_Value = article_Data.Metadata.first().Technology?.first()
+      tag_Value        = article_Data.Metadata.first().Tag?.first()
+      if not tag_Value                                                    # if there is not Tag value, use the technology value
+        tag_Value = technology_Value?.split(' ').join(',')                # splited by space and joined by comma
+      importUtil.add_Triplet(article_Id  , 'tags', tag_Value || "")       # the metadata called it Tag but it better to normalize it to tags
+
     add_Metadata_Target(target) for target in ['Phase', 'Technology', 'Type'] # 'Category'
     add_Article_Summary();
+    add_Article_Tag();
 
     @.importService.graph.db.put importUtil.data, ()=>
       next()

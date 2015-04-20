@@ -2,6 +2,7 @@ Cache_Service            = null
 Search_Artifacts_Service = null
 async                    = null
 loaded_Search_Mappings   = null
+loaded_Tag_Mappings      = null
 
 class Search_Text_Service
 
@@ -27,65 +28,102 @@ class Search_Text_Service
     new Search_Artifacts_Service().create_Search_Mappings (search_Mappings)->
       callback search_Mappings
 
+  tag_Mappings: (callback)=>
+    if loaded_Tag_Mappings
+      return callback loaded_Tag_Mappings
+
+    key = 'tags_mappings.json'
+    if @.cache_Search.has_Key key
+      data = @.cache_Search.get key
+      loaded_Tag_Mappings = data.json_Parse()
+      return callback loaded_Tag_Mappings
+    new Search_Artifacts_Service().create_Tag_Mappings (tag_Mappings)->
+      callback tag_Mappings
+
   word_Data: (word, callback)=>
     @.search_Mappings (mappings)->
       callback mappings[word]
 
   word_Score: (word, callback)=>
+    log word
     word = word.lower()
     results = []
 
-    @.search_Mappings (mappings)->
+    @.tag_Mappings (tag_Mappings)=>
+      @.search_Mappings (mappings)->
 
-      add_Results_Mappings =  (key)->
-        for article_Id, data of mappings[key]
-            result = {id : article_Id, score: 0, why: {}}
-            for tag in data.where
-              score = 1
-              switch tag
-                when 'title'
-                  score = 10
-                when 'h1'
-                  score = 5
-                when 'h2'
-                  score = 4
-                when 'em'
-                  score = 3
-                when 'b'
-                  score = 3
-                when 'a'
-                  score = -4
+        add_Results_Mappings =  (key)->
+          for article_Id, data of mappings[key]
+              result = {id : article_Id, score: 0, why: {}}
+              for tag in data.where
+                score = 1
+                switch tag
+                  when 'title'
+                    score = 10
+                  when 'h1'
+                    score = 5
+                  when 'h2'
+                    score = 4
+                  when 'em'
+                    score = 3
+                  when 'b'
+                    score = 3
+                  when 'a'
+                    score = -4
 
-              result.score += score
-              result.why[tag]?=0
-              result.why[tag]+=score
-            results.push result
+                result.score += score
+                result.why[tag]?=0
+                result.why[tag]+=score
+              results.push result
 
-      add_Results_Mappings word
+        add_Tag_Mappings = (key)=>
+          if tag_Mappings[key]
+            tag_Articles = tag_Mappings[key]
+            extra_Results = []
 
-      results = (results.sort (a,b)-> a.score - b.score).reverse()
+            for result in results
+              if tag_Articles.contains(result.id)
+                result.score += 30
+                result.why.tag = 30
+                tag_Articles.splice tag_Articles.indexOf(result.id),1
 
-      # if there are no results via exact match, try searching inside each work
-      if results.empty()
-        for key,value of mappings
-          if key.contains(word)
-            add_Results_Mappings key
+            for article_Id in tag_Articles
+              result = {id : article_Id, score: 30, why: {tag:30}}
+              results.push result
 
-      callback results
+        add_Results_Mappings word
+        add_Tag_Mappings word
+
+        results = (results.sort (a,b)-> a.score - b.score).reverse()
+        log results.size()
+        # if there are no results via exact match, try searching inside each word
+        if results.empty()
+          for key,value of mappings
+            if key.contains(word)
+              add_Results_Mappings key
+
+        callback results
 
   words_Score: (words, callback)=>
     words = words.lower()
     results = {}
 
-    get_Score = (word,next)=>
-      if word is ''
-        return next()
-      @word_Score word , (word_Results)->
-        results[word] = word_Results
-        next()
+    @word_Score words, (result)=>
+      callback result
+      #results[words]= result
+      #@.consolidate_Scores(results, callback)
+      return
 
-    async.eachSeries words.split(' '), get_Score , =>
-      @.consolidate_Scores(results, callback)
+
+      get_Score = (word,next)=>
+        if word is ''
+          return next()
+        @word_Score word , (word_Results)->
+          results[word] = word_Results
+          next()
+
+      async.eachSeries words.split(' '), get_Score , =>
+        @.consolidate_Scores(results, callback)
 
   consolidate_Scores: (scores, callback)=>
     mapped_Scores = {}
@@ -99,6 +137,7 @@ class Search_Text_Service
     results = []
     words_Size =  scores.keys().size()
     for id, id_Data of mapped_Scores
+      log id_Data.keys()
       if id_Data.keys().size() is words_Size
         result = {id: id, score:0 , why: {}}
         for word,word_Data of id_Data

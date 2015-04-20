@@ -224,4 +224,17 @@ class Graph_Find
 
     async.each subjects, map_Subject_data, -> callback(result)
 
+  find_Tags: (callback)=>
+    @.graph.query 'predicate','tags', (data)=>
+      tag_Data = {}
+      for item in data
+        tags       = item.object
+        article_Id = item.subject
+        for tag in tags.split(',')
+          tag = tag.lower()
+          if tag_Data[tag] is undefined or typeof tag_Data[tag] is 'function'
+            tag_Data[tag] = []
+          tag_Data[tag].push article_Id
+      callback tag_Data
+
 module.exports = Graph_Find

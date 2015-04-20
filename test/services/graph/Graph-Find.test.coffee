@@ -120,3 +120,10 @@ describe '| services | graph | Graph-Find.test', ->
         @.find_Article_By_Title title, (article_Data)->
           article_Data.assert_Is article_Id
           done()
+
+    it 'find_Tags', (done)->
+      using article, ->
+        @.tags (tags)=>
+          tags.keys().assert_Not_Empty()
+          tags.values().assert_Not_Empty()
+          done()

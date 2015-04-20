@@ -205,6 +205,12 @@ describe '| api | Data-API.test', ->
             #log result_Filter_1.size
             done()
 
+    it 'tags', (done)->
+      clientApi.tags  (tags_Data)=>
+        tags_Data.keys().assert_Not_Empty()
+        tags_Data.values().assert_Not_Empty()
+        done()
+
 
 
 
