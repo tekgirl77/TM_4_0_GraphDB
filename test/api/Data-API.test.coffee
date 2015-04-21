@@ -54,6 +54,14 @@ describe '| api | Data-API.test', ->
           data.obj.article_Id.assert_Is article_Id
           done()
 
+    it 'article invalid', (done)->
+      clientApi.articles (article_Ids)->
+        article_Id = 'article-'
+        article_Id.assert_Contains 'article-'
+        clientApi.article {ref: article_Id}, (data)->
+          data.assert_Is_Undefined
+          done()
+
     it 'articles', (done)->
       clientApi.articles (data)->
         data.obj.keys().assert_Size_Is_Bigger_Than(50)
