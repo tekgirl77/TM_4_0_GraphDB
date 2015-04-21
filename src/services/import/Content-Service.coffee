@@ -3,7 +3,6 @@ xml2js  = require('xml2js')
 async   = require('async')
 
 Config_Service = require '../utils/Config-Service'
-Git_API        = require '../../api/Git-API'
 
 class Content_Service
   constructor: (options)->
@@ -25,29 +24,6 @@ class Content_Service
     @.library_Folder (library_Folder)=>
       json_Folder = library_Folder.append('-json')
       callback json_Folder, library_Folder
-
-  load_Library_Data: (callback)=>
-    @.xml_Files (xmlFiles)=>
-      if xmlFiles.not_Empty() and @.force_Reload is false
-        callback("data load skipped")
-      else
-        @.configService.get_Config (config)=>
-          @.library_Folder (folder)->
-
-            source_Repo = config.default_Repo
-            target_Folder = folder
-            target_Folder.folder_Delete_Recursive()
-            git_Command =
-              name  : 'clone'
-              params:['clone', "#{source_Repo}","#{target_Folder}"]
-            execMethod = new Git_API().git_Exec_Method(git_Command)
-            res =
-              send: (result)->
-                #log "Clone completed"
-                #log result
-                callback(result)
-            execMethod(null, res)
-
 
   convert_Xml_To_Json: (callback)=>
     @.json_Files (json_Files)=>
