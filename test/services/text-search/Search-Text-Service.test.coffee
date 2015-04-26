@@ -8,7 +8,7 @@ describe '| services | text-search | Search-Text-Service', ->
     search_Text = new Search_Text_Service()
     done()
 
-  it.only 'search_Mappings', (done)->
+  it 'search_Mappings', (done)->
     @timeout 5000
     search_Text.search_Mappings (data)->
       data.assert_Is_Object()
