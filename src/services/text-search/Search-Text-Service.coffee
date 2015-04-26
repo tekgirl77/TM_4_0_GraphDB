@@ -25,6 +25,7 @@ class Search_Text_Service
       data = @.cache_Search.get key
       loaded_Search_Mappings = data.json_Parse()
       return callback loaded_Search_Mappings
+
     new Search_Artifacts_Service().create_Search_Mappings (search_Mappings)->
       callback search_Mappings
 
