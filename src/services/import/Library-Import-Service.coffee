@@ -8,7 +8,7 @@ class Library_Import_Service
       if  folder.files().empty()
         callback null
       else
-        callback folder.files().first().load_Json()     # assumes that there is only one Xml file which represents the library
+        callback folder.files('.json').first().load_Json()     # assumes that there is only one json file which represents the library
 
   add_Json_Folder: (target_Folders, json_Folder)->
     all_Articles = []

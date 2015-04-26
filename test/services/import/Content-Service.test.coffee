@@ -1,7 +1,7 @@
 async           = require 'async'
 Content_Service = require '../../../src/services/import/Content-Service'
 
-describe '| services | import | Content-Service.test |', ->
+describe '| services | import | Content-Service |', ->
 
   contentService = null
 
@@ -11,21 +11,24 @@ describe '| services | import | Content-Service.test |', ->
   it 'constructor',->
     using contentService, ->
       @.options    .assert_Is {}
-      @.configService.constructor.name.assert_Is('Config_Service')
+      @.content_Folder .assert_Contains ['.tmCache','_TM_3_5_Content']
+      @.current_Library.assert_Is 'Lib_UNO'
+
 
   it 'construtor (with params)',->
-    options = { configService: 'abc'}
+    options = { content_Folder : 'abc', current_Library: 'efg'}
     using new Content_Service(options), ->
-      @.options      .assert_Is(options)
-      @.configService.assert_Is(options.configService)
+      @.options    .assert_Is(options)
+      @.content_Folder .assert_Is(options.content_Folder )
+      @.current_Library.assert_Is(options.current_Library )
+
 
   it 'library_Folder', (done)->
     using contentService,->
       @.library_Folder (folder)->
-        folder.assert_Folder_Exists()
-              .assert_Contains(['.tmCache','_TM_3_5_Content'])
-              .assert_Contains('Lib_')
-              .assert_Contains(process.cwd())
+        folder.assert_Folder_Not_Exists()
+              .assert_Contains('Lib_UNO')
+              .assert_Contains('.tmCache')
         done()
 
   it 'library_Json_Folder', (done)->
@@ -34,14 +37,7 @@ describe '| services | import | Content-Service.test |', ->
         @.library_Json_Folder (json_Folder, library_Folder)->
           library_Folder.assert_Is(folder)
           json_Folder   .assert_Is(library_Folder.append('-json'))
-          done()
-
-  it 'load_Library_Data',(done)->
-    @timeout(20000)         # git it time to clone
-    using contentService,->
-      @.library_Folder (folder)=>
-        @.load_Library_Data (result)->
-          folder.assert_Contains(folder)
+          json_Folder.assert_Folder_Exists()
           done()
 
   it 'convert_Xml_To_Json', (done)->
@@ -54,25 +50,13 @@ describe '| services | import | Content-Service.test |', ->
             @json_Files (jsons)=>
               @xml_Files (xmls)->
                 xmls.assert_Not_Empty()
-                    .assert_Size_Is(jsons.size())
+                .assert_Size_Is(jsons.size())
                 done()
-
-  it 'load_Data', (done)->
-    @timeout 10000
-    using contentService,->
-      @library_Json_Folder (json_Folder, library_Folder)=>
-        @._json_Files = null
-        @load_Data =>
-          @json_Files (jsons)=>
-            @xml_Files (xmls)=>
-              xmls.assert_Size_Is(jsons.size())
-
-              done()
 
   it 'article_Data', (done)->
     using contentService,->
-      check_File = (xml_File, next)=>
-        article_Id  = xml_File.file_Name().remove('.xml')
+      check_File = (json_File, next)=>
+        article_Id  = json_File.file_Name().remove('.json')
         @article_Data article_Id, (article_Data)->
           if (article_Data.TeamMentor_Article)
             using article_Data.TeamMentor_Article, ->
@@ -81,10 +65,5 @@ describe '| services | import | Content-Service.test |', ->
               @.Content.assert_Is_Object()
           next()
 
-      @.xml_Files (xml_Files)->
-        async.each xml_Files.take(10), check_File, done
-
-          #guid = '00869e27-75c2-4ba3-a91b-d15aea30411d'
-
-
-        #log article_Data
+      @.json_Files (json_Files)->
+        async.each json_Files.take(10), check_File, done

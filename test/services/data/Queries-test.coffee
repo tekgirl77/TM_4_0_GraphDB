@@ -13,9 +13,8 @@ describe '| services | data | Queries.test', ->
       importService  = @
       queries        = @.queries
       graph_Find     = @.graph_Find
-      @.content.load_Data =>
-        importService.graph.openDb ->
-          done()
+      importService.graph.openDb ->
+        done()
 
   after (done)->
     importService.graph.closeDb ->

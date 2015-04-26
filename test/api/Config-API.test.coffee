@@ -55,18 +55,6 @@ describe '| api | Config-API.test', ->
         data.obj.assert_Is_Object()
         done()
 
-    it 'load_Library_Data', (done)->
-      @.timeout(60000)
-      clientApi.load_Library_Data (data)->
-        data.obj.assert_Is_String()
-        done()
-
-    it 'convert_Xml_To_Json', (done)->
-      @.timeout(20000)
-      clientApi.convert_Xml_To_Json (data)->
-        data.obj.assert_Size_Is_Bigger_Than(10)
-        done()
-
     it 'reload', (done)->
       @timeout 50000
       clientApi.reload (data)->
