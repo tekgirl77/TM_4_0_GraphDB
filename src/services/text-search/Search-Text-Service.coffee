@@ -23,15 +23,12 @@ class Search_Text_Service
     if loaded_Search_Mappings
       return callback loaded_Search_Mappings
 
-    key = 'search_mappings.json'
-    log
-    if @.cache_Search.has_Key key
-      data = @.cache_Search.get key
-      loaded_Search_Mappings = data.json_Parse()
-      return callback loaded_Search_Mappings
+    key = @.folder_Search_Data().path_Combine 'search_mappings.json'
 
-    new Search_Artifacts_Service().create_Search_Mappings (search_Mappings)->
-      callback search_Mappings
+    if key.file_Exists()
+      loaded_Search_Mappings = key.load_Json()
+      return callback loaded_Search_Mappings
+    callback {}
 
   tag_Mappings: (callback)=>
     if loaded_Tag_Mappings
