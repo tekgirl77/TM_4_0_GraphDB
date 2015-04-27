@@ -17,7 +17,9 @@ class Search_Text_Service
     @.cache_Search       = new Cache_Service("search_cache")
 
   folder_Search_Data: ()=>
-    return __dirname.path_Combine '../../../.tmCache/Lib_Uno-json/Search_Data'
+    # __dirname.path_Combine '../../../.tmCache/Lib_Uno-json/Search_Data'
+    __dirname.path_Combine "..#{path.sep}..#{path.sep}..#{path.sep}.tmCache#{path.sep}Lib_Uno-json#{path.sep}Search_Data"
+
 
   search_Mappings: (callback)=>
     if loaded_Search_Mappings
