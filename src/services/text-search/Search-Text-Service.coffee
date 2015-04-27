@@ -1,8 +1,6 @@
 Cache_Service            = null
 Search_Artifacts_Service = null
 async                    = null
-path                     = null
-
 loaded_Search_Mappings   = null
 loaded_Tag_Mappings      = null
 
@@ -12,7 +10,6 @@ class Search_Text_Service
     Cache_Service            = require('teammentor').Cache_Service
     Search_Artifacts_Service = require './Search-Artifacts-Service'
     async                    = require 'async'
-    path                     = require 'path'
 
   constructor: (options)->
     @.dependencies()
@@ -21,7 +18,7 @@ class Search_Text_Service
 
   folder_Search_Data: ()=>
     # __dirname.path_Combine '../../../.tmCache/Lib_Uno-json/Search_Data'
-    __dirname.path_Combine "..#{path.sep}..#{path.sep}..#{path.sep}.tmCache#{path.sep}Lib_Uno-json#{path.sep}Search_Data"
+    __dirname.path_Combine "../../../.tmCache/Lib_UNO-json/Search_Data"
 
 
   search_Mappings: (callback)=>
