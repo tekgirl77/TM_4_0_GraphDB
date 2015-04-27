@@ -17,7 +17,6 @@ class Search_Text_Service
     @.cache_Search       = new Cache_Service("search_cache")
 
   folder_Search_Data: ()=>
-    # __dirname.path_Combine '../../../.tmCache/Lib_Uno-json/Search_Data'
     __dirname.path_Combine "../../../.tmCache/Lib_UNO-json/Search_Data"
 
 

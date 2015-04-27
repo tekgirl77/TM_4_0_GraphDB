@@ -1,6 +1,6 @@
 Search_Text_Service = require './../../../src/services/text-search/Search-Text-Service'
 
-describe.only '| services | text-search | Search-Text-Service', ->
+describe '| services | text-search | Search-Text-Service', ->
 
   search_Text = null
 
@@ -9,9 +9,6 @@ describe.only '| services | text-search | Search-Text-Service', ->
     done()
 
   it 'folder_Search_Data', ()->
-    console.log __dirname
-    console.log __dirname.files()
-    console.log search_Text.folder_Search_Data().files()
     search_Text.folder_Search_Data().assert_Folder_Exists()
 
   it 'search_Mappings', (done)->
@@ -19,7 +16,7 @@ describe.only '| services | text-search | Search-Text-Service', ->
     search_Text.search_Mappings (data)->
       data.assert_Is_Object()
       done()
-  return
+
   it 'tag_Mappings', (done)->
     search_Text.tag_Mappings (data)->
       data.assert_Is_Object()
