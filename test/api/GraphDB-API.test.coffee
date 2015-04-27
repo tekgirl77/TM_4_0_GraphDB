@@ -65,6 +65,7 @@ describe '| api | GraphDB-API.test', ->
       done()
 
   it 'objects', (done)->
+    @.timeout 5000
     clientApi.objects (data)->
       data.obj.assert_Not_Empty()
       done()

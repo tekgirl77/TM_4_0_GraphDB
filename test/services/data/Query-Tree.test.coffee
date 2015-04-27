@@ -44,7 +44,7 @@ describe '| services | data | Query-Tree.test', ->
 
           done()
 
-  it 'get_Query_Tree (search-security)', (done)->
+  xit 'get_Query_Tree (search-security)', (done)->
     using importService, ->
       query_Id = 'search-security'
       @.query_Tree.get_Query_Tree query_Id, (query_Tree)->
