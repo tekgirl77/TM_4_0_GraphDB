@@ -8,11 +8,10 @@ describe '| regression-tests | tests-1',->
     @timeout 5000
     using new Import_Service(name: 'tm-uno'), ->
       importService  = @
-      @.content.load_Data =>
-        importService.graph.openDb =>
-          @.graph_Find.find_Library (data)=>
-            library_Data = data
-            done()
+      importService.graph.openDb =>
+        @.graph_Find.find_Library (data)=>
+          library_Data = data
+          done()
 
   after (done)->
     importService.graph.closeDb ->

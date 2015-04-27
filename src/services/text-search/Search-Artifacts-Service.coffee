@@ -135,6 +135,6 @@ class Search_Artifacts_Service
   create_Tag_Mappings :(callback)=>
     @.import_Service.graph_Find.find_Tags (tags_Data)=>
       @.cache_Search.put 'tags_mappings.json', tags_Data
-      callback()
+      callback tags_Data
 
 module.exports = Search_Artifacts_Service

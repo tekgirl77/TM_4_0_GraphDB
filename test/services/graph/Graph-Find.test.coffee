@@ -11,9 +11,8 @@ describe '| services | graph | Graph-Find.test', ->
     using new Import_Service(name: 'tm-uno'), ->
       importService = @
       graph_Find    = @.graph_Find
-      @.content.load_Data =>
-        importService.graph.openDb ->
-          done()
+      importService.graph.openDb ->
+        done()
 
   after (done)->
     importService.graph.closeDb ->

@@ -15,9 +15,8 @@ describe '| services | data | Query-Tree.test', ->
       graph_Find     = @.graph_Find
       query_Mappings = @.query_Mappings
       query_Tree     = @.query_Tree
-      @.content.load_Data =>
-        importService.graph.openDb ->
-          done()
+      importService.graph.openDb ->
+        done()
 
   after (done)->
     importService.graph.closeDb ->

@@ -10,10 +10,9 @@ describe '| services | data | Query-Mappings.test', ->
     using new Import_Service(name: 'tm-uno'), ->
       importService  = @
       query_Mappings = @.query_Mappings
-      @.content.load_Data =>
-        importService.graph.openDb (status)->
-          status.assert_True()
-          done()
+      importService.graph.openDb (status)->
+        status.assert_True()
+        done()
 
   after (done)->
     importService.graph.closeDb ->

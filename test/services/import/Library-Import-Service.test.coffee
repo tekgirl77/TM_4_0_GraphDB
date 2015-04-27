@@ -1,7 +1,7 @@
 Import_Service         = require '../../../src/services/data/Import-Service'
 #Library_Import_Service = require '../../../src/services/import/Library-Import-Service'
 
-describe '| services | import | Library-Import-Service.test |', ->
+describe '| services | import | Library-Import-Service |', ->
 
   importService  = null
   library_Import = null
@@ -12,8 +12,7 @@ describe '| services | import | Library-Import-Service.test |', ->
     using new Import_Service(name: '_load_library_data'), ->
       importService = @
       library_Import = @.library_Import
-      @.content.load_Data ->
-        done()
+      done()
 
   after ->
     #importService.cache.cacheFolder()

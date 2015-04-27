@@ -1,13 +1,19 @@
 sudo: false
 language: node_js
 node_js:
-- 0.1
-before_install: 
+ - 0.12
+
+before_install:
+ - mkdir ./.tmCache
+ - mkdir ./.tmCache/_TM_3_5_Content
+ - git clone https://tm-build:$git_pwd@github.com/TMContent/Lib_UNO-json.git ./.tmCache/_TM_3_5_Content/Lib_UNO-json
+
 after_script:
-- 'echo ''Since tests passed: instrument files, rerun tests and publish results to
-  coveralls'' '
-- ls -la
-- sh -e ./bin/publish-code-coverage.sh
+#- 'echo ''Since tests passed: instrument files, rerun tests and publish results to
+#  coveralls'' '
+#- ls -la
+#- sh -e ./bin/publish-code-coverage.sh
+
 notifications:
   slack:
     secure: CI7WvibSD7vLzm1y2n8n4tclxCtnrKsZ+XTtWuV7dVfQKgQhaffiAkARvdEaQy0OL6gbWLF+IXQcOaDh2dW7JsakaSybowGPisio6Je5btdan+Xf/ACgYAO7ytlKo09rJerWkVwiNxWjPifHoKVORG1PNmYyWtu4fBNavg7/9wU=

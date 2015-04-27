@@ -1,6 +1,6 @@
 Search_Text_Service = require './../../../src/services/text-search/Search-Text-Service'
 
-describe '| services | text-search | Search-Text-Service.test', ->
+describe '| services | text-search | Search-Text-Service', ->
 
   search_Text = null
 
@@ -9,6 +9,7 @@ describe '| services | text-search | Search-Text-Service.test', ->
     done()
 
   it 'search_Mappings', (done)->
+    @timeout 5000
     search_Text.search_Mappings (data)->
       data.assert_Is_Object()
       done()

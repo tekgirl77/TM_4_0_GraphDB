@@ -1,0 +1,26 @@
+# Test against this version of Node.js
+environment:
+  nodejs_version: "0.12"
+
+# Install scripts. (runs after repo cloning)
+install:
+  - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
+  - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
+  - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
+  - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
+
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node $env:nodejs_version
+
+  - bin\setup.cmd
+
+  - npm install
+
+test_script:
+  - node --version
+  - npm --version
+
+  - npm test
+
+# Don't actually build.
+build: off
