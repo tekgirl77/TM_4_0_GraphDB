@@ -1,6 +1,8 @@
 Cache_Service            = null
 Search_Artifacts_Service = null
 async                    = null
+path                     = null
+
 loaded_Search_Mappings   = null
 loaded_Tag_Mappings      = null
 
@@ -10,6 +12,7 @@ class Search_Text_Service
     Cache_Service            = require('teammentor').Cache_Service
     Search_Artifacts_Service = require './Search-Artifacts-Service'
     async                    = require 'async'
+    path                     = require 'path'
 
   constructor: (options)->
     @.dependencies()
