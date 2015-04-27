@@ -6,6 +6,10 @@ node_js:
 before_install:
  - mkdir ./.tmCache
  - git clone https://tm-build:$git_pwd@github.com/TMContent/Lib_UNO-json.git ./.tmCache/Lib_UNO-json
+ - ls ./.tmCache
+ - ls ./.tmCache/Lib_UNO-json
+ - ls ./.tmCache/Lib_UNO-json/Search_Data
+
 
 after_script:
 #- 'echo ''Since tests passed: instrument files, rerun tests and publish results to
