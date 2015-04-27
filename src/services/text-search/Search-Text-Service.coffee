@@ -47,16 +47,25 @@ class Search_Text_Service
     @.search_Mappings (mappings)->
       callback mappings[word]
 
+  normalize_Article_Id: (article_Id)=>
+    if article_Id.starts_With('article-')
+      return article_Id
+    splited = article_Id.split('-')
+    if splited.size() is 5
+      return "article-#{splited.last()}"
+    return article_Id
+
   word_Score: (word, callback)=>
     word = word.lower()
     results = []
 
     @.tag_Mappings (tag_Mappings)=>
-      @.search_Mappings (mappings)->
+      @.search_Mappings (mappings)=>
 
-        add_Results_Mappings =  (key)->
+        add_Results_Mappings =  (key)=>
           for article_Id, data of mappings[key]
-              result = {id : article_Id, score: 0, why: {}}
+
+              result = {id : @.normalize_Article_Id(article_Id), score: 0, why: {}}
               for tag in data.where
                 score = 1
                 switch tag

@@ -12,7 +12,6 @@ class Article
 
   article_Id_To_Guid: (article_Id, callback)=>
     @.importService.graph_Find.get_Subject_Data article_Id, (article_Data)=>
-      log article_Data
       callback article_Data?.guid
 
   html: (article_id,callback)=>

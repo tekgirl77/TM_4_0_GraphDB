@@ -23,10 +23,11 @@ class Search_API extends Swagger_GraphDB
 
     query_from_text_search: (req,res)=>
       text = req.params?.text || ''
-      key =  "search_query_from_text_search_#{text}.json"
-      key = null
+      #key =  "search_query_from_text_search_#{text}.json"
+      key = null #
       @.using_Search_Service res, key, (send)->
-        @.query_From_Text_Search text, send
+        @.query_From_Text_Search text, (data)->
+          send data
 
     word_score: (req,res)=>
       word = req.params?.word?.lower() || ''

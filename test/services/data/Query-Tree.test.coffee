@@ -44,6 +44,15 @@ describe '| services | data | Query-Tree.test', ->
 
           done()
 
+  it 'get_Query_Tree (search-security)', (done)->
+    using importService, ->
+      query_Id = 'search-security'
+      @.query_Tree.get_Query_Tree query_Id, (query_Tree)->
+        log query_Tree.results
+        query_Tree.results.assert_Size_Is_Bigger_Than 10
+        query_Tree.id.assert_Is query_Id
+
+        done()
   #TO DO
   xit 'get_Query_Tree (confirm containers and filters are alphabetically sorted', (done)->
     using importService, ->

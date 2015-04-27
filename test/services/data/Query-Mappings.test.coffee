@@ -22,8 +22,19 @@ describe '| services | data | Query-Mappings.test', ->
     using query_Mappings, ->
       @.get_Queries_Mappings (mappings)=>
         mappings.keys().assert_Not_Empty()
-        query_Id = mappings.keys().first()
+        query_Id = mappings.keys().second()
         @.get_Query_Mappings query_Id, (query_Mappings)=>
+          log query_Mappings
+          query_Mappings.assert_Is_Object()
+          query_Mappings.assert_Is(mappings[query_Id])
+          done();
+
+  it 'get_Query_Mappings (search-security)', (done)->
+    using query_Mappings, ->
+      @.get_Queries_Mappings (mappings)=>
+        query_Id = 'search-security'
+        @.get_Query_Mappings query_Id, (query_Mappings)=>
+          #log query_Mappings
           query_Mappings.assert_Is_Object()
           query_Mappings.assert_Is(mappings[query_Id])
           done();

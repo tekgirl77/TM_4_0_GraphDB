@@ -28,9 +28,14 @@ describe '| services | text-search | Search-Text-Service', ->
       done()
 
   it 'word_Score', (done)->
+    @.timeout 5000
     search_Text.word_Score 'injection', (results)->
     #search_Text.word_Score 'wcf 3.5', (results)->
       results.assert_Not_Empty()
+      result = results.first()
+      result.id.assert_Contains 'article-'
+      result.score.assert_Is_Number()
+      result.why.keys().assert_Not_Empty()
       done()
 
   it 'words_Score', (done)->

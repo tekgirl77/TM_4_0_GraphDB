@@ -46,7 +46,6 @@ class Search_Service
         if results.empty()
           callback null
           return
-
         article_Ids = (result.id for result in results)
 
         articles_Nodes = [{ subject:query_Id , predicate:'is'         , object:'Query' }

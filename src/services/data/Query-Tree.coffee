@@ -6,14 +6,16 @@ class Query_Tree
     @.graph_Find     = import_Service.graph_Find
 
   get_Query_Tree: (query_Id,callback)=>
-
     @.import_Service.query_Mappings.get_Query_Mappings query_Id, (query_Mappings)=>
       if not query_Mappings
         return callback null
 
       articles = query_Mappings.articles
+
       if query_Mappings['search-data']
         articles = (item.id for item in query_Mappings['search-data'])
+
+      #log query_Mappings['search-data']
 
       if typeof(articles) is 'string'         # handle the case when there is one article in query_Mappings.articles
         articles = [articles]
