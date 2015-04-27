@@ -8,6 +8,9 @@ describe '| services | text-search | Search-Text-Service', ->
     search_Text = new Search_Text_Service()
     done()
 
+  it.only 'folder_Search_Data', ()->
+    search_Text.folder_Search_Data().assert_Folder_Exists()
+
   it 'search_Mappings', (done)->
     @timeout 10000
     search_Text.search_Mappings (data)->

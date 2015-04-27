@@ -13,14 +13,18 @@ class Search_Text_Service
 
   constructor: (options)->
     @.dependencies()
-    @.options         = options || {}
-    @.cache_Search    = new Cache_Service("search_cache")
+    @.options            = options || {}
+    @.cache_Search       = new Cache_Service("search_cache")
+
+  folder_Search_Data: ()=>
+    return __dirname.path_Combine '../../../.tmCache/Lib_Uno-json/Search_Data'
 
   search_Mappings: (callback)=>
     if loaded_Search_Mappings
       return callback loaded_Search_Mappings
 
     key = 'search_mappings.json'
+    log
     if @.cache_Search.has_Key key
       data = @.cache_Search.get key
       loaded_Search_Mappings = data.json_Parse()
