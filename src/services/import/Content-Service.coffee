@@ -17,7 +17,8 @@ class Content_Service
 
   library_Json_Folder: (callback)=>
     @.library_Folder (library_Folder)=>
-      json_Folder = library_Folder.append('-json')
+      json_Folder = library_Folder.append("-json#{path.sep}Library")
+      json_Folder.folder_Create()
       callback json_Folder, library_Folder
 
   json_Files: (callback)=>

@@ -1,3 +1,4 @@
+path            = require 'path'
 async           = require 'async'
 Content_Service = require '../../../src/services/import/Content-Service'
 
@@ -36,22 +37,9 @@ describe '| services | import | Content-Service |', ->
       @.library_Folder (folder)=>
         @.library_Json_Folder (json_Folder, library_Folder)->
           library_Folder.assert_Is(folder)
-          json_Folder   .assert_Is(library_Folder.append('-json'))
+          json_Folder   .assert_Is(library_Folder.append("-json#{path.sep}Library"))
           json_Folder.assert_Folder_Exists()
           done()
-
-  it 'convert_Xml_To_Json', (done)->
-    @timeout 15000
-    contentService.json_Files (files)->
-      (done();return) if files.not_Empty()
-      using contentService,->
-        @.convert_Xml_To_Json ()=>
-          @.library_Json_Folder (json_Folder, library_Folder)=>
-            @json_Files (jsons)=>
-              @xml_Files (xmls)->
-                xmls.assert_Not_Empty()
-                .assert_Size_Is(jsons.size())
-                done()
 
   it 'article_Data', (done)->
     using contentService,->
