@@ -9,7 +9,7 @@ describe '| services | text-search | Search-Text-Service', ->
     done()
 
   it 'search_Mappings', (done)->
-    @timeout 5000
+    @timeout 10000
     search_Text.search_Mappings (data)->
       data.assert_Is_Object()
       done()

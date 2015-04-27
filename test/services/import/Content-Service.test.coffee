@@ -12,7 +12,7 @@ describe '| services | import | Content-Service |', ->
   it 'constructor',->
     using contentService, ->
       @.options    .assert_Is {}
-      @.content_Folder .assert_Contains ['.tmCache','_TM_3_5_Content']
+      @.content_Folder .assert_Contains '.tmCache'
       @.current_Library.assert_Is 'Lib_UNO'
 
 

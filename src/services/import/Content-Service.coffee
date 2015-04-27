@@ -6,7 +6,7 @@ class Content_Service
     @.options         = options || {}
     @.force_Reload    = true       # since this is now running on CI, we want to force reload
     @._json_Files     = null
-    @.content_Folder  = @.options.content_Folder  || ".tmCache#{path.sep}_TM_3_5_Content"
+    @.content_Folder  = @.options.content_Folder  || ".tmCache"
     @.current_Library = @.options.current_Library || "Lib_UNO"
 
   library_Folder: (callback)=>
