@@ -38,10 +38,10 @@ describe '| api | User-API.test', ->
 
   it 'log_search_valid', (done)->
     clientApi.log_search_valid {user:'abc', value:'valid search'}, (data)->
-      console.log data
+      data.assert_Is_Object()
       done()
 
   it 'log_search_empty', (done)->
     clientApi.log_search_empty {user:'abc', value:'empty search'}, (data)->
-      console.log data
+      data.assert_Is_Object()
       done()
