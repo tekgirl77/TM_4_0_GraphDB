@@ -20,6 +20,7 @@ function add_Swagger(app)
     new (require('./src/api/Convert-API'))({swaggerService: swaggerService}).add_Methods()
     new (require('./src/api/GraphDB-API'))({swaggerService: swaggerService}).add_Methods()
     new (require('./src/api/Config-API' ))({swaggerService: swaggerService}).add_Methods()
+    new (require('./src/api/User-API' ))({swaggerService: swaggerService}).add_Methods()
 
     swaggerService.swagger_Setup()
   }
