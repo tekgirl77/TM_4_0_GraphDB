@@ -24,7 +24,7 @@ class User_API extends Swagger_GraphDB
     target_File = @.target_Folder.path_Combine("user_#{user.url_Encode()}.txt")
     if target_File.file_Not_Exists()
       "# This file contains all user searches performed by the user #{user}\n\n".save_As(target_File)
-    fs.appendFile target_File, value.url_Encode(), (err)->
+    fs.appendFile target_File, value.url_Encode() + '\n', (err)->
       if err
         res.send { status: 'error' }
       else
