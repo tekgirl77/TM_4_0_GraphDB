@@ -9,6 +9,8 @@ describe '| api | GraphDB-API.test', ->
   clientApi      = null
   graphDbApi      = null
 
+  @.timeout 5000
+  
   before (done)->
     graphDbApi = new GraphDB_API()
 
@@ -65,7 +67,6 @@ describe '| api | GraphDB-API.test', ->
       done()
 
   it 'objects', (done)->
-    @.timeout 5000
     clientApi.objects (data)->
       data.obj.assert_Not_Empty()
       done()
