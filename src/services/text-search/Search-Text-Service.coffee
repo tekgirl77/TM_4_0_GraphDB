@@ -61,10 +61,8 @@ class Search_Text_Service
 
     @.tag_Mappings (tag_Mappings)=>
       @.search_Mappings (mappings)=>
-
         add_Results_Mappings =  (key)=>
           for article_Id, data of mappings[key]
-
               result = {id : @.normalize_Article_Id(article_Id), score: 0, why: {}}
               for tag in data.where
                 score = 1
