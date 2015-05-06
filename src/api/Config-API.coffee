@@ -1,7 +1,7 @@
 Swagger_Common  = require './base-classes/Swagger-Common'
 Config_Service  = require '../services/utils/Config-Service'
 Import_Service  = require '../services/data/Import-Service'
-TM_Guidance     = require '../graph/TM-Guidance'
+#TM_Guidance     = require '../graph/TM-Guidance'
 Cache_Service   = require('teammentor').Cache_Service
 
 
@@ -12,7 +12,7 @@ class Config_API extends Swagger_Common
       @.swaggerService = @options.swaggerService
       @.configService  = new Config_Service()
       @.cache          = new Cache_Service("data_cache")
-      @.tmGuidance     = new TM_Guidance { importService : new Import_Service(name:'tm-uno') }
+      #@.tmGuidance     = new TM_Guidance { importService : new Import_Service(name:'tm-uno') }
       @.options.area   = 'config'
       super(options)
 
@@ -22,12 +22,6 @@ class Config_API extends Swagger_Common
     contents: (req,res)=>
       @configService.get_Config (config)=>
         res.send config.json_pretty()
-
-    reload: (req,res)=>
-      @.tmGuidance.reload_Data true, ()=>
-        @.tmGuidance.importService.graph.closeDb ->
-          data = "data reloaded"
-          res.send data.json_pretty()
 
     delete_data_cache: (req,res)=>
       @.cache.cacheFolder().folder_Delete_Recursive()

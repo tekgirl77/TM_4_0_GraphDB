@@ -55,12 +55,6 @@ describe '| api | Config-API.test', ->
         data.obj.assert_Is_Object()
         done()
 
-    it 'reload', (done)->
-      @timeout 50000
-      clientApi.reload (data)->
-        #data.obj.assert_Is('data reloaded')
-        done()
-
     it 'delete_data_cache', (done)->
       tmp_Cache_Root = '.tmp_Cache_Folder'
       using configApi.cache, ->

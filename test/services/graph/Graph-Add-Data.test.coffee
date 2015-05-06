@@ -14,16 +14,16 @@ describe '| services | graph | Graph-Add_Data.test', ->
       #importService.cache.cacheFolder().folder_Delete_Recursive()
       done()
 
-  it 'add_Db and get_Subject', (done)->
-    type = 'test'
-    guid = "aaaa-bbbc-cccc-dddd"
-    data = { b:'c_'.add_Random_Letters() , d: 'e_'.add_5_Random_Letters()}
-    importService.graph_Add_Data.add_Db type, guid, data, (id)->
-      importService.graph_Find.get_Subject_Data id, (id_Data)->
-        id_Data.assert_Is_Object()
-        id_Data.b.assert_Is(data.b)
-        id_Data.d.assert_Is(data.d)
-        done()
+  #it 'add_Db and get_Subject', (done)->
+  #  type = 'test'
+  #  guid = "aaaa-bbbc-cccc-dddd"
+  #  data = { b:'c_'.add_Random_Letters() , d: 'e_'.add_5_Random_Letters()}
+  #  importService.graph_Add_Data.add_Db type, guid, data, (id)->
+  #    importService.graph_Find.get_Subject_Data id, (id_Data)->
+  #      id_Data.assert_Is_Object()
+  #      id_Data.b.assert_Is(data.b)
+  #      id_Data.d.assert_Is(data.d)
+  #      done()
 
   it 'add_Is, find_Using_Is', (done)->
     id    = 'is_id'
@@ -41,9 +41,9 @@ describe '| services | graph | Graph-Add_Data.test', ->
         data.first().assert_Is(id)
         done();
 
-  it 'new_Data_Import_Util', ->
-    importService.graph_Add_Data.new_Data_Import_Util.assert_Is_Function()
-    importService.graph_Add_Data.new_Data_Import_Util().assert_Is_Object()
+  #it 'new_Data_Import_Util', ->
+  #  importService.graph_Add_Data.new_Data_Import_Util.assert_Is_Function()
+  #  importService.graph_Add_Data.new_Data_Import_Util().assert_Is_Object()
 
   it 'new_Short_Guid', ->
     importService.graph_Add_Data.new_Short_Guid.assert_Is_Function()
