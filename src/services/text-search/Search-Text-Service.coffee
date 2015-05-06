@@ -45,7 +45,7 @@ class Search_Text_Service
 
   word_Data: (word, callback)=>
     @.search_Mappings (mappings)->
-      callback mappings[word]
+      callback mappings[word] || null
 
   normalize_Article_Id: (article_Id)=>
     if article_Id.starts_With('article-')
@@ -106,12 +106,6 @@ class Search_Text_Service
         add_Tag_Mappings word
 
         results = (results.sort (a,b)-> a.score - b.score).reverse()
-
-        # if there are no results via exact match, try searching inside each word
-        if results.empty()
-          for key,value of mappings
-            if key.contains(word)
-              add_Results_Mappings key
 
         callback results
 
