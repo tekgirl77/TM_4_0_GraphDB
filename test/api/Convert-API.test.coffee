@@ -48,7 +48,7 @@ describe '| api | Convert-API.test', ->
             done()
 
       it 'to_ids (bad data)', (done)->
-
+        @.timeout 20000                     # since this is the first test to hit the DB, if the db doesn't exist this will trigger a reload
         check = (send, expect, next)->
           clientApi.to_ids {values: send }, (data)->
             data.obj.assert_Is expect

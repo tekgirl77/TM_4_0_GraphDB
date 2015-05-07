@@ -52,6 +52,16 @@ describe '| services | graph | Graph-Service.test |', ->
     #          @.dbPath.assert_File_Not_Exists()
     #          done()
 
+  describe 'load TM_Uno data |', ->
+
+    it '@.ensure_TM_Uno_Is_Loaded', (done)->
+      @.timeout 30000
+      using new Graph_Service(name:'tm-uno'),->
+        @.openDb => #this will trigger @.ensure_TM_Uno_Is_Loaded =>
+          @.allData (data)=>
+            data.assert_Size_Is_Bigger_Than 20000
+            @.closeDb ->
+              done()
 
   describe 'data operations |', ->
     graphService  = null

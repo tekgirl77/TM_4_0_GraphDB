@@ -1,5 +1,6 @@
 levelgraph      = null
 GitHub_Service  = null
+async           = require 'async'
 
 class Graph_Service
 
@@ -26,9 +27,10 @@ class Graph_Service
     else
       locked = true
       process.nextTick =>
-        @db = levelgraph(@dbPath)
-        process.nextTick =>
-          callback true
+        @.ensure_TM_Uno_Is_Loaded =>
+          @.db = levelgraph(@dbPath)
+          process.nextTick =>
+            callback true
 
   closeDb: (callback)=>
     if (@db)
@@ -77,6 +79,37 @@ class Graph_Service
     @db.del { subject:subject , predicate:predicate  , object:object }, (err)->
       throw err if err
       callback()
+
+  ensure_TM_Uno_Is_Loaded: (callback)=>
+    path_To_Lib_Uno_Flag = __dirname.path_Combine '../../../'
+                                    .path_Combine '.tmCache/tm-uno-loaded.flag'
+    path_To_Lib_Uno_Json = __dirname.path_Combine '../../../'
+                                    .path_Combine '.tmCache/Lib_UNO-json/Graph_Data'
+    if path_To_Lib_Uno_Flag.file_Exists()
+      return callback()
+    "[Graph-Service] #{path_To_Lib_Uno_Flag.file_Name()} file doesn't exist, so deleting GraphDB and re-importing Lib_Uno-Json data".log()
+
+    @.deleteDb =>
+      @.db = levelgraph(@.dbPath)                # needs to be done direcly since ensure_TM_Uno_Is_Loaded is part of the openDb code
+
+      console.time('graph import')
+      import_Data = (file, callback)=>
+        "loading graph data from: #{file.file_Name()}".log()
+        graph_Data = file.load_Json()
+        "There are #{graph_Data.size()} triplets to import".log()
+
+        async.each graph_Data, @.db.put, callback
+
+
+      #for file in path_To_Lib_Uno_Json.files()
+      import_Data path_To_Lib_Uno_Json.files().first(), =>
+        "Import complete".log()
+        "Data loaded at #{new Date()}".log().save_As path_To_Lib_Uno_Flag
+        console.timeEnd('graph import')
+
+        @.closeDb =>                              # seems need to make sure all data is synced
+          callback()
+
 
   get_Subjects: (callback)=>
     if @.db is null

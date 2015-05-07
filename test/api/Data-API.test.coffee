@@ -97,17 +97,6 @@ describe '| api | Data-API.test', ->
           data.obj[article_Id].assert_Is(article)
           done()
 
-
-    it 'library', (done)->
-      clientApi.library (data)->
-        library = data.obj
-        library.assert_Is_Object()
-        library.id.assert_Is_String()
-        library.name.assert_Is_String()
-        library.folders.assert_Not_Empty()
-        library.articles.assert_Not_Empty()
-        done()
-
     it 'library_Query', (done)->
       clientApi.library_Query (data)->
         if data.obj.queryId
