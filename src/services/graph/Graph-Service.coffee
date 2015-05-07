@@ -86,26 +86,38 @@ class Graph_Service
                                     .path_Combine ".tmCache#{path.sep}tm-uno-loaded.flag"
     path_To_Lib_Uno_Json = __dirname.path_Combine "..#{path.sep}..#{path.sep}..#{path.sep}"
                                     .path_Combine ".tmCache#{path.sep}Lib_UNO-json#{path.sep}Graph_Data"
+    if path_To_Lib_Uno_Json.folder_Not_Exists()
+      path_To_Lib_Uno_Json = ".tmCache#{path.sep}Lib_UNO-json#{path.sep}Graph_Data"
+
+    log "[ensure_TM_Uno_Is_Loaded] Using path_To_Lib_Uno_Json: #{path_To_Lib_Uno_Json}"
+    if path_To_Lib_Uno_Json.folder_Not_Exists()
+      log "[ensure_TM_Uno_Is_Loaded] ERROR: Lib_Uno-json folder not found : #{path_To_Lib_Uno_Json}"
+      return callback()
+
     if path_To_Lib_Uno_Flag.file_Exists()
       return callback()
-    "[Graph-Service] #{path_To_Lib_Uno_Flag.file_Name()} file doesn't exist, so deleting GraphDB and re-importing Lib_Uno-Json data".log()
+    "[ensure_TM_Uno_Is_Loaded] #{path_To_Lib_Uno_Flag.file_Name()} file doesn't exist, so deleting GraphDB and re-importing Lib_Uno-Json data".log()
 
     @.deleteDb =>
+      '[ensure_TM_Uno_Is_Loaded] deleting data_cache and search_cache folders'.log()
+      path_To_Lib_Uno_Json.path_Combine('../../data_cache').folder_Delete_Recursive()
+      path_To_Lib_Uno_Json.path_Combine('../../search_cache').folder_Delete_Recursive()
+
       @.db = levelgraph(@.dbPath)                # needs to be done direcly since ensure_TM_Uno_Is_Loaded is part of the openDb code
 
       console.time('graph import')
       import_Data = (file, callback)=>
-        "loading graph data from: #{file.file_Name()}".log()
+        "[ensure_TM_Uno_Is_Loaded] Loading graph data from: #{file.file_Name()}".log()
         graph_Data = file.load_Json()
-        "There are #{graph_Data.size()} triplets to import".log()
+        "[ensure_TM_Uno_Is_Loaded] There are #{graph_Data.size()} triplets to import".log()
 
         async.each graph_Data, @.db.put, callback
 
 
       #for file in path_To_Lib_Uno_Json.files()
       import_Data path_To_Lib_Uno_Json.files().first(), =>
-        "Import complete".log()
-        "Data loaded at #{new Date()}".log().save_As path_To_Lib_Uno_Flag
+        "[ensure_TM_Uno_Is_Loaded] Import complete".log()
+        "[ensure_TM_Uno_Is_Loaded] Data loaded at #{new Date()}".log().save_As path_To_Lib_Uno_Flag
         console.timeEnd('graph import')
 
         @.closeDb =>                              # seems need to make sure all data is synced
