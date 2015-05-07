@@ -1,6 +1,7 @@
 levelgraph      = null
 GitHub_Service  = null
 async           = require 'async'
+path            = require 'path'
 
 class Graph_Service
 
@@ -81,10 +82,10 @@ class Graph_Service
       callback()
 
   ensure_TM_Uno_Is_Loaded: (callback)=>
-    path_To_Lib_Uno_Flag = __dirname.path_Combine '../../../'
-                                    .path_Combine '.tmCache/tm-uno-loaded.flag'
-    path_To_Lib_Uno_Json = __dirname.path_Combine '../../../'
-                                    .path_Combine '.tmCache/Lib_UNO-json/Graph_Data'
+    path_To_Lib_Uno_Flag = __dirname.path_Combine "..#{path.sep}..#{path.sep}..#{path.sep}"
+                                    .path_Combine ".tmCache#{path.sep}tm-uno-loaded.flag"
+    path_To_Lib_Uno_Json = __dirname.path_Combine "..#{path.sep}..#{path.sep}..#{path.sep}"
+                                    .path_Combine ".tmCache#{path.sep}Lib_UNO-json#{path.sep}Graph_Data"
     if path_To_Lib_Uno_Flag.file_Exists()
       return callback()
     "[Graph-Service] #{path_To_Lib_Uno_Flag.file_Name()} file doesn't exist, so deleting GraphDB and re-importing Lib_Uno-Json data".log()
