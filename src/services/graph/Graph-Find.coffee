@@ -88,7 +88,6 @@ class Graph_Find
     find_Using @.find_Article_By_Id, =>
       find_Using @.find_Article_By_Partial_Id, =>
         find_Using @.find_Article_By_Guid, =>
-          find_Using @.find_Article_By_Title, =>
             callback null
 
   find_Article_By_Id: (id, callback)=>
@@ -116,17 +115,6 @@ class Graph_Find
                            callback data.first().id
                          else
                            callback null
-
-  find_Article_By_Title: (title, callback)=>
-    title = title.replace(/-/g,' ')  # handle titles with dashes
-    @graph.db.nav(title).archIn('title').as('id')
-                       .archOut('is').as('is')
-                       .solutions (err,data) ->
-                         if data?.first()?.is is 'Article'
-                           callback data.first().id
-                         else
-                           callback null
-
 
   find_Articles: (callback)=>
     @graph.db.nav('Article').archIn('is').as('article')
