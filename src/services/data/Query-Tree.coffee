@@ -46,8 +46,9 @@ class Query_Tree
           query_Tree.filters = filters
           @.import_Service.graph_Find.get_Subjects_Data articles, (data)=>
             for article_Id in articles
-              query_Tree.results.add data[article_Id]
-
+              article_Data = data[article_Id]
+              if article_Data and article_Data.id and article_Data.title                  # enforces that id and title exist
+                query_Tree.results.add data[article_Id]                                   # fixes https://github.com/TeamMentor/TM_4_0_Design/issues/742
             callback query_Tree
 
   get_Query_Tree_Filters: (articles_Ids, callback)=>
