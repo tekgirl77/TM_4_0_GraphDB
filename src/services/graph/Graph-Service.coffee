@@ -188,7 +188,7 @@ class Graph_Service
       object   : object     || @db.v("object")
     }], (err, data)->callback(data)
 
-  query: (key, value, callback)->
+  query: (key, value, callback)=>
     if @.db is null
       callback null
       return

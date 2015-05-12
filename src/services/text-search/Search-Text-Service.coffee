@@ -14,6 +14,7 @@ class Search_Text_Service
   constructor: (options)->
     @.dependencies()
     @.options            = options || {}
+    @.importService      = @.options.importService
     @.cache_Search       = new Cache_Service("search_cache")
 
   folder_Search_Data: ()=>
@@ -34,13 +35,13 @@ class Search_Text_Service
   tag_Mappings: (callback)=>
     if loaded_Tag_Mappings
       return callback loaded_Tag_Mappings
-
     key = 'tags_mappings.json'
     if @.cache_Search.has_Key key
       data = @.cache_Search.get key
-      loaded_Tag_Mappings = data.json_Parse()
-      return callback loaded_Tag_Mappings
-    new Search_Artifacts_Service().create_Tag_Mappings (tag_Mappings)->
+      if  data isnt '{}'
+        loaded_Tag_Mappings = data.json_Parse()
+        return callback loaded_Tag_Mappings
+    new Search_Artifacts_Service(import_Service:@.importService).create_Tag_Mappings (tag_Mappings)->
       callback tag_Mappings
 
   word_Data: (word, callback)=>

@@ -27,7 +27,7 @@ class Search_Service
 
   search_Using_Text: (text, callback)=>
     text = text.lower()
-    new Search_Text_Service().words_Score text, (results)->
+    new Search_Text_Service(importService:@.importService).words_Score text, (results)->
       callback results
 
   query_Id_From_Text: (text)=>
