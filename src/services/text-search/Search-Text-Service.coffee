@@ -69,7 +69,7 @@ class Search_Text_Service
                 score = 1
                 switch tag
                   when 'title'
-                    score = 10
+                    score = 30
                   when 'h1'
                     score = 5
                   when 'h2'
@@ -80,6 +80,8 @@ class Search_Text_Service
                     score = 3
                   when 'a'
                     score = -4
+                  when 'span'
+                    score = 0
 
                 result.score += score
                 result.why[tag]?=0
