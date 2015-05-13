@@ -88,6 +88,7 @@ class Graph_Find
     find_Using @.find_Article_By_Id, =>
       find_Using @.find_Article_By_Partial_Id, =>
         find_Using @.find_Article_By_Guid, =>
+          find_Using @.find_Article_By_Alias, =>
             callback null
 
   find_Article_By_Id: (id, callback)=>
@@ -97,7 +98,7 @@ class Graph_Find
                           callback id
                         else
                           callback null
-                          
+
   find_Article_By_Partial_Id: (partial_Id, callback)=>
     id = "article-#{partial_Id}"
     @graph.db.nav(id).archOut('is').as('is')
@@ -109,6 +110,15 @@ class Graph_Find
 
   find_Article_By_Guid: (guid, callback)=>
     @graph.db.nav(guid).archIn('guid').as('id')
+                       .archOut('is').as('is')
+                       .solutions (err,data) ->
+                         if data?.first()?.is is 'Article'
+                           callback data.first().id
+                         else
+                           callback null
+
+  find_Article_By_Alias: (guid, callback)=>
+    @graph.db.nav(guid).archIn('alias').as('id')
                        .archOut('is').as('is')
                        .solutions (err,data) ->
                          if data?.first()?.is is 'Article'

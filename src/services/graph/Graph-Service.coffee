@@ -113,10 +113,7 @@ class Graph_Service
 
         async.each graph_Data, @.db.put, callback
 
-
-      #for file in path_To_Lib_Uno_Json.files()
-      import_Data path_To_Lib_Uno_Json.files().first(), =>
-        "[ensure_TM_Uno_Is_Loaded] Import complete".log()
+      async.each path_To_Lib_Uno_Json.files(), import_Data , =>
         "[ensure_TM_Uno_Is_Loaded] Data loaded at #{new Date()}".log().save_As path_To_Lib_Uno_Flag
         console.timeEnd('graph import')
 
