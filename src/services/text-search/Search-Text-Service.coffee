@@ -91,10 +91,8 @@ class Search_Text_Service
         add_Tag_Mappings = (key)=>
           if tag_Mappings[key]
             tag_Articles = tag_Mappings[key]
-            extra_Results = []
-
             for result in results
-              if tag_Articles.contains(result.id)
+              if tag_Articles.contains?(result.id)
                 result.score += 30
                 result.why.tag = 30
                 tag_Articles.splice tag_Articles.indexOf(result.id),1
@@ -138,9 +136,10 @@ class Search_Text_Service
     #log mapped_Scores
 
     results = []
-    words_Size =  scores.keys().size()
+    words_Size =  scores.keys?().size()
+
     for id, id_Data of mapped_Scores
-      if id_Data.keys().size() is words_Size
+      if id_Data.keys?().size() is words_Size
         result = {id: id, score:0 , why: {}}
         for word,word_Data of id_Data
           result.score +=  word_Data.score
