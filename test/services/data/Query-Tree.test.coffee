@@ -26,7 +26,8 @@ describe '| services | data | Query-Tree.test', ->
     @timeout 5000
     using importService, ->
       @.query_Mappings.find_Root_Queries (root_Queries)=>
-        query_Id = root_Queries.queries.second().id
+        #query_Id = root_Queries.queries.second().id
+        query_Id = 'query-5f606f7d111b'   # Automatically Lock Inactive Accounts
         @.query_Tree.get_Query_Tree query_Id, (query_Tree)=>
           filter = query_Tree.filters.first().results.first()
           @.query_Tree.apply_Query_Tree_Query_Id_Filter query_Tree, filter.id, (filtered_Query_Tree)->
@@ -37,14 +38,15 @@ describe '| services | data | Query-Tree.test', ->
   it 'get_Query_Tree', (done)->
     using importService, ->
       @.query_Mappings.find_Root_Queries (root_Queries)=>
-        query_Id = root_Queries.queries.second().id
+        #query_Id = root_Queries.queries.second().id
+        query_Id = 'query-e93aac2084fe'  # Require Authentication for All Sensitive Operations
         @.query_Tree.get_Query_Tree query_Id, (query_Tree)->
-          query_Tree.results.assert_Size_Is_Bigger_Than 10
+          query_Tree.results.assert_Size_Is_Bigger_Than 14
           query_Tree.id.assert_Is query_Id
 
           done()
 
-  xit 'get_Query_Tree (search-security)', (done)->
+  it 'get_Query_Tree (search-security)', (done)->
     using importService, ->
       query_Id = 'search-security'
       @.query_Tree.get_Query_Tree query_Id, (query_Tree)->
@@ -53,6 +55,7 @@ describe '| services | data | Query-Tree.test', ->
         query_Tree.id.assert_Is query_Id
 
         done()
+
   #TO DO
   xit 'get_Query_Tree (confirm containers and filters are alphabetically sorted', (done)->
     using importService, ->
