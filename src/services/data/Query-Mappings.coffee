@@ -66,6 +66,7 @@ class Query_Mappings
             child_Query.parents.add(query_Id)
             map_Contains_Article child_Query['contains-article'],query.articles
 
+
           map_Contains_Article query['contains-article'],query.articles
 
         # remote 'contains-query' and 'contains-article'
@@ -83,7 +84,19 @@ class Query_Mappings
           query = queries[query_Id]
           query.articles = query.articles.unique()
 
+        # ensure parents articles match child articles (see https://github.com/TeamMentor/TM_4_0_Design/issues/787)
+        for query_Id in query_Ids
+          query = queries[query_Id]
+          if query.queries.not_Empty()
+            articles = []
+            for child_Query in query.queries
+              articles = articles.concat(child_Query.articles)
+            if articles.unique().size() isnt query.articles.size()
+              "[get_Queries_Mappings] Fixed parent articles for query #{query.id}".log()
+              query.articles = articles.unique()
+
         Local_Cache.Queries_Mappings = queries
+
         callback(queries)
 
   get_Query_Mappings: (query_Id,callback)=>
