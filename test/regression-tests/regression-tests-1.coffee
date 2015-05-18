@@ -24,11 +24,11 @@ describe '| _issues | regresion-tests-1 |',->
         search_Text.word_Score 'ul', (results)->
           results.assert_Size_Is 0                    #   9366 hits for ul
           search_Text.word_Score 'a', (results)->
-            results.assert_Size_Is 2233               #   2233 hits for a
+            results.assert_Is_Greater_Than 200               #   2233 hits for a
             search_Text.word_Score 'td', (results)->
               results.assert_Size_Is 0                #   9366 hits for td
               search_Text.word_Score 'p', (results)->
-                results.assert_Size_Is 23             #   23 hits for p
+                results.assert_Is_Greater_Than 20             #   23 hits for p
                 done()
 
     test_3 = (next)->
