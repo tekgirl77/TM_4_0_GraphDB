@@ -55,3 +55,15 @@ describe '| services | data | Query-Mappings.test', ->
         root_Queries.queries .assert_Size_Is_Bigger_Than 4
         root_Queries.articles.assert_Size_Is 0             # for now, no queries are returned in this top level list
         done()
+
+  xit '#787 - Standards articles are not part of the total count and principle type is not shown.', (done)->
+    using query_Mappings, ->
+      @.get_Queries_Mappings (mappings)=>
+
+
+        mappings['query-6234f2d47eb7'].articles.assert_Size_Is 1751 # Index
+        #mappings['query-ca4b67378adb'].articles.assert_Size_Is 329  # Standards
+        #mappings['query-b53e272fa197'].articles.assert_Size_Is 106  # CWE
+
+        # In the results above the first one is wrong (it should be above 2000)
+        done()
