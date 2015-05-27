@@ -25,6 +25,7 @@ describe '| services | data | Search-Service.test |', ->
       @.graph        .assert_Is_Object()
 
   it 'article_Titles', (done)->
+    @.timeout 4000
     searchService.article_Titles (titles)->
       titles.assert_Size_Is_Bigger_Than 10
       article_Id    = titles.first().id
